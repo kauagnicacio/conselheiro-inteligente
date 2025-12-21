@@ -1,9 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// Verificar se as variáveis de ambiente estão disponíveis
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Criar cliente apenas se as credenciais estiverem disponíveis
+export const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
+
+// Flag para verificar se Supabase está configurado
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
 // Tipos para o banco de dados
 export interface UserProfile {

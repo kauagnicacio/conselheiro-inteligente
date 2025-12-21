@@ -1,94 +1,97 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 
-type AuthMode = "login" | "signup" | "reset";
-
 interface AuthFormProps {
   onAuthSuccess?: () => void;
+  signupOnly?: boolean; // Modo apenas cadastro (após checkout)
 }
 
-export function AuthForm({ onAuthSuccess }: AuthFormProps) {
-  const [mode, setMode] = useState<AuthMode>("signup");
+export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
 
     try {
-      if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+      // Verificar se Supabase está configurado
+      if (!isSupabaseConfigured || !supabase) {
+        // Modo local/demo - simular criação de conta
+        console.log("Modo demo: Supabase não configurado");
+        
+        // Criar usuário local simulado
+        const mockUser = {
+          id: `local-${Date.now()}`,
           email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-            data: {
-              email_confirm: false, // Não exigir confirmação de email
-            },
-          },
-        });
-
-        if (error) throw error;
-
+          created_at: new Date().toISOString(),
+        };
+        
+        // Salvar no localStorage
+        localStorage.setItem("lumia-local-user", JSON.stringify(mockUser));
+        
         setMessage({
           type: "success",
-          text: "Conta criada com sucesso! Você já pode usar o app.",
+          text: "Conta criada com sucesso! Redirecionando...",
         });
-        
-        // Fazer login automático após criar conta
-        setTimeout(async () => {
-          const { error: loginError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-          
-          if (!loginError && onAuthSuccess) {
+
+        // Chamar callback de sucesso após breve delay
+        setTimeout(() => {
+          if (onAuthSuccess) {
             onAuthSuccess();
           }
+          // Recarregar página para atualizar estado de autenticação
+          window.location.reload();
         }, 1000);
-      } else if (mode === "login") {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) throw error;
-
-        setMessage({
-          type: "success",
-          text: "Login realizado com sucesso!",
-        });
         
-        // Chamar callback de sucesso
-        if (onAuthSuccess) {
-          setTimeout(() => {
-            onAuthSuccess();
-          }, 500);
-        }
-      } else if (mode === "reset") {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/auth/reset-password`,
-        });
-
-        if (error) throw error;
-
-        setMessage({
-          type: "success",
-          text: "Email de recuperação enviado! Verifique sua caixa de entrada.",
-        });
+        return;
       }
+
+      // Criar conta no Supabase
+      const { error: signupError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            email_confirm: false, // Não exigir confirmação de email
+          },
+        },
+      });
+
+      if (signupError) throw signupError;
+
+      // Fazer login automático após criar conta
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (loginError) throw loginError;
+
+      setMessage({
+        type: "success",
+        text: "Conta criada com sucesso! Redirecionando...",
+      });
+
+      // Chamar callback de sucesso após breve delay
+      setTimeout(() => {
+        if (onAuthSuccess) {
+          onAuthSuccess();
+        }
+      }, 1000);
     } catch (error: any) {
+      console.error("Erro no cadastro:", error);
       setMessage({
         type: "error",
         text: error.message || "Ocorreu um erro. Tente novamente.",
@@ -100,7 +103,15 @@ export function AuthForm({ onAuthSuccess }: AuthFormProps) {
 
   return (
     <div className="w-full max-w-md mx-auto p-6">
-      <form onSubmit={handleAuth} className="space-y-4">
+      {!isSupabaseConfigured && (
+        <Alert className="mb-4">
+          <AlertDescription>
+            Modo demonstração: As contas serão salvas localmente no seu navegador.
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      <form onSubmit={handleSignup} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -115,22 +126,23 @@ export function AuthForm({ onAuthSuccess }: AuthFormProps) {
           />
         </div>
 
-        {mode !== "reset" && (
-          <div className="space-y-2">
-            <Label htmlFor="password">Senha</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              disabled={loading}
-              minLength={6}
-              className="h-12"
-            />
-          </div>
-        )}
+        <div className="space-y-2">
+          <Label htmlFor="password">Senha</Label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Mínimo 6 caracteres"
+            required
+            disabled={loading}
+            minLength={6}
+            className="h-12"
+          />
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Crie uma senha com no mínimo 6 caracteres
+          </p>
+        </div>
 
         {message && (
           <Alert variant={message.type === "error" ? "destructive" : "default"}>
@@ -146,67 +158,18 @@ export function AuthForm({ onAuthSuccess }: AuthFormProps) {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Processando...
+              Criando sua conta...
             </>
-          ) : mode === "login" ? (
-            "Entrar"
-          ) : mode === "signup" ? (
-            "Criar conta"
           ) : (
-            "Enviar link"
+            "Criar conta e acessar"
           )}
         </Button>
       </form>
 
-      <div className="mt-6 text-center space-y-2">
-        {mode === "login" && (
-          <>
-            <button
-              type="button"
-              onClick={() => setMode("reset")}
-              className="text-sm text-purple-600 dark:text-purple-400 hover:underline"
-              disabled={loading}
-            >
-              Esqueceu sua senha?
-            </button>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Não tem uma conta?{" "}
-              <button
-                type="button"
-                onClick={() => setMode("signup")}
-                className="text-purple-600 dark:text-purple-400 hover:underline font-medium"
-                disabled={loading}
-              >
-                Criar conta
-              </button>
-            </div>
-          </>
-        )}
-
-        {mode === "signup" && (
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            Já tem uma conta?{" "}
-            <button
-              type="button"
-              onClick={() => setMode("login")}
-              className="text-purple-600 dark:text-purple-400 hover:underline font-medium"
-              disabled={loading}
-            >
-              Entrar
-            </button>
-          </div>
-        )}
-
-        {mode === "reset" && (
-          <button
-            type="button"
-            onClick={() => setMode("login")}
-            className="text-sm text-purple-600 dark:text-purple-400 hover:underline"
-            disabled={loading}
-          >
-            Voltar para login
-          </button>
-        )}
+      <div className="mt-6 text-center">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          Ao criar sua conta, você concorda com nossos termos de uso e política de privacidade
+        </p>
       </div>
     </div>
   );

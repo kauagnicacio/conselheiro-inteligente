@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { LumAvatar } from "@/components/LumIcons";
+import { LumLogo } from "@/components/LumIcons";
 import { Sparkles } from "lucide-react";
 
 interface WelcomeMessageProps {
@@ -13,75 +13,93 @@ export function WelcomeMessage({ responses, onContinue }: WelcomeMessageProps) {
   // Gerar mensagem personalizada baseada nas respostas
   const generateMessage = () => {
     const momento = responses.momento_vida;
-    const emocional = responses.rotina_emocional;
-    const apoio = responses.apoio_emocional;
-    const sensacao = responses.sensacao_predominante;
-
-    let message = "";
-
-    // Introdução acolhedora
-    if (momento === "desafiador" || emocional === "sobrecarregado" || sensacao === "cansaco") {
-      message = "Eu vejo que você está passando por um momento intenso. ";
-    } else if (momento === "transicao" || sensacao === "confusao") {
-      message = "Percebo que você está em um momento de mudanças e reflexões. ";
-    } else if (momento === "equilibrado" || sensacao === "gratidao") {
-      message = "Que bom sentir que você está em um momento mais leve. ";
+    const busca = responses.busca_principal;
+    
+    let message = "Obrigada por compartilhar um pouco sobre você. ";
+    
+    if (momento === "crescimento") {
+      message += "É inspirador ver que você está em um momento de crescimento. ";
+    } else if (momento === "transicao") {
+      message += "Mudanças podem ser desafiadoras, mas também trazem novas oportunidades. ";
+    } else if (momento === "desafiador") {
+      message += "Reconheço que este é um momento intenso para você. ";
+    }
+    
+    if (busca === "clareza") {
+      message += "Vou te ajudar a encontrar a clareza que você busca.";
+    } else if (busca === "acolhimento") {
+      message += "Estou aqui para te acolher e compreender.";
+    } else if (busca === "paz") {
+      message += "Juntos, vamos trabalhar para trazer mais paz à sua vida.";
+    } else if (busca === "transformacao") {
+      message += "Vou te apoiar nessa jornada de transformação.";
     } else {
-      message = "Obrigada por compartilhar um pouco do seu momento comigo. ";
+      message += "Estou aqui para te apoiar no que você precisar.";
     }
-
-    // Reconhecimento emocional
-    if (apoio === "pouco" || apoio === "nao") {
-      message += "Sei que nem sempre é fácil encontrar alguém para conversar de verdade. ";
-    } else if (emocional === "altos_baixos" || emocional === "ansioso") {
-      message += "Entendo que lidar com essas oscilações pode ser cansativo. ";
-    }
-
-    // Acolhimento final
-    message += "Aqui você pode ser você mesmo(a), sem julgamentos. A Lum é um espaço seguro para suas emoções, dúvidas e reflexões. Estou aqui para te ouvir e caminhar junto com você. 💜";
-
+    
     return message;
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 dark:from-gray-900 dark:via-[#1a1a1a] dark:to-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
-        {/* Avatar e animação */}
-        <div className="flex justify-center mb-6">
-          <div className="relative">
-            <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-2xl animate-pulse" />
-            <LumAvatar className="w-24 h-24 relative" />
-          </div>
-        </div>
-
-        {/* Mensagem personalizada */}
-        <div className="bg-white dark:bg-[#212121] rounded-2xl shadow-xl p-8 mb-6">
-          <div className="flex items-start gap-3 mb-4">
-            <Sparkles className="w-6 h-6 text-purple-500 shrink-0 mt-1" />
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                É muito bom te conhecer
-              </h2>
-              <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-                {generateMessage()}
-              </p>
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <LumLogo className="w-20 h-20" />
+              <div className="absolute -top-2 -right-2">
+                <Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
+              </div>
             </div>
           </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            Prazer em te conhecer! ✨
+          </h1>
         </div>
 
-        {/* Botão de continuar */}
-        <div className="space-y-4">
-          <Button
-            onClick={onContinue}
-            className="w-full h-14 text-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            Começar minha jornada com a Lum
-          </Button>
+        <div className="bg-white dark:bg-[#212121] rounded-2xl shadow-xl p-8 md:p-10 mb-6">
+          <div className="prose prose-lg dark:prose-invert max-w-none">
+            <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+              {generateMessage()}
+            </p>
+            
+            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-6 mb-6">
+              <h3 className="text-xl font-semibold text-purple-900 dark:text-purple-100 mb-3">
+                Como a Lum pode te ajudar:
+              </h3>
+              <ul className="space-y-3 text-gray-700 dark:text-gray-300">
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-500 mt-1">✓</span>
+                  <span>Conversas profundas e acolhedoras 24/7</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-500 mt-1">✓</span>
+                  <span>Orientação prática para seus desafios diários</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-500 mt-1">✓</span>
+                  <span>Apoio emocional personalizado baseado no seu perfil</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-500 mt-1">✓</span>
+                  <span>Ferramentas para autoconhecimento e crescimento</span>
+                </li>
+              </ul>
+            </div>
 
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-            🔒 Suas conversas são privadas e seguras. Ninguém tem acesso ao que você escreve aqui.
-          </p>
+            <p className="text-gray-600 dark:text-gray-400 text-center">
+              Pronto para começar essa jornada comigo?
+            </p>
+          </div>
         </div>
+
+        <Button
+          onClick={onContinue}
+          className="w-full h-14 text-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-lg"
+        >
+          Continuar
+          <Sparkles className="w-5 h-5 ml-2" />
+        </Button>
       </div>
     </div>
   );

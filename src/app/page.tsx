@@ -1,15 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, X, LogOut, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatInterface } from "./components/ChatInterface";
 import { QuizLibrary } from "./components/QuizLibrary";
 import { ProfileView } from "./components/ProfileView";
-import { OnboardingQuiz } from "./components/OnboardingQuiz";
-import { WelcomeMessage } from "./components/WelcomeMessage";
-import { CheckoutScreen } from "./components/CheckoutScreen";
-import { AuthForm } from "@/components/auth/AuthForm";
 import { useAuth } from "@/hooks/useAuth";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -33,43 +30,55 @@ interface CustomTab {
   name: string;
 }
 
-type OnboardingStep = "quiz" | "welcome" | "checkout" | "auth" | "completed";
-
 export default function Home() {
+  const router = useRouter();
   const { user, loading, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("inicio");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [customTabs, setCustomTabs] = useState<CustomTab[]>([]);
   const [displayName, setDisplayName] = useState("");
-  
-  // Estados do onboarding
-  const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>("quiz");
-  const [quizResponses, setQuizResponses] = useState<Record<string, string>>({});
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [hasSubscription, setHasSubscription] = useState(false);
 
-  // Verificar se usuário já completou onboarding
+  // Verificar se usuário completou onboarding e tem assinatura
   useEffect(() => {
     if (user) {
       const onboardingCompleted = localStorage.getItem(`lumia-onboarding-${user.id}`);
       const subscriptionActive = localStorage.getItem(`lumia-subscription-${user.id}`);
       
-      if (onboardingCompleted === "true") {
-        setHasCompletedOnboarding(true);
-        setOnboardingStep("completed");
-      }
-      
-      if (subscriptionActive === "true") {
-        setHasSubscription(true);
-      }
-    } else {
-      // Verificar onboarding para usuários não logados
-      const guestOnboarding = localStorage.getItem("lumia-guest-onboarding");
-      if (guestOnboarding === "true") {
-        setOnboardingStep("auth");
-      }
+      setHasCompletedOnboarding(onboardingCompleted === "true");
+      setHasSubscription(subscriptionActive === "true");
     }
   }, [user]);
+
+  // BLOQUEIO DE ACESSO: Redirecionar para /quiz se não estiver logado
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/quiz");
+    }
+  }, [user, loading, router]);
+
+  // BLOQUEIO DE ACESSO: Redirecionar se não tem assinatura ativa
+  useEffect(() => {
+    if (!loading && user) {
+      // Verificar se tem assinatura
+      if (!hasSubscription) {
+        // Se não tem assinatura, redirecionar para checkout
+        router.push("/quiz");
+        return;
+      }
+
+      // Se tem assinatura mas não completou onboarding, redirecionar para cadastro
+      if (!hasCompletedOnboarding) {
+        const guestOnboarding = localStorage.getItem("lumia-guest-onboarding");
+        if (guestOnboarding === "true") {
+          router.push("/cadastro");
+        } else {
+          router.push("/quiz");
+        }
+      }
+    }
+  }, [user, loading, hasCompletedOnboarding, hasSubscription, router]);
 
   // Carregar nome de exibição
   useEffect(() => {
@@ -135,64 +144,7 @@ export default function Home() {
     setActiveTab("inicio");
     setHasCompletedOnboarding(false);
     setHasSubscription(false);
-    setOnboardingStep("quiz");
-  };
-
-  // Handlers do onboarding
-  const handleQuizComplete = (responses: Record<string, string>) => {
-    setQuizResponses(responses);
-    
-    // Se usuário não está logado, salvar que completou quiz como guest
-    if (!user) {
-      localStorage.setItem("lumia-guest-onboarding", "true");
-      localStorage.setItem("lumia-guest-quiz-responses", JSON.stringify(responses));
-    }
-    
-    setOnboardingStep("welcome");
-  };
-
-  const handleWelcomeContinue = () => {
-    setOnboardingStep("checkout");
-  };
-
-  const handleCheckout = () => {
-    // TODO: Integrar com link de checkout real quando fornecido
-    // Por enquanto, simular conclusão do checkout
-    console.log("Checkout iniciado - aguardando integração com link real");
-    
-    // Simular que o usuário completou o checkout
-    // Em produção, isso virá do webhook do sistema de pagamento
-    if (user) {
-      localStorage.setItem(`lumia-subscription-${user.id}`, "true");
-      setHasSubscription(true);
-    }
-    
-    setOnboardingStep("auth");
-  };
-
-  const handleAuthComplete = () => {
-    if (user) {
-      // Salvar que completou onboarding
-      localStorage.setItem(`lumia-onboarding-${user.id}`, "true");
-      
-      // Salvar respostas do quiz
-      if (Object.keys(quizResponses).length > 0) {
-        localStorage.setItem(`lumia-quiz-responses-${user.id}`, JSON.stringify(quizResponses));
-      } else {
-        // Recuperar respostas do guest se existir
-        const guestResponses = localStorage.getItem("lumia-guest-quiz-responses");
-        if (guestResponses) {
-          localStorage.setItem(`lumia-quiz-responses-${user.id}`, guestResponses);
-          localStorage.removeItem("lumia-guest-quiz-responses");
-        }
-      }
-      
-      // Limpar flag de guest
-      localStorage.removeItem("lumia-guest-onboarding");
-      
-      setHasCompletedOnboarding(true);
-      setOnboardingStep("completed");
-    }
+    router.push("/quiz");
   };
 
   const fixedTabs = [
@@ -221,72 +173,13 @@ export default function Home() {
     );
   }
 
-  // Fluxo de onboarding
-  if (!hasCompletedOnboarding || !hasSubscription) {
-    // Quiz obrigatório
-    if (onboardingStep === "quiz") {
-      return <OnboardingQuiz onComplete={handleQuizComplete} />;
-    }
-
-    // Mensagem de boas-vindas
-    if (onboardingStep === "welcome") {
-      return <WelcomeMessage responses={quizResponses} onContinue={handleWelcomeContinue} />;
-    }
-
-    // Tela de checkout
-    if (onboardingStep === "checkout") {
-      return <CheckoutScreen onCheckout={handleCheckout} />;
-    }
-
-    // Tela de autenticação
-    if (onboardingStep === "auth" && !user) {
-      return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 to-white dark:from-gray-900 dark:to-[#1a1a1a]">
-          <div className="w-full max-w-md">
-            <div className="text-center mb-6">
-              <div className="flex justify-center mb-4">
-                <LumLogo className="w-16 h-16" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                Quase lá!
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Crie sua conta para acessar a Lum
-              </p>
-            </div>
-            <AuthForm onAuthSuccess={handleAuthComplete} />
-          </div>
-        </div>
-      );
-    }
+  // BLOQUEIO: Se não estiver logado, não tem assinatura ou não completou onboarding, não renderizar
+  // (o useEffect vai redirecionar)
+  if (!user || !hasSubscription || !hasCompletedOnboarding) {
+    return null;
   }
 
-  // Verificar se tem assinatura ativa antes de mostrar app
-  if (user && !hasSubscription) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 to-white dark:from-gray-900 dark:to-[#1a1a1a]">
-        <div className="text-center max-w-md p-8">
-          <div className="flex justify-center mb-4">
-            <LumLogo className="w-16 h-16" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-            Assinatura necessária
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Para acessar a Lum, você precisa de uma assinatura ativa.
-          </p>
-          <Button
-            onClick={() => setOnboardingStep("checkout")}
-            className="w-full h-12 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
-          >
-            Ver planos
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // App principal (após onboarding completo)
+  // App principal (após login, assinatura ativa e onboarding completo)
   return (
     <div className="flex h-screen bg-white dark:bg-[#1a1a1a] overflow-hidden">
       {/* Sidebar */}
@@ -436,7 +329,7 @@ export default function Home() {
           <ThemeToggle />
         </header>
 
-        {/* Content Area */}
+        {/* Content Area - Navegação interna sem alterar URL */}
         <div className="flex-1 overflow-hidden">
           {activeTab === "quiz" ? (
             <QuizLibrary 

@@ -2,124 +2,126 @@
 
 import { Button } from "@/components/ui/button";
 import { LumLogo } from "@/components/LumIcons";
-import { Check, Sparkles, Heart, Shield } from "lucide-react";
+import { Check, Shield, Clock, Heart } from "lucide-react";
 
 interface CheckoutScreenProps {
   onCheckout: () => void;
 }
 
 export function CheckoutScreen({ onCheckout }: CheckoutScreenProps) {
-  const benefits = [
-    {
-      icon: Heart,
-      title: "Apoio emocional 24/7",
-      description: "Converse quando precisar, sem julgamentos",
-    },
-    {
-      icon: Sparkles,
-      title: "Orientação personalizada",
-      description: "Respostas adaptadas ao seu momento e necessidades",
-    },
-    {
-      icon: Shield,
-      title: "Privacidade total",
-      description: "Suas conversas são 100% privadas e seguras",
-    },
-  ];
-
-  const features = [
-    "Conversas ilimitadas com a IA",
-    "Biblioteca completa de quizzes de autoconhecimento",
-    "Histórico organizado por temas",
-    "Suporte emocional personalizado",
-    "Atualizações e novos recursos",
-  ];
+  const handleCheckoutClick = () => {
+    // Redirecionar para o link do checkout
+    window.location.href = "https://pay.kirvano.com/7b8cc79c-b462-4502-b453-3397e525b603";
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 dark:from-gray-900 dark:via-[#1a1a1a] dark:to-gray-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
-        {/* Header */}
+      <div className="w-full max-w-2xl">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <LumLogo className="w-16 h-16" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-            Pronto para começar sua jornada?
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            Escolha seu plano
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
-            Tenha acesso completo à Lum e comece a cuidar da sua saúde emocional hoje
+          <p className="text-gray-600 dark:text-gray-400">
+            Comece sua jornada de autoconhecimento hoje
           </p>
         </div>
 
-        {/* Benefits Cards */}
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
-          {benefits.map((benefit, index) => {
-            const Icon = benefit.icon;
-            return (
-              <div
-                key={index}
-                className="bg-white dark:bg-[#212121] rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
-              >
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mb-4">
-                  <Icon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  {benefit.title}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {benefit.description}
-                </p>
+        <div className="mb-8">
+          {/* Plano Único */}
+          <div className="bg-white dark:bg-[#212121] rounded-2xl shadow-xl p-8 border-2 border-purple-500 dark:border-purple-400">
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                Plano Mensal
+              </h3>
+              <div className="flex items-baseline justify-center gap-2">
+                <span className="text-4xl font-bold text-purple-600 dark:text-purple-400">
+                  R$ 27,90
+                </span>
+                <span className="text-gray-600 dark:text-gray-400">/mês</span>
               </div>
-            );
-          })}
+            </div>
+
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
+                <span className="text-gray-700 dark:text-gray-300">
+                  Acesso ilimitado à Lum 24/7
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
+                <span className="text-gray-700 dark:text-gray-300">
+                  Conversas personalizadas
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
+                <span className="text-gray-700 dark:text-gray-300">
+                  Ferramentas de autoconhecimento
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-purple-500 shrink-0 mt-0.5" />
+                <span className="text-gray-700 dark:text-gray-300">
+                  Cancele quando quiser
+                </span>
+              </li>
+            </ul>
+
+            <Button
+              onClick={handleCheckoutClick}
+              className="w-full h-12 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+            >
+              Assinar Agora
+            </Button>
+          </div>
         </div>
 
-        {/* Pricing Card */}
-        <div className="bg-white dark:bg-[#212121] rounded-2xl shadow-2xl p-8 mb-6">
-          <div className="text-center mb-6">
-            <div className="inline-block bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-4 py-1 rounded-full text-sm font-medium mb-4">
-              Oferta de Lançamento
+        {/* Garantias */}
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <div className="text-center">
+            <div className="flex justify-center mb-3">
+              <Shield className="w-10 h-10 text-purple-500" />
             </div>
-            <div className="mb-2">
-              <span className="text-5xl font-bold text-gray-900 dark:text-gray-100">R$ 29,90</span>
-              <span className="text-gray-600 dark:text-gray-400 ml-2">/mês</span>
-            </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Cancele quando quiser, sem compromisso
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+              Pagamento Seguro
+            </h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Seus dados protegidos
             </p>
           </div>
 
-          {/* Features List */}
-          <div className="space-y-3 mb-8">
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-center gap-3">
-                <div className="w-5 h-5 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center shrink-0">
-                  <Check className="w-3 h-3 text-purple-600 dark:text-purple-400" />
-                </div>
-                <span className="text-gray-700 dark:text-gray-300">{feature}</span>
-              </div>
-            ))}
+          <div className="text-center">
+            <div className="flex justify-center mb-3">
+              <Clock className="w-10 h-10 text-purple-500" />
+            </div>
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+              Cancele Quando Quiser
+            </h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Sem compromisso
+            </p>
           </div>
 
-          {/* CTA Button */}
-          <Button
-            onClick={onCheckout}
-            className="w-full h-14 text-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            Assinar agora
-          </Button>
-
-          <p className="text-center text-xs text-gray-500 dark:text-gray-400 mt-4">
-            Pagamento seguro • Cancele quando quiser
-          </p>
+          <div className="text-center">
+            <div className="flex justify-center mb-3">
+              <Heart className="w-10 h-10 text-purple-500" />
+            </div>
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+              Garantia de 7 dias
+            </h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Satisfação garantida
+            </p>
+          </div>
         </div>
 
-        {/* Trust Badge */}
-        <div className="text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            🔒 Ambiente seguro e confidencial • Seus dados são protegidos
-          </p>
-        </div>
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+          Ao continuar, você concorda com nossos termos de uso e política de privacidade
+        </p>
       </div>
     </div>
   );
