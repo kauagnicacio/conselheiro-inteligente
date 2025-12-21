@@ -37,12 +37,7 @@ export default function CadastroPage() {
   }, [user, loading, router]);
 
   const handleAuthSuccess = () => {
-    // Após criar conta, verificar se tem assinatura
-    // Por enquanto, assumir que veio do checkout e tem assinatura
-    // Em produção, isso será validado via webhook
-    if (user) {
-      localStorage.setItem(`lumia-subscription-${user.id}`, "true");
-    }
+    // Após autenticação bem-sucedida, redirecionar para a área principal
     router.push("/");
   };
 
@@ -67,13 +62,13 @@ export default function CadastroPage() {
             <LumLogo className="w-16 h-16" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Quase lá!
+            Bem-vindo à Lum
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            Crie sua conta para acessar a Lum
+            Entre ou crie sua conta para continuar
           </p>
         </div>
-        <AuthForm onAuthSuccess={handleAuthSuccess} signupOnly={true} />
+        <AuthForm onAuthSuccess={handleAuthSuccess} />
       </div>
     </div>
   );
