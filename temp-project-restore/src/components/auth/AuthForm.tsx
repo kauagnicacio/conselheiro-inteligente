@@ -58,7 +58,7 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
       }
 
       // Criar conta no Supabase
-      const { data: signupData, error: signupError } = await supabase.auth.signUp({
+      const { error: signupError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -72,27 +72,12 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
       if (signupError) throw signupError;
 
       // Fazer login automático após criar conta
-      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+      const { error: loginError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (loginError) throw loginError;
-
-      // Criar perfil do usuário na tabela profiles com is_subscriber = false
-      if (loginData.user) {
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .insert({
-            user_id: loginData.user.id,
-            is_subscriber: false,
-          });
-
-        // Se der erro porque o perfil já existe, ignorar
-        if (profileError && profileError.code !== "23505") {
-          console.error("Erro ao criar perfil:", profileError);
-        }
-      }
 
       setMessage({
         type: "success",
