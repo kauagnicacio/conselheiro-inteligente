@@ -5,6 +5,24 @@ import { Brain, Heart, Briefcase, Users, ArrowLeft, MessageCircle, Zap, Target, 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
 
 interface Quiz {
   id: string;
@@ -1242,14 +1260,22 @@ interface QuizLibraryProps {
 }
 
 export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
+  const { isSubscriber, loading: subscriptionLoading } = useSubscription();
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [showResult, setShowResult] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [currentFeedback, setCurrentFeedback] = useState("");
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const handleSelectQuiz = (quiz: Quiz) => {
+    // Verificar se é assinante antes de iniciar quiz
+    if (!subscriptionLoading && isSubscriber === false) {
+      setShowPaywall(true);
+      return;
+    }
+
     setSelectedQuiz(quiz);
     setCurrentQuestion(0);
     setAnswers([]);

@@ -6,6 +6,32 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { TabType } from "../page";
 import { LumAvatar } from "@/components/LumIcons";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PaywallModal } from "@/components/PaywallModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,6 +74,7 @@ const tabGreetings: Record<string, string> = {
 };
 
 export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInterfaceProps) {
+  const { isSubscriber, loading: subscriptionLoading } = useSubscription();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -59,6 +86,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [newTabName, setNewTabName] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -256,6 +284,12 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
 
   const handleSend = async () => {
     if ((!input.trim() && !selectedFile) || isLoading) return;
+
+    // Verificar se é assinante antes de enviar mensagem
+    if (!subscriptionLoading && isSubscriber === false) {
+      setShowPaywall(true);
+      return;
+    }
 
     let messageContent = input.trim();
     let messageType: "text" | "audio" | "image" = "text";
@@ -784,6 +818,13 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Paywall Modal */}
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="enviar mensagens"
+      />
     </div>
   );
 }
