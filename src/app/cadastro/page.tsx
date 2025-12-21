@@ -10,34 +10,15 @@ export default function CadastroPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  // Verificar se tem assinatura antes de permitir cadastro
+  // Se já estiver logado, redirecionar para o app
   useEffect(() => {
-    if (!loading) {
-      // Verificar se completou o quiz (guest onboarding)
-      const guestOnboarding = localStorage.getItem("lumia-guest-onboarding");
-      
-      if (!guestOnboarding) {
-        // Se não completou o quiz, redirecionar para /quiz
-        router.push("/quiz");
-        return;
-      }
-
-      // Se já estiver logado, verificar se tem assinatura
-      if (user) {
-        const hasSubscription = localStorage.getItem(`lumia-subscription-${user.id}`);
-        if (hasSubscription === "true") {
-          // Se já tem assinatura, redirecionar para o app
-          router.push("/");
-        } else {
-          // Se não tem assinatura, redirecionar para checkout
-          router.push("/quiz");
-        }
-      }
+    if (!loading && user) {
+      router.push("/");
     }
   }, [user, loading, router]);
 
   const handleAuthSuccess = () => {
-    // Após autenticação bem-sucedida, redirecionar para a área principal
+    // Após autenticação bem-sucedida, redirecionar para a área principal (SEM checkout)
     router.push("/");
   };
 

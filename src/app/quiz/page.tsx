@@ -4,9 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { OnboardingQuiz } from "../components/OnboardingQuiz";
 import { WelcomeMessage } from "../components/WelcomeMessage";
-import { CheckoutScreen } from "../components/CheckoutScreen";
 
-type QuizStep = "quiz" | "welcome" | "checkout";
+type QuizStep = "quiz" | "welcome";
 
 export default function QuizPage() {
   const router = useRouter();
@@ -24,12 +23,8 @@ export default function QuizPage() {
   };
 
   const handleWelcomeContinue = () => {
-    setStep("checkout");
-  };
-
-  const handleCheckout = () => {
-    // Redirecionar para o checkout real
-    window.location.href = "https://pay.kirvano.com/7b8cc79c-b462-4502-b453-3397e525b603";
+    // Redirecionar para cadastro (SEM checkout)
+    router.push("/cadastro");
   };
 
   if (step === "quiz") {
@@ -38,10 +33,6 @@ export default function QuizPage() {
 
   if (step === "welcome") {
     return <WelcomeMessage responses={quizResponses} onContinue={handleWelcomeContinue} />;
-  }
-
-  if (step === "checkout") {
-    return <CheckoutScreen onCheckout={handleCheckout} />;
   }
 
   return null;
