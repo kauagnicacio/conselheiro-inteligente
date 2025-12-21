@@ -7,22 +7,6 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useSubscription } from "@/hooks/useSubscription";
 import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
 
 interface Quiz {
   id: string;

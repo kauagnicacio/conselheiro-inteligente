@@ -8,30 +8,6 @@ import { TabType } from "../page";
 import { LumAvatar } from "@/components/LumIcons";
 import { useSubscription } from "@/hooks/useSubscription";
 import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PaywallModal } from "@/components/PaywallModal";
 import {
   DropdownMenu,
   DropdownMenuContent,

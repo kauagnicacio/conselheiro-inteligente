@@ -53,6 +53,6 @@ export function ProtectedArea({ children }: ProtectedAreaProps) {
     );
   }
 
-  // Está logado - renderizar conteúdo (sem verificar assinatura aqui)
+  // Está logado - renderizar conteúdo (SEM verificar assinatura - acesso livre ao app)
   return <>{children}</>;
 }
