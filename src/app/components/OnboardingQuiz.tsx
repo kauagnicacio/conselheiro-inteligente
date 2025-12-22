@@ -103,6 +103,28 @@ const questions: Question[] = [
       { value: "esperancoso", label: "Esperançoso(a) por mudanças" },
     ],
   },
+  {
+    id: "autocuidado",
+    question: "Como você tem cuidado de si mesmo(a) ultimamente?",
+    options: [
+      { value: "bem", label: "Tenho me dedicado ao autocuidado" },
+      { value: "irregular", label: "De forma irregular, quando dá" },
+      { value: "pouco", label: "Pouco, me coloco em último lugar" },
+      { value: "tentando", label: "Estou tentando melhorar nisso" },
+      { value: "nao_sei", label: "Não sei por onde começar" },
+    ],
+  },
+  {
+    id: "expectativa",
+    question: "O que você espera ao conversar com a Lum?",
+    options: [
+      { value: "compreensao", label: "Ser compreendido(a) sem julgamentos" },
+      { value: "orientacao", label: "Receber orientação prática" },
+      { value: "desabafo", label: "Ter um espaço seguro para desabafar" },
+      { value: "clareza", label: "Ganhar clareza sobre minhas questões" },
+      { value: "apoio", label: "Sentir apoio e acolhimento" },
+    ],
+  },
 ];
 
 interface OnboardingQuizProps {
