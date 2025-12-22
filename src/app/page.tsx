@@ -10,7 +10,6 @@ import { ProfileView } from "./components/ProfileView";
 import { useAuth } from "@/hooks/useAuth";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { ProtectedArea } from "@/components/ProtectedArea";
 import { 
   LumLogo, 
   LumAvatar,
@@ -31,13 +30,55 @@ interface CustomTab {
   name: string;
 }
 
-function AppContent() {
+export default function Home() {
   const router = useRouter();
-  const { user, signOut } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("inicio");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [customTabs, setCustomTabs] = useState<CustomTab[]>([]);
   const [displayName, setDisplayName] = useState("");
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [hasSubscription, setHasSubscription] = useState(false);
+
+  // Verificar se usuário completou onboarding e tem assinatura
+  useEffect(() => {
+    if (user) {
+      const onboardingCompleted = localStorage.getItem(`lumia-onboarding-${user.id}`);
+      const subscriptionActive = localStorage.getItem(`lumia-subscription-${user.id}`);
+      
+      setHasCompletedOnboarding(onboardingCompleted === "true");
+      setHasSubscription(subscriptionActive === "true");
+    }
+  }, [user]);
+
+  // BLOQUEIO DE ACESSO: Redirecionar para /quiz se não estiver logado
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/quiz");
+    }
+  }, [user, loading, router]);
+
+  // BLOQUEIO DE ACESSO: Redirecionar se não tem assinatura ativa
+  useEffect(() => {
+    if (!loading && user) {
+      // Verificar se tem assinatura
+      if (!hasSubscription) {
+        // Se não tem assinatura, redirecionar para checkout
+        router.push("/quiz");
+        return;
+      }
+
+      // Se tem assinatura mas não completou onboarding, redirecionar para cadastro
+      if (!hasCompletedOnboarding) {
+        const guestOnboarding = localStorage.getItem("lumia-guest-onboarding");
+        if (guestOnboarding === "true") {
+          router.push("/cadastro");
+        } else {
+          router.push("/quiz");
+        }
+      }
+    }
+  }, [user, loading, hasCompletedOnboarding, hasSubscription, router]);
 
   // Carregar nome de exibição
   useEffect(() => {
@@ -101,6 +142,8 @@ function AppContent() {
     await signOut();
     setCustomTabs([]);
     setActiveTab("inicio");
+    setHasCompletedOnboarding(false);
+    setHasSubscription(false);
     router.push("/quiz");
   };
 
@@ -116,6 +159,27 @@ function AppContent() {
     { id: "perfil", name: "Perfil", icon: PersonalIcon },
   ];
 
+  // Mostrar loading enquanto verifica autenticação
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#1a1a1a]">
+        <div className="text-center">
+          <div className="mb-4 flex justify-center">
+            <LumLogo className="w-16 h-16 animate-pulse" />
+          </div>
+          <p className="text-gray-600 dark:text-gray-400">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // BLOQUEIO: Se não estiver logado, não tem assinatura ou não completou onboarding, não renderizar
+  // (o useEffect vai redirecionar)
+  if (!user || !hasSubscription || !hasCompletedOnboarding) {
+    return null;
+  }
+
+  // App principal (após login, assinatura ativa e onboarding completo)
   return (
     <div className="flex h-screen bg-white dark:bg-[#1a1a1a] overflow-hidden">
       {/* Sidebar */}
@@ -292,13 +356,5 @@ function AppContent() {
       {/* PWA Install Prompt */}
       <PWAInstallPrompt />
     </div>
-  );
-}
-
-export default function Home() {
-  return (
-    <ProtectedArea>
-      <AppContent />
-    </ProtectedArea>
   );
 }

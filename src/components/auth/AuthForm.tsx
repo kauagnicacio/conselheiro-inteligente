@@ -10,13 +10,13 @@ import { Loader2 } from "lucide-react";
 
 interface AuthFormProps {
   onAuthSuccess?: () => void;
-  signupOnly?: boolean;
+  signupOnly?: boolean; // Modo apenas cadastro (após checkout)
 }
 
 type AuthMode = "signup" | "login" | "reset";
 
 export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
-  const [mode, setMode] = useState<AuthMode>(signupOnly ? "signup" : "login");
+  const [mode, setMode] = useState<AuthMode>("signup"); // Padrão: Criar conta
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,14 +28,19 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
     setMessage(null);
 
     try {
+      // Verificar se Supabase está configurado
       if (!isSupabaseConfigured || !supabase) {
-        // Modo local/demo
+        // Modo local/demo - simular criação de conta
+        console.log("Modo demo: Supabase não configurado");
+        
+        // Criar usuário local simulado
         const mockUser = {
           id: `local-${Date.now()}`,
           email,
           created_at: new Date().toISOString(),
         };
         
+        // Salvar no localStorage
         localStorage.setItem("lumia-local-user", JSON.stringify(mockUser));
         
         setMessage({
@@ -43,10 +48,12 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
           text: "Conta criada com sucesso! Redirecionando...",
         });
 
+        // Chamar callback de sucesso após breve delay
         setTimeout(() => {
           if (onAuthSuccess) {
             onAuthSuccess();
           }
+          // Recarregar página para atualizar estado de autenticação
           window.location.reload();
         }, 1000);
         
@@ -54,64 +61,48 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
       }
 
       // Criar conta no Supabase
-      const { data: signupData, error: signupError } = await supabase.auth.signUp({
+      const { error: signupError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
-            email_confirm: false,
+            email_confirm: false, // Não exigir confirmação de email
           },
         },
       });
 
       if (signupError) {
-        // Se o usuário já existe, mostrar mensagem amigável
-        if (signupError.message.includes("already registered") || 
-            signupError.message.includes("User already registered")) {
+        // Se o erro for "usuário já existe", mostrar mensagem amigável
+        if (signupError.message.includes("already registered") || signupError.message.includes("User already registered")) {
           setMessage({
             type: "error",
             text: "Esse e-mail já está cadastrado.",
           });
-          // Adicionar botão para trocar para login
+          // Oferecer troca para modo login após 2 segundos
           setTimeout(() => {
-            setMessage({
-              type: "error",
-              text: "Esse e-mail já está cadastrado. Clique no botão abaixo para entrar.",
-            });
-          }, 100);
+            setMode("login");
+            setMessage(null);
+          }, 2000);
           return;
         }
         throw signupError;
       }
 
       // Fazer login automático após criar conta
-      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+      const { error: loginError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (loginError) throw loginError;
 
-      // Criar perfil do usuário na tabela profiles com is_subscriber = false
-      if (loginData.user) {
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .insert({
-            user_id: loginData.user.id,
-            is_subscriber: false,
-          });
-
-        if (profileError && profileError.code !== "23505") {
-          console.error("Erro ao criar perfil:", profileError);
-        }
-      }
-
       setMessage({
         type: "success",
         text: "Conta criada com sucesso! Redirecionando...",
       });
 
+      // Chamar callback de sucesso após breve delay
       setTimeout(() => {
         if (onAuthSuccess) {
           onAuthSuccess();
@@ -134,14 +125,19 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
     setMessage(null);
 
     try {
+      // Verificar se Supabase está configurado
       if (!isSupabaseConfigured || !supabase) {
-        // Modo local/demo
+        // Modo local/demo - simular login
+        console.log("Modo demo: Supabase não configurado");
+        
+        // Verificar se existe usuário local
         const localUser = localStorage.getItem("lumia-local-user");
         if (localUser) {
           setMessage({
             type: "success",
             text: "Login realizado com sucesso! Redirecionando...",
           });
+
           setTimeout(() => {
             if (onAuthSuccess) {
               onAuthSuccess();
@@ -154,11 +150,12 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
             text: "Usuário não encontrado. Crie uma conta primeiro.",
           });
         }
+        
         return;
       }
 
       // Login com Supabase
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -170,6 +167,7 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
         text: "Login realizado com sucesso! Redirecionando...",
       });
 
+      // Chamar callback de sucesso após breve delay
       setTimeout(() => {
         if (onAuthSuccess) {
           onAuthSuccess();
@@ -188,7 +186,7 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
     }
   };
 
-  const handleResetPassword = async (e: React.FormEvent) => {
+  const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
@@ -197,7 +195,7 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
       if (!isSupabaseConfigured || !supabase) {
         setMessage({
           type: "error",
-          text: "Recuperação de senha não disponível no modo demonstração.",
+          text: "Recuperação de senha não disponível no modo demo.",
         });
         return;
       }
@@ -210,7 +208,7 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
 
       setMessage({
         type: "success",
-        text: "Link de recuperação enviado! Verifique seu e-mail.",
+        text: "Link de recuperação enviado para seu e-mail!",
       });
 
       // Voltar para login após 3 segundos
@@ -229,18 +227,8 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    if (mode === "signup") {
-      handleSignup(e);
-    } else if (mode === "login") {
-      handleLogin(e);
-    } else {
-      handleResetPassword(e);
-    }
-  };
-
   return (
-    <div className="w-full max-w-md mx-auto p-6">
+    <div className="w-full max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
       {!isSupabaseConfigured && (
         <Alert className="mb-4">
           <AlertDescription>
@@ -248,23 +236,33 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
           </AlertDescription>
         </Alert>
       )}
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="seu@email.com"
-            required
-            disabled={loading}
-            className="h-12"
-          />
-        </div>
 
-        {mode !== "reset" && (
+      {/* Título dinâmico baseado no modo */}
+      <div className="mb-6 text-center">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          {mode === "signup" && "Crie sua conta para acessar a Lum"}
+          {mode === "login" && "Bem-vindo de volta à Lum"}
+          {mode === "reset" && "Recuperar senha"}
+        </h2>
+      </div>
+      
+      {/* Formulário de Cadastro */}
+      {mode === "signup" && (
+        <form onSubmit={handleSignup} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">E-mail</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="seu@email.com"
+              required
+              disabled={loading}
+              className="h-12"
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="password">Senha</Label>
             <Input
@@ -272,128 +270,175 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder={mode === "signup" ? "Mínimo 6 caracteres" : "Digite sua senha"}
+              placeholder="Mínimo 6 caracteres"
               required
               disabled={loading}
               minLength={6}
               className="h-12"
             />
-            {mode === "signup" && (
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Crie uma senha com no mínimo 6 caracteres
-              </p>
-            )}
           </div>
-        )}
 
-        {message && (
-          <Alert variant={message.type === "error" ? "destructive" : "default"}>
-            <AlertDescription>{message.text}</AlertDescription>
-          </Alert>
-        )}
+          {message && (
+            <Alert variant={message.type === "error" ? "destructive" : "default"}>
+              <AlertDescription>{message.text}</AlertDescription>
+            </Alert>
+          )}
 
-        {/* Botão para trocar para login quando e-mail já existe */}
-        {message?.type === "error" && message.text.includes("já está cadastrado") && (
           <Button
-            type="button"
-            variant="outline"
-            className="w-full h-12"
-            onClick={() => {
-              setMode("login");
-              setMessage(null);
-            }}
+            type="submit"
+            className="w-full h-12 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+            disabled={loading}
           >
-            Clique aqui para entrar
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Criando sua conta...
+              </>
+            ) : (
+              "Criar conta"
+            )}
           </Button>
-        )}
 
-        <Button
-          type="submit"
-          className="w-full h-12 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
-          disabled={loading}
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              {mode === "signup" ? "Criando sua conta..." : mode === "login" ? "Entrando..." : "Enviando..."}
-            </>
-          ) : (
-            <>
-              {mode === "signup" ? "Criar conta e acessar" : mode === "login" ? "Entrar" : "Enviar link de recuperação"}
-            </>
-          )}
-        </Button>
-
-        {/* Links de navegação entre modos */}
-        <div className="space-y-2 text-center">
-          {mode === "login" && (
-            <>
-              <button
-                type="button"
-                onClick={() => {
-                  setMode("reset");
-                  setMessage(null);
-                }}
-                className="text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 underline"
-                disabled={loading}
-              >
-                Esqueci minha senha
-              </button>
-              {!signupOnly && (
-                <>
-                  <br />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMode("signup");
-                      setMessage(null);
-                    }}
-                    className="text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                    disabled={loading}
-                  >
-                    Não tem conta? Criar conta
-                  </button>
-                </>
-              )}
-            </>
-          )}
-
-          {mode === "signup" && !signupOnly && (
+          <div className="text-center space-y-3">
             <button
               type="button"
-              onClick={() => {
-                setMode("login");
-                setMessage(null);
-              }}
-              className="text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              disabled={loading}
+              onClick={() => setMode("login")}
+              className="text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 font-medium"
             >
-              Já tem conta? Entrar
+              Já tenho conta
             </button>
+            
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Ao criar sua conta, você concorda com nossos termos de uso e política de privacidade.
+            </p>
+          </div>
+        </form>
+      )}
+
+      {/* Formulário de Login */}
+      {mode === "login" && (
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email-login">E-mail</Label>
+            <Input
+              id="email-login"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="seu@email.com"
+              required
+              disabled={loading}
+              className="h-12"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password-login">Senha</Label>
+            <Input
+              id="password-login"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Digite sua senha"
+              required
+              disabled={loading}
+              className="h-12"
+            />
+          </div>
+
+          {message && (
+            <Alert variant={message.type === "error" ? "destructive" : "default"}>
+              <AlertDescription>{message.text}</AlertDescription>
+            </Alert>
           )}
 
-          {mode === "reset" && (
+          <Button
+            type="submit"
+            className="w-full h-12 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Entrando...
+              </>
+            ) : (
+              "Entrar"
+            )}
+          </Button>
+
+          <div className="text-center space-y-2">
             <button
               type="button"
-              onClick={() => {
-                setMode("login");
-                setMessage(null);
-              }}
+              onClick={() => setMode("reset")}
+              className="text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 font-medium block w-full"
+            >
+              Esqueci minha senha
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => setMode("signup")}
               className="text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            >
+              Ainda não tenho conta? <span className="text-purple-600 dark:text-purple-400 font-medium">Criar conta</span>
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* Formulário de Recuperação de Senha */}
+      {mode === "reset" && (
+        <form onSubmit={handlePasswordReset} className="space-y-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Digite seu e-mail para receber um link de recuperação de senha.
+          </p>
+
+          <div className="space-y-2">
+            <Label htmlFor="email-reset">E-mail</Label>
+            <Input
+              id="email-reset"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="seu@email.com"
+              required
               disabled={loading}
+              className="h-12"
+            />
+          </div>
+
+          {message && (
+            <Alert variant={message.type === "error" ? "destructive" : "default"}>
+              <AlertDescription>{message.text}</AlertDescription>
+            </Alert>
+          )}
+
+          <Button
+            type="submit"
+            className="w-full h-12 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Enviando...
+              </>
+            ) : (
+              "Enviar link de recuperação"
+            )}
+          </Button>
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => setMode("login")}
+              className="text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
             >
               Voltar para login
             </button>
-          )}
-        </div>
-      </form>
-
-      {mode === "signup" && (
-        <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Ao criar sua conta, você concorda com nossos termos de uso e política de privacidade
-          </p>
-        </div>
+          </div>
+        </form>
       )}
     </div>
   );

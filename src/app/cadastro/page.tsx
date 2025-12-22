@@ -42,12 +42,6 @@ export default function CadastroPage() {
           <div className="flex justify-center mb-4">
             <LumLogo className="w-16 h-16" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Bem-vindo à Lum
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Entre ou crie sua conta para continuar
-          </p>
         </div>
         <AuthForm onAuthSuccess={handleAuthSuccess} />
       </div>
