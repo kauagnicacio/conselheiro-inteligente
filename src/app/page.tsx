@@ -37,48 +37,13 @@ export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [customTabs, setCustomTabs] = useState<CustomTab[]>([]);
   const [displayName, setDisplayName] = useState("");
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
-  const [hasSubscription, setHasSubscription] = useState(false);
 
-  // Verificar se usuário completou onboarding e tem assinatura
-  useEffect(() => {
-    if (user) {
-      const onboardingCompleted = localStorage.getItem(`lumia-onboarding-${user.id}`);
-      const subscriptionActive = localStorage.getItem(`lumia-subscription-${user.id}`);
-      
-      setHasCompletedOnboarding(onboardingCompleted === "true");
-      setHasSubscription(subscriptionActive === "true");
-    }
-  }, [user]);
-
-  // BLOQUEIO DE ACESSO: Redirecionar para /quiz se não estiver logado
+  // REGRA SIMPLES: Se não estiver logado, redirecionar para /quiz
   useEffect(() => {
     if (!loading && !user) {
       router.push("/quiz");
     }
   }, [user, loading, router]);
-
-  // BLOQUEIO DE ACESSO: Redirecionar se não tem assinatura ativa
-  useEffect(() => {
-    if (!loading && user) {
-      // Verificar se tem assinatura
-      if (!hasSubscription) {
-        // Se não tem assinatura, redirecionar para checkout
-        router.push("/quiz");
-        return;
-      }
-
-      // Se tem assinatura mas não completou onboarding, redirecionar para cadastro
-      if (!hasCompletedOnboarding) {
-        const guestOnboarding = localStorage.getItem("lumia-guest-onboarding");
-        if (guestOnboarding === "true") {
-          router.push("/cadastro");
-        } else {
-          router.push("/quiz");
-        }
-      }
-    }
-  }, [user, loading, hasCompletedOnboarding, hasSubscription, router]);
 
   // Carregar nome de exibição
   useEffect(() => {
@@ -142,8 +107,6 @@ export default function Home() {
     await signOut();
     setCustomTabs([]);
     setActiveTab("inicio");
-    setHasCompletedOnboarding(false);
-    setHasSubscription(false);
     router.push("/quiz");
   };
 
@@ -173,13 +136,12 @@ export default function Home() {
     );
   }
 
-  // BLOQUEIO: Se não estiver logado, não tem assinatura ou não completou onboarding, não renderizar
-  // (o useEffect vai redirecionar)
-  if (!user || !hasSubscription || !hasCompletedOnboarding) {
+  // Se não estiver logado, não renderizar (o useEffect vai redirecionar)
+  if (!user) {
     return null;
   }
 
-  // App principal (após login, assinatura ativa e onboarding completo)
+  // App principal (após login bem-sucedido)
   return (
     <div className="flex h-screen bg-white dark:bg-[#1a1a1a] overflow-hidden">
       {/* Sidebar */}
