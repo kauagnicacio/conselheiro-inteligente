@@ -110,6 +110,7 @@ interface OnboardingQuizProps {
 }
 
 export function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
+  const [showWelcome, setShowWelcome] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [selectedOption, setSelectedOption] = useState<string>("");
@@ -138,42 +139,70 @@ export function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
     }
   };
 
+  const handleStartQuiz = () => {
+    setShowWelcome(false);
+  };
+
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
+  // Tela de boas-vindas (etapa 0)
+  if (showWelcome) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 dark:from-gray-900 dark:via-[#1a1a1a] dark:to-gray-900 flex items-center justify-center p-4">
+        <div className="w-full max-w-2xl">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-6">
+              <LumLogo className="w-20 h-20" />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Responda algumas perguntas rápidas pra Lum te conhecer melhor ✨
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto mb-8">
+              Esse questionário vai te ajudar a refletir sobre você e mostrar padrões da sua vida que às vezes passam despercebidos.
+            </p>
+            
+            {/* Bullets */}
+            <div className="bg-white dark:bg-[#212121] rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-lg">
+              <ul className="text-left space-y-3 text-base text-gray-700 dark:text-gray-300">
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-500 mt-0.5 text-xl">✓</span>
+                  <span>Entender melhor como você reage em situações</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-500 mt-0.5 text-xl">✓</span>
+                  <span>Reconhecer padrões emocionais</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-500 mt-0.5 text-xl">✓</span>
+                  <span>Ter conversas mais personalizadas com a Lum</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Botão de começar */}
+            <Button
+              onClick={handleStartQuiz}
+              className="h-14 px-8 text-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all"
+            >
+              Começar perguntas
+              <ChevronRight className="w-5 h-5 ml-2" />
+            </Button>
+
+            {/* Privacy Note */}
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-8">
+              🔒 Suas respostas são privadas e seguras. Ninguém tem acesso ao que você compartilha aqui.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Tela das perguntas (layout limpo)
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 dark:from-gray-900 dark:via-[#1a1a1a] dark:to-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <LumLogo className="w-16 h-16" />
-          </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Responda algumas perguntas rápidas pra Lum te conhecer melhor ✨
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto mb-6">
-            Esse questionário vai te ajudar a refletir sobre você e mostrar padrões da sua vida que às vezes passam despercebidos.
-          </p>
-          
-          {/* Bullets */}
-          <div className="bg-white dark:bg-[#212121] rounded-xl p-4 max-w-md mx-auto mb-6">
-            <ul className="text-left space-y-2 text-sm text-gray-700 dark:text-gray-300">
-              <li className="flex items-start gap-2">
-                <span className="text-purple-500 mt-0.5">✓</span>
-                <span>Entender melhor como você reage em situações</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-purple-500 mt-0.5">✓</span>
-                <span>Reconhecer padrões emocionais</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-purple-500 mt-0.5">✓</span>
-                <span>Ter conversas mais personalizadas com a Lum</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
@@ -256,7 +285,7 @@ export function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
 
         {/* Privacy Note */}
         <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-          🔒 Suas respostas são privadas e seguras. Ninguém tem acesso ao que você compartilha aqui.
+          🔒 Suas respostas são privadas e seguras.
         </p>
       </div>
     </div>
