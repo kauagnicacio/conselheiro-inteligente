@@ -149,11 +149,29 @@ export function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
             <LumLogo className="w-16 h-16" />
           </div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Bem-vindo(a) à Lum
+            Responda algumas perguntas rápidas pra Lum te conhecer melhor ✨
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Vamos nos conhecer melhor? Responda com sinceridade, sem pressa.
+          <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto mb-6">
+            Esse questionário vai te ajudar a refletir sobre você e mostrar padrões da sua vida que às vezes passam despercebidos.
           </p>
+          
+          {/* Bullets */}
+          <div className="bg-white dark:bg-[#212121] rounded-xl p-4 max-w-md mx-auto mb-6">
+            <ul className="text-left space-y-2 text-sm text-gray-700 dark:text-gray-300">
+              <li className="flex items-start gap-2">
+                <span className="text-purple-500 mt-0.5">✓</span>
+                <span>Entender melhor como você reage em situações</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-purple-500 mt-0.5">✓</span>
+                <span>Reconhecer padrões emocionais</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-purple-500 mt-0.5">✓</span>
+                <span>Ter conversas mais personalizadas com a Lum</span>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Progress Bar */}
