@@ -469,6 +469,769 @@ const quizzes: Quiz[] = [
         ]
       }
     ]
+  },
+  {
+    id: "resiliencia",
+    title: "Resiliência",
+    description: "Descubra como você lida com adversidades e desafios",
+    icon: Shield,
+    color: "from-orange-500 to-orange-700",
+    questions: [
+      {
+        id: 1,
+        question: "Como você reage quando algo não sai como planejado?",
+        options: [
+          { text: "Busco alternativas rapidamente", feedback: "Você é adaptável." },
+          { text: "Fico frustrado mas sigo em frente", feedback: "Você processa e continua." },
+          { text: "Preciso de tempo para me recompor", feedback: "Você respeita seu ritmo." },
+          { text: "Desisto facilmente", feedback: "Você se desanima rápido." }
+        ]
+      },
+      {
+        id: 2,
+        question: "O que te ajuda a superar momentos difíceis?",
+        options: [
+          { text: "Apoio de pessoas próximas", feedback: "Você busca conexão." },
+          { text: "Foco em soluções práticas", feedback: "Você é pragmático." },
+          { text: "Tempo para processar sozinho", feedback: "Você se recolhe." },
+          { text: "Lembrar de superações passadas", feedback: "Você se inspira em si." }
+        ]
+      },
+      {
+        id: 3,
+        question: "Como você lida com críticas construtivas?",
+        options: [
+          { text: "Vejo como oportunidade de crescer", feedback: "Você é aberto." },
+          { text: "Fico na defensiva inicialmente", feedback: "Você se protege." },
+          { text: "Reflito bastante antes de aceitar", feedback: "Você pondera." },
+          { text: "Me sinto atacado", feedback: "Você leva pro pessoal." }
+        ]
+      },
+      {
+        id: 4,
+        question: "Quando você falha em algo importante:",
+        options: [
+          { text: "Analiso o que deu errado e tento de novo", feedback: "Você aprende." },
+          { text: "Me culpo por muito tempo", feedback: "Você carrega peso." },
+          { text: "Busco apoio para seguir em frente", feedback: "Você pede ajuda." },
+          { text: "Evito pensar no assunto", feedback: "Você foge." }
+        ]
+      },
+      {
+        id: 5,
+        question: "O que te mantém motivado em períodos difíceis?",
+        options: [
+          { text: "Meus objetivos de longo prazo", feedback: "Você tem visão." },
+          { text: "Pessoas que dependem de mim", feedback: "Você se motiva pelos outros." },
+          { text: "Saber que tudo passa", feedback: "Você tem perspectiva." },
+          { text: "Tenho dificuldade em me manter motivado", feedback: "Você se desanima." }
+        ]
+      },
+      {
+        id: 6,
+        question: "Como você se recupera de uma decepção?",
+        options: [
+          { text: "Rapidamente, foco no próximo passo", feedback: "Você segue em frente." },
+          { text: "Preciso de tempo para processar", feedback: "Você respeita sua dor." },
+          { text: "Converso com alguém de confiança", feedback: "Você compartilha." },
+          { text: "Guardo pra mim e sigo", feedback: "Você engole." }
+        ]
+      },
+      {
+        id: 7,
+        question: "Diante de um grande desafio, você:",
+        options: [
+          { text: "Fico animado com a possibilidade", feedback: "Você é desafiador." },
+          { text: "Sinto medo mas enfrento", feedback: "Você é corajoso." },
+          { text: "Avalio se vale a pena", feedback: "Você é estratégico." },
+          { text: "Prefiro evitar", feedback: "Você se protege." }
+        ]
+      },
+      {
+        id: 8,
+        question: "Como você lida com mudanças bruscas na vida?",
+        options: [
+          { text: "Adapto-me com facilidade", feedback: "Você é flexível." },
+          { text: "Levo tempo mas me ajusto", feedback: "Você processa." },
+          { text: "Busco manter algum controle", feedback: "Você se organiza." },
+          { text: "Fico muito desestabilizado", feedback: "Mudança te abala." }
+        ]
+      },
+      {
+        id: 9,
+        question: "O que você faz quando se sente sobrecarregado?",
+        options: [
+          { text: "Priorizo o essencial", feedback: "Você é prático." },
+          { text: "Peço ajuda", feedback: "Você reconhece limites." },
+          { text: "Tento dar conta de tudo", feedback: "Você se força." },
+          { text: "Paro tudo e descanso", feedback: "Você se cuida." }
+        ]
+      },
+      {
+        id: 10,
+        question: "Como você vê os obstáculos na sua vida?",
+        options: [
+          { text: "Como oportunidades de aprendizado", feedback: "Você é otimista." },
+          { text: "Como parte natural da jornada", feedback: "Você aceita." },
+          { text: "Como testes da minha capacidade", feedback: "Você se desafia." },
+          { text: "Como impedimentos ao meu sucesso", feedback: "Você se vitimiza." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "criatividade",
+    title: "Criatividade",
+    description: "Explore como você pensa e resolve problemas de forma criativa",
+    icon: Lightbulb,
+    color: "from-yellow-500 to-yellow-700",
+    questions: [
+      {
+        id: 1,
+        question: "Como você costuma ter suas melhores ideias?",
+        options: [
+          { text: "Em momentos de relaxamento", feedback: "Você cria no ócio." },
+          { text: "Conversando com outras pessoas", feedback: "Você cria na troca." },
+          { text: "Quando estou focado em resolver algo", feedback: "Você cria sob demanda." },
+          { text: "De forma espontânea e imprevisível", feedback: "Você cria no caos." }
+        ]
+      },
+      {
+        id: 2,
+        question: "Diante de um problema, você:",
+        options: [
+          { text: "Busco soluções já testadas", feedback: "Você é pragmático." },
+          { text: "Tento abordagens diferentes", feedback: "Você é experimental." },
+          { text: "Combino ideias existentes", feedback: "Você é sintetizador." },
+          { text: "Crio algo completamente novo", feedback: "Você é inovador." }
+        ]
+      },
+      {
+        id: 3,
+        question: "O que mais te inspira criativamente?",
+        options: [
+          { text: "Arte e cultura", feedback: "Você se inspira no belo." },
+          { text: "Natureza e experiências", feedback: "Você se inspira no real." },
+          { text: "Conversas e histórias", feedback: "Você se inspira no humano." },
+          { text: "Desafios e limitações", feedback: "Você se inspira na restrição." }
+        ]
+      },
+      {
+        id: 4,
+        question: "Como você lida com bloqueios criativos?",
+        options: [
+          { text: "Faço uma pausa e volto depois", feedback: "Você respeita o processo." },
+          { text: "Forço até sair algo", feedback: "Você persiste." },
+          { text: "Busco inspiração externa", feedback: "Você se alimenta." },
+          { text: "Mudo completamente de abordagem", feedback: "Você se reinventa." }
+        ]
+      },
+      {
+        id: 5,
+        question: "Você prefere trabalhar em projetos:",
+        options: [
+          { text: "Com estrutura clara", feedback: "Você cria com direção." },
+          { text: "Com total liberdade", feedback: "Você cria sem amarras." },
+          { text: "Com algumas diretrizes", feedback: "Você equilibra." },
+          { text: "Que me desafiam tecnicamente", feedback: "Você cria resolvendo." }
+        ]
+      },
+      {
+        id: 6,
+        question: "Como você reage a críticas sobre suas ideias?",
+        options: [
+          { text: "Uso para melhorar", feedback: "Você é receptivo." },
+          { text: "Defendo minha visão", feedback: "Você é convicto." },
+          { text: "Fico desanimado", feedback: "Você é sensível." },
+          { text: "Considero e adapto", feedback: "Você é flexível." }
+        ]
+      },
+      {
+        id: 7,
+        question: "O que te motiva a criar algo novo?",
+        options: [
+          { text: "Resolver um problema real", feedback: "Você cria com propósito." },
+          { text: "Expressar uma ideia", feedback: "Você cria pra comunicar." },
+          { text: "O prazer de criar", feedback: "Você cria pelo processo." },
+          { text: "Ser reconhecido", feedback: "Você cria pra validação." }
+        ]
+      },
+      {
+        id: 8,
+        question: "Como você organiza suas ideias?",
+        options: [
+          { text: "De forma estruturada e sistemática", feedback: "Você é organizado." },
+          { text: "Deixo fluir naturalmente", feedback: "Você é orgânico." },
+          { text: "Uso ferramentas visuais", feedback: "Você é visual." },
+          { text: "Não organizo muito", feedback: "Você é caótico." }
+        ]
+      },
+      {
+        id: 9,
+        question: "Você se considera mais:",
+        options: [
+          { text: "Visionário (ideias grandes)", feedback: "Você pensa grande." },
+          { text: "Executor (tira do papel)", feedback: "Você realiza." },
+          { text: "Refinador (melhora o existente)", feedback: "Você aperfeiçoa." },
+          { text: "Explorador (testa possibilidades)", feedback: "Você experimenta." }
+        ]
+      },
+      {
+        id: 10,
+        question: "Como você sabe que uma ideia é boa?",
+        options: [
+          { text: "Quando resolve um problema real", feedback: "Você valida na prática." },
+          { text: "Quando me emociona", feedback: "Você valida no sentir." },
+          { text: "Quando outros validam", feedback: "Você valida no externo." },
+          { text: "Quando é diferente do comum", feedback: "Você valida na originalidade." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "lideranca",
+    title: "Liderança",
+    description: "Entenda seu estilo de liderança e influência",
+    icon: Target,
+    color: "from-indigo-500 to-indigo-700",
+    questions: [
+      {
+        id: 1,
+        question: "Como você motiva outras pessoas?",
+        options: [
+          { text: "Pelo exemplo", feedback: "Você lidera fazendo." },
+          { text: "Com palavras inspiradoras", feedback: "Você lidera comunicando." },
+          { text: "Reconhecendo conquistas", feedback: "Você lidera valorizando." },
+          { text: "Criando desafios", feedback: "Você lidera provocando." }
+        ]
+      },
+      {
+        id: 2,
+        question: "Diante de um conflito na equipe, você:",
+        options: [
+          { text: "Medeia buscando consenso", feedback: "Você é conciliador." },
+          { text: "Toma uma decisão firme", feedback: "Você é decisivo." },
+          { text: "Deixa as partes resolverem", feedback: "Você dá autonomia." },
+          { text: "Busco entender todos os lados", feedback: "Você é empático." }
+        ]
+      },
+      {
+        id: 3,
+        question: "Como você delega tarefas?",
+        options: [
+          { text: "Confio e dou autonomia total", feedback: "Você empodera." },
+          { text: "Acompanho de perto", feedback: "Você supervisiona." },
+          { text: "Dou diretrizes claras", feedback: "Você estrutura." },
+          { text: "Prefiro fazer eu mesmo", feedback: "Você centraliza." }
+        ]
+      },
+      {
+        id: 4,
+        question: "O que você valoriza mais em uma equipe?",
+        options: [
+          { text: "Resultados e eficiência", feedback: "Você é orientado a metas." },
+          { text: "Colaboração e harmonia", feedback: "Você é orientado a pessoas." },
+          { text: "Inovação e criatividade", feedback: "Você é orientado a ideias." },
+          { text: "Comprometimento e lealdade", feedback: "Você é orientado a valores." }
+        ]
+      },
+      {
+        id: 5,
+        question: "Como você lida com erros da equipe?",
+        options: [
+          { text: "Vejo como oportunidade de aprendizado", feedback: "Você é educador." },
+          { text: "Corrijo e sigo em frente", feedback: "Você é prático." },
+          { text: "Analiso para evitar repetição", feedback: "Você é preventivo." },
+          { text: "Assumo a responsabilidade", feedback: "Você protege." }
+        ]
+      },
+      {
+        id: 6,
+        question: "Seu estilo de comunicação é:",
+        options: [
+          { text: "Direto e objetivo", feedback: "Você é claro." },
+          { text: "Inspirador e motivacional", feedback: "Você é carismático." },
+          { text: "Consultivo e colaborativo", feedback: "Você é inclusivo." },
+          { text: "Estratégico e visionário", feedback: "Você é pensador." }
+        ]
+      },
+      {
+        id: 7,
+        question: "Como você toma decisões importantes?",
+        options: [
+          { text: "Consulto a equipe", feedback: "Você é democrático." },
+          { text: "Analiso dados e decido", feedback: "Você é analítico." },
+          { text: "Confio na minha experiência", feedback: "Você é intuitivo." },
+          { text: "Busco consenso", feedback: "Você é conciliador." }
+        ]
+      },
+      {
+        id: 8,
+        question: "O que te faz um bom líder?",
+        options: [
+          { text: "Capacidade de inspirar", feedback: "Você mobiliza." },
+          { text: "Competência técnica", feedback: "Você ensina." },
+          { text: "Empatia e escuta", feedback: "Você acolhe." },
+          { text: "Visão estratégica", feedback: "Você direciona." }
+        ]
+      },
+      {
+        id: 9,
+        question: "Como você desenvolve sua equipe?",
+        options: [
+          { text: "Dou desafios crescentes", feedback: "Você desenvolve fazendo." },
+          { text: "Ofereço feedback constante", feedback: "Você desenvolve orientando." },
+          { text: "Crio oportunidades de aprendizado", feedback: "Você desenvolve ensinando." },
+          { text: "Dou autonomia para experimentar", feedback: "Você desenvolve liberando." }
+        ]
+      },
+      {
+        id: 10,
+        question: "Qual seu maior desafio como líder?",
+        options: [
+          { text: "Equilibrar resultados e pessoas", feedback: "Você busca equilíbrio." },
+          { text: "Delegar e confiar", feedback: "Você busca soltar." },
+          { text: "Manter a equipe motivada", feedback: "Você busca engajar." },
+          { text: "Tomar decisões difíceis", feedback: "Você busca coragem." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "comunicacao",
+    title: "Comunicação",
+    description: "Descubra seu estilo de comunicação e expressão",
+    icon: MessageCircle,
+    color: "from-cyan-500 to-cyan-700",
+    questions: [
+      {
+        id: 1,
+        question: "Como você prefere se comunicar?",
+        options: [
+          { text: "Pessoalmente, olho no olho", feedback: "Você valoriza presença." },
+          { text: "Por mensagens escritas", feedback: "Você valoriza reflexão." },
+          { text: "Por áudio ou vídeo", feedback: "Você valoriza expressão." },
+          { text: "Depende da situação", feedback: "Você é adaptável." }
+        ]
+      },
+      {
+        id: 2,
+        question: "Em uma conversa difícil, você:",
+        options: [
+          { text: "Vou direto ao ponto", feedback: "Você é direto." },
+          { text: "Preparo cuidadosamente o que vou dizer", feedback: "Você é cuidadoso." },
+          { text: "Evito ao máximo", feedback: "Você foge." },
+          { text: "Busco o momento certo", feedback: "Você é estratégico." }
+        ]
+      },
+      {
+        id: 3,
+        question: "Como você lida com mal-entendidos?",
+        options: [
+          { text: "Esclareço imediatamente", feedback: "Você é proativo." },
+          { text: "Reflito antes de responder", feedback: "Você é ponderado." },
+          { text: "Fico chateado", feedback: "Você é sensível." },
+          { text: "Tento entender a perspectiva do outro", feedback: "Você é empático." }
+        ]
+      },
+      {
+        id: 4,
+        question: "Você se considera um bom ouvinte?",
+        options: [
+          { text: "Sim, escuto atentamente", feedback: "Você está presente." },
+          { text: "Às vezes me distraio", feedback: "Você se dispersa." },
+          { text: "Escuto mas já penso na resposta", feedback: "Você antecipa." },
+          { text: "Tenho dificuldade em apenas ouvir", feedback: "Você quer falar." }
+        ]
+      },
+      {
+        id: 5,
+        question: "Como você expressa discordância?",
+        options: [
+          { text: "De forma clara e respeitosa", feedback: "Você é assertivo." },
+          { text: "Evito confronto", feedback: "Você é passivo." },
+          { text: "De forma indireta", feedback: "Você é diplomático." },
+          { text: "Às vezes de forma agressiva", feedback: "Você se exalta." }
+        ]
+      },
+      {
+        id: 6,
+        question: "Em grupo, você costuma:",
+        options: [
+          { text: "Falar bastante e compartilhar ideias", feedback: "Você é expressivo." },
+          { text: "Ouvir mais do que falar", feedback: "Você é observador." },
+          { text: "Mediar e facilitar a conversa", feedback: "Você é facilitador." },
+          { text: "Falar apenas quando necessário", feedback: "Você é seletivo." }
+        ]
+      },
+      {
+        id: 7,
+        question: "Como você pede ajuda?",
+        options: [
+          { text: "Diretamente, sem rodeios", feedback: "Você é claro." },
+          { text: "Com dificuldade", feedback: "Você se guarda." },
+          { text: "Explico bem o contexto", feedback: "Você contextualiza." },
+          { text: "Prefiro resolver sozinho", feedback: "Você é independente." }
+        ]
+      },
+      {
+        id: 8,
+        question: "Você é mais:",
+        options: [
+          { text: "Objetivo e direto", feedback: "Você é pragmático." },
+          { text: "Detalhista e explicativo", feedback: "Você é minucioso." },
+          { text: "Emotivo e expressivo", feedback: "Você é intenso." },
+          { text: "Conciso e sintético", feedback: "Você é econômico." }
+        ]
+      },
+      {
+        id: 9,
+        question: "Como você recebe feedback?",
+        options: [
+          { text: "Agradeço e reflito", feedback: "Você é receptivo." },
+          { text: "Fico na defensiva", feedback: "Você se protege." },
+          { text: "Peço exemplos específicos", feedback: "Você busca clareza." },
+          { text: "Levo pro pessoal", feedback: "Você se machuca." }
+        ]
+      },
+      {
+        id: 10,
+        question: "Qual seu maior desafio na comunicação?",
+        options: [
+          { text: "Ser mais claro e objetivo", feedback: "Você se perde." },
+          { text: "Ouvir sem interromper", feedback: "Você se adianta." },
+          { text: "Expressar emoções", feedback: "Você se guarda." },
+          { text: "Lidar com conflitos", feedback: "Você evita." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "proposito",
+    title: "Propósito de Vida",
+    description: "Explore o que dá sentido e direção à sua vida",
+    icon: Wind,
+    color: "from-teal-500 to-teal-700",
+    questions: [
+      {
+        id: 1,
+        question: "O que te faz sentir que sua vida tem sentido?",
+        options: [
+          { text: "Contribuir para algo maior", feedback: "Você busca impacto." },
+          { text: "Crescer e evoluir constantemente", feedback: "Você busca desenvolvimento." },
+          { text: "Ter relacionamentos significativos", feedback: "Você busca conexão." },
+          { text: "Realizar meus sonhos pessoais", feedback: "Você busca realização." }
+        ]
+      },
+      {
+        id: 2,
+        question: "Se pudesse dedicar sua vida a uma causa, seria:",
+        options: [
+          { text: "Ajudar pessoas necessitadas", feedback: "Você é solidário." },
+          { text: "Criar algo inovador", feedback: "Você é criador." },
+          { text: "Educar e inspirar", feedback: "Você é educador." },
+          { text: "Proteger o meio ambiente", feedback: "Você é guardião." }
+        ]
+      },
+      {
+        id: 3,
+        question: "O que você gostaria que dissessem sobre você?",
+        options: [
+          { text: "Que fiz diferença na vida das pessoas", feedback: "Você valoriza impacto." },
+          { text: "Que fui autêntico e verdadeiro", feedback: "Você valoriza autenticidade." },
+          { text: "Que alcancei grandes feitos", feedback: "Você valoriza conquistas." },
+          { text: "Que vivi intensamente", feedback: "Você valoriza experiência." }
+        ]
+      },
+      {
+        id: 4,
+        question: "O que te deixa mais realizado?",
+        options: [
+          { text: "Ver outras pessoas felizes por minha causa", feedback: "Você se realiza no outro." },
+          { text: "Superar meus próprios limites", feedback: "Você se realiza no desafio." },
+          { text: "Criar algo do zero", feedback: "Você se realiza na criação." },
+          { text: "Estar em paz comigo mesmo", feedback: "Você se realiza no ser." }
+        ]
+      },
+      {
+        id: 5,
+        question: "Como você quer ser lembrado?",
+        options: [
+          { text: "Pelo bem que fiz", feedback: "Você quer deixar legado." },
+          { text: "Pela minha essência", feedback: "Você quer ser autêntico." },
+          { text: "Pelas minhas conquistas", feedback: "Você quer ser admirado." },
+          { text: "Pelo amor que compartilhei", feedback: "Você quer ser amado." }
+        ]
+      },
+      {
+        id: 6,
+        question: "O que te tira da cama todos os dias?",
+        options: [
+          { text: "Meus objetivos e sonhos", feedback: "Você é movido por metas." },
+          { text: "As pessoas que amo", feedback: "Você é movido por afeto." },
+          { text: "Curiosidade pelo novo dia", feedback: "Você é movido por descoberta." },
+          { text: "Responsabilidades", feedback: "Você é movido por dever." }
+        ]
+      },
+      {
+        id: 7,
+        question: "Se tivesse recursos ilimitados, você:",
+        options: [
+          { text: "Criaria projetos de impacto social", feedback: "Você busca transformar." },
+          { text: "Viveria experiências pelo mundo", feedback: "Você busca viver." },
+          { text: "Desenvolveria seus talentos", feedback: "Você busca excelência." },
+          { text: "Cuidaria de quem amo", feedback: "Você busca cuidar." }
+        ]
+      },
+      {
+        id: 8,
+        question: "O que te faz sentir vivo?",
+        options: [
+          { text: "Desafios e superações", feedback: "Você vive na intensidade." },
+          { text: "Conexões profundas", feedback: "Você vive na relação." },
+          { text: "Momentos de criação", feedback: "Você vive na expressão." },
+          { text: "Paz e tranquilidade", feedback: "Você vive na serenidade." }
+        ]
+      },
+      {
+        id: 9,
+        question: "Qual seu maior medo existencial?",
+        options: [
+          { text: "Não fazer diferença", feedback: "Você teme irrelevância." },
+          { text: "Não ser autêntico", feedback: "Você teme falsidade." },
+          { text: "Não realizar meu potencial", feedback: "Você teme desperdício." },
+          { text: "Morrer sem ter vivido", feedback: "Você teme vazio." }
+        ]
+      },
+      {
+        id: 10,
+        question: "O que define uma vida bem vivida pra você?",
+        options: [
+          { text: "Ter contribuído positivamente", feedback: "Você valoriza legado." },
+          { text: "Ter sido fiel a mim mesmo", feedback: "Você valoriza autenticidade." },
+          { text: "Ter amado e sido amado", feedback: "Você valoriza amor." },
+          { text: "Ter vivido plenamente", feedback: "Você valoriza experiência." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "gestao-tempo",
+    title: "Gestão de Tempo",
+    description: "Entenda como você organiza e prioriza seu tempo",
+    icon: TrendingUp,
+    color: "from-red-500 to-red-700",
+    questions: [
+      {
+        id: 1,
+        question: "Como você planeja seu dia?",
+        options: [
+          { text: "Faço lista detalhada de tarefas", feedback: "Você é estruturado." },
+          { text: "Tenho ideia geral do que fazer", feedback: "Você é flexível." },
+          { text: "Vou fazendo conforme surge", feedback: "Você é espontâneo." },
+          { text: "Uso ferramentas de produtividade", feedback: "Você é sistemático." }
+        ]
+      },
+      {
+        id: 2,
+        question: "Como você lida com prazos?",
+        options: [
+          { text: "Começo com antecedência", feedback: "Você é preventivo." },
+          { text: "Trabalho melhor sob pressão", feedback: "Você é reativo." },
+          { text: "Distribuo o trabalho ao longo do tempo", feedback: "Você é equilibrado." },
+          { text: "Frequentemente atraso", feedback: "Você procrastina." }
+        ]
+      },
+      {
+        id: 3,
+        question: "O que mais consome seu tempo?",
+        options: [
+          { text: "Trabalho e responsabilidades", feedback: "Você prioriza dever." },
+          { text: "Redes sociais e entretenimento", feedback: "Você se distrai." },
+          { text: "Relacionamentos e pessoas", feedback: "Você prioriza conexão." },
+          { text: "Desenvolvimento pessoal", feedback: "Você prioriza crescimento." }
+        ]
+      },
+      {
+        id: 4,
+        question: "Como você prioriza tarefas?",
+        options: [
+          { text: "Pelo que é mais urgente", feedback: "Você é urgente." },
+          { text: "Pelo que é mais importante", feedback: "Você é estratégico." },
+          { text: "Pelo que é mais fácil", feedback: "Você busca momentum." },
+          { text: "Pelo que me dá mais prazer", feedback: "Você busca satisfação." }
+        ]
+      },
+      {
+        id: 5,
+        question: "Você consegue dizer não?",
+        options: [
+          { text: "Sim, quando necessário", feedback: "Você tem limites." },
+          { text: "Tenho dificuldade", feedback: "Você se sobrecarrega." },
+          { text: "Depende de quem pede", feedback: "Você é seletivo." },
+          { text: "Raramente digo não", feedback: "Você se doa demais." }
+        ]
+      },
+      {
+        id: 6,
+        question: "Como você lida com interrupções?",
+        options: [
+          { text: "Me adaptou e retomo depois", feedback: "Você é flexível." },
+          { text: "Fico irritado", feedback: "Você valoriza foco." },
+          { text: "Estabeleço momentos sem interrupção", feedback: "Você se protege." },
+          { text: "Não me incomodo muito", feedback: "Você é tranquilo." }
+        ]
+      },
+      {
+        id: 7,
+        question: "Você reserva tempo para você?",
+        options: [
+          { text: "Sim, é prioridade", feedback: "Você se cuida." },
+          { text: "Quando sobra tempo", feedback: "Você se negligencia." },
+          { text: "Tento mas nem sempre consigo", feedback: "Você se esforça." },
+          { text: "Raramente", feedback: "Você se esquece." }
+        ]
+      },
+      {
+        id: 8,
+        question: "Como você lida com multitarefas?",
+        options: [
+          { text: "Consigo fazer várias coisas ao mesmo tempo", feedback: "Você é multitarefa." },
+          { text: "Prefiro focar em uma coisa por vez", feedback: "Você é focado." },
+          { text: "Depende da complexidade", feedback: "Você avalia." },
+          { text: "Acabo não fazendo nada bem", feedback: "Você se dispersa." }
+        ]
+      },
+      {
+        id: 9,
+        question: "Qual seu maior desafio com tempo?",
+        options: [
+          { text: "Procrastinação", feedback: "Você adia." },
+          { text: "Falta de planejamento", feedback: "Você se desorganiza." },
+          { text: "Excesso de compromissos", feedback: "Você se sobrecarrega." },
+          { text: "Dificuldade em priorizar", feedback: "Você se confunde." }
+        ]
+      },
+      {
+        id: 10,
+        question: "Como você se sente em relação ao seu tempo?",
+        options: [
+          { text: "Tenho controle sobre ele", feedback: "Você é empoderado." },
+          { text: "Nunca tenho tempo suficiente", feedback: "Você se pressiona." },
+          { text: "Equilibrado na maioria das vezes", feedback: "Você está bem." },
+          { text: "Perdido e desorganizado", feedback: "Você precisa de estrutura." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "valores",
+    title: "Valores Pessoais",
+    description: "Identifique o que realmente importa para você",
+    icon: Zap,
+    color: "from-violet-500 to-violet-700",
+    questions: [
+      {
+        id: 1,
+        question: "O que você não abre mão na sua vida?",
+        options: [
+          { text: "Honestidade e integridade", feedback: "Você valoriza verdade." },
+          { text: "Liberdade e autonomia", feedback: "Você valoriza independência." },
+          { text: "Família e relacionamentos", feedback: "Você valoriza conexão." },
+          { text: "Crescimento e evolução", feedback: "Você valoriza desenvolvimento." }
+        ]
+      },
+      {
+        id: 2,
+        question: "O que te deixa mais indignado?",
+        options: [
+          { text: "Injustiça e desigualdade", feedback: "Você valoriza justiça." },
+          { text: "Desonestidade e mentira", feedback: "Você valoriza verdade." },
+          { text: "Desrespeito e falta de empatia", feedback: "Você valoriza respeito." },
+          { text: "Desperdício e irresponsabilidade", feedback: "Você valoriza responsabilidade." }
+        ]
+      },
+      {
+        id: 3,
+        question: "Como você toma decisões éticas?",
+        options: [
+          { text: "Pelo que é certo, independente das consequências", feedback: "Você é principista." },
+          { text: "Pelo que causa menos dano", feedback: "Você é consequencialista." },
+          { text: "Pelo que meu coração diz", feedback: "Você é intuitivo." },
+          { text: "Pelo que a maioria considera certo", feedback: "Você é social." }
+        ]
+      },
+      {
+        id: 4,
+        question: "O que define uma pessoa de caráter pra você?",
+        options: [
+          { text: "Coerência entre fala e ação", feedback: "Você valoriza integridade." },
+          { text: "Capacidade de assumir erros", feedback: "Você valoriza humildade." },
+          { text: "Respeito pelos outros", feedback: "Você valoriza empatia." },
+          { text: "Compromisso com a verdade", feedback: "Você valoriza honestidade." }
+        ]
+      },
+      {
+        id: 5,
+        question: "O que você admira nas pessoas?",
+        options: [
+          { text: "Autenticidade", feedback: "Você valoriza genuinidade." },
+          { text: "Coragem", feedback: "Você valoriza bravura." },
+          { text: "Generosidade", feedback: "Você valoriza doação." },
+          { text: "Sabedoria", feedback: "Você valoriza conhecimento." }
+        ]
+      },
+      {
+        id: 6,
+        question: "Como você quer ser visto pelos outros?",
+        options: [
+          { text: "Como alguém confiável", feedback: "Você valoriza confiança." },
+          { text: "Como alguém inspirador", feedback: "Você valoriza impacto." },
+          { text: "Como alguém autêntico", feedback: "Você valoriza verdade." },
+          { text: "Como alguém competente", feedback: "Você valoriza excelência." }
+        ]
+      },
+      {
+        id: 7,
+        question: "O que te faz perder o respeito por alguém?",
+        options: [
+          { text: "Mentira e falsidade", feedback: "Você não tolera desonestidade." },
+          { text: "Deslealdade", feedback: "Você não tolera traição." },
+          { text: "Falta de palavra", feedback: "Você não tolera irresponsabilidade." },
+          { text: "Desrespeito", feedback: "Você não tolera desconsideração." }
+        ]
+      },
+      {
+        id: 8,
+        question: "Como você lida com dilemas morais?",
+        options: [
+          { text: "Sigo meus princípios", feedback: "Você é firme." },
+          { text: "Avalio caso a caso", feedback: "Você é contextual." },
+          { text: "Busco conselho", feedback: "Você é prudente." },
+          { text: "Sigo meu coração", feedback: "Você é emocional." }
+        ]
+      },
+      {
+        id: 9,
+        question: "O que define sucesso pra você?",
+        options: [
+          { text: "Viver de acordo com meus valores", feedback: "Você valoriza coerência." },
+          { text: "Fazer diferença no mundo", feedback: "Você valoriza impacto." },
+          { text: "Ser feliz e em paz", feedback: "Você valoriza bem-estar." },
+          { text: "Realizar meus sonhos", feedback: "Você valoriza realização." }
+        ]
+      },
+      {
+        id: 10,
+        question: "O que você não faria por dinheiro?",
+        options: [
+          { text: "Comprometer meus valores", feedback: "Você tem princípios." },
+          { text: "Prejudicar outras pessoas", feedback: "Você tem empatia." },
+          { text: "Mentir ou enganar", feedback: "Você tem integridade." },
+          { text: "Abrir mão da minha liberdade", feedback: "Você tem autonomia." }
+        ]
+      }
+    ]
   }
 ];
 
@@ -605,6 +1368,132 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
           "Trabalhe comunicação de necessidades",
           "Desenvolva resolução de conflitos",
           "Pratique vulnerabilidade saudável"
+        ]
+      },
+      resiliencia: {
+        title: "Seu Perfil de Resiliência",
+        characteristics: [
+          "Você demonstra capacidade de adaptação",
+          "Tem consciência de seus recursos internos",
+          "Reconhece seus padrões de superação"
+        ],
+        strengths: [
+          "Capacidade de se recuperar de adversidades",
+          "Flexibilidade diante de mudanças",
+          "Consciência de suas estratégias de enfrentamento"
+        ],
+        attentionPoints: [
+          "Continue desenvolvendo recursos de enfrentamento",
+          "Pratique autocuidado em momentos difíceis",
+          "Busque apoio quando necessário"
+        ]
+      },
+      criatividade: {
+        title: "Seu Perfil Criativo",
+        characteristics: [
+          "Você tem consciência do seu processo criativo",
+          "Reconhece suas fontes de inspiração",
+          "Entende como suas ideias surgem"
+        ],
+        strengths: [
+          "Capacidade de pensar de forma original",
+          "Abertura para experimentação",
+          "Consciência de seus bloqueios e facilitadores"
+        ],
+        attentionPoints: [
+          "Continue explorando novas formas de criar",
+          "Pratique regularmente sua criatividade",
+          "Busque ambientes que estimulem suas ideias"
+        ]
+      },
+      lideranca: {
+        title: "Seu Estilo de Liderança",
+        characteristics: [
+          "Você tem consciência do seu estilo de influência",
+          "Reconhece como motiva outras pessoas",
+          "Entende seus pontos fortes como líder"
+        ],
+        strengths: [
+          "Capacidade de inspirar e mobilizar",
+          "Consciência de como toma decisões",
+          "Clareza sobre seus valores de liderança"
+        ],
+        attentionPoints: [
+          "Continue desenvolvendo suas habilidades de liderança",
+          "Pratique escuta ativa com sua equipe",
+          "Busque feedback sobre seu estilo"
+        ]
+      },
+      comunicacao: {
+        title: "Seu Estilo de Comunicação",
+        characteristics: [
+          "Você tem consciência de como se expressa",
+          "Reconhece seus padrões de comunicação",
+          "Entende como se relaciona através da palavra"
+        ],
+        strengths: [
+          "Capacidade de se expressar",
+          "Consciência de como ouve os outros",
+          "Clareza sobre seus desafios comunicacionais"
+        ],
+        attentionPoints: [
+          "Continue praticando escuta ativa",
+          "Desenvolva clareza na expressão",
+          "Busque feedback sobre como se comunica"
+        ]
+      },
+      proposito: {
+        title: "Seu Senso de Propósito",
+        characteristics: [
+          "Você tem consciência do que dá sentido à sua vida",
+          "Reconhece seus valores mais profundos",
+          "Entende o que te move existencialmente"
+        ],
+        strengths: [
+          "Clareza sobre o que importa pra você",
+          "Consciência de seus valores essenciais",
+          "Capacidade de refletir sobre sentido"
+        ],
+        attentionPoints: [
+          "Continue explorando seu propósito",
+          "Alinhe suas ações com seus valores",
+          "Busque experiências que deem sentido"
+        ]
+      },
+      "gestao-tempo": {
+        title: "Seu Estilo de Gestão de Tempo",
+        characteristics: [
+          "Você tem consciência de como usa seu tempo",
+          "Reconhece seus padrões de organização",
+          "Entende seus desafios com produtividade"
+        ],
+        strengths: [
+          "Consciência de suas prioridades",
+          "Clareza sobre o que consome seu tempo",
+          "Capacidade de identificar melhorias"
+        ],
+        attentionPoints: [
+          "Continue desenvolvendo organização",
+          "Pratique priorização consciente",
+          "Busque equilíbrio entre fazer e ser"
+        ]
+      },
+      valores: {
+        title: "Seus Valores Essenciais",
+        characteristics: [
+          "Você tem clareza sobre o que não abre mão",
+          "Reconhece seus princípios fundamentais",
+          "Entende o que te guia eticamente"
+        ],
+        strengths: [
+          "Firmeza em seus valores",
+          "Consciência de seus princípios",
+          "Capacidade de agir com integridade"
+        ],
+        attentionPoints: [
+          "Continue vivendo de acordo com seus valores",
+          "Pratique coerência entre fala e ação",
+          "Busque ambientes alinhados com seus princípios"
         ]
       }
     };
