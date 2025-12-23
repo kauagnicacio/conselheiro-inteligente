@@ -12,13 +12,8 @@ interface PaywallProps {
 export function Paywall({ onClose, trigger }: PaywallProps) {
   const handleCheckout = () => {
     // URL do checkout da Kirvano
-    const checkoutUrl = process.env.NEXT_PUBLIC_KIRVANO_CHECKOUT_URL || "";
-    
-    if (checkoutUrl) {
-      window.location.href = checkoutUrl;
-    } else {
-      console.error("URL do checkout não configurada");
-    }
+    const checkoutUrl = "https://pay.kirvano.com/7b8cc79c-b462-4502-b453-3397e525b603";
+    window.location.href = checkoutUrl;
   };
 
   const triggerText = trigger === "message" 
