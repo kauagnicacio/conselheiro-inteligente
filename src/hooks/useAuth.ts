@@ -45,11 +45,12 @@ export function useAuth() {
       // Modo local - limpar localStorage
       localStorage.removeItem("lumia-local-user");
       setUser(null);
-      window.location.reload();
+      window.location.href = "/quiz";
       return;
     }
 
     await supabase.auth.signOut();
+    window.location.href = "/quiz";
   };
 
   return { user, loading, signOut };

@@ -10,16 +10,16 @@ export default function CadastroPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  // Se já estiver logado, redirecionar para o app
+  // Se já estiver logado, redirecionar para /home
   useEffect(() => {
     if (!loading && user) {
-      router.push("/");
+      router.push("/home");
     }
   }, [user, loading, router]);
 
   const handleAuthSuccess = () => {
-    // Após autenticação bem-sucedida, redirecionar para a área principal (SEM checkout)
-    router.push("/");
+    // Após autenticação bem-sucedida, redirecionar para /home
+    router.push("/home");
   };
 
   if (loading) {

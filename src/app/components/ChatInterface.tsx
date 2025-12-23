@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { TabType } from "../page";
 import { LumAvatar } from "@/components/LumIcons";
+import { Paywall } from "@/components/Paywall";
+import { useSubscription } from "@/hooks/useSubscription";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,6 +61,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [newTabName, setNewTabName] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -66,6 +69,8 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+
+  const { isSubscribed, loading: subscriptionLoading } = useSubscription(userId);
 
   const greeting = tabGreetings[activeTab] || tabGreetings.inicio;
   const isFixedTab = ["trabalho", "relacionamento", "familia", "estudos", "pessoal", "tomada-decisao"].includes(activeTab);
@@ -256,6 +261,12 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
 
   const handleSend = async () => {
     if ((!input.trim() && !selectedFile) || isLoading) return;
+
+    // VERIFICAR ASSINATURA ANTES DE ENVIAR
+    if (!subscriptionLoading && !isSubscribed) {
+      setShowPaywall(true);
+      return;
+    }
 
     let messageContent = input.trim();
     let messageType: "text" | "audio" | "image" = "text";
@@ -485,6 +496,14 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-[#212121]">
+      {/* Paywall */}
+      {showPaywall && (
+        <Paywall 
+          onClose={() => setShowPaywall(false)} 
+          trigger="message"
+        />
+      )}
+
       {/* Header with Actions */}
       {messages.length > 0 && (
         <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 flex items-center justify-between">

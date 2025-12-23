@@ -1,69 +1,53 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useEffect, useState } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
-export function useSubscription() {
-  const { user } = useAuth();
-  const [isSubscriber, setIsSubscriber] = useState<boolean | null>(null);
+export function useSubscription(userId?: string) {
+  const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function checkSubscription() {
-      if (!user) {
-        setIsSubscriber(null);
+      if (!userId) {
+        setIsSubscribed(false);
         setLoading(false);
         return;
       }
 
-      // Se Supabase não estiver configurado, usar localStorage como fallback
+      // Se Supabase não estiver configurado, verificar localStorage
       if (!isSupabaseConfigured || !supabase) {
-        const localSubscription = localStorage.getItem(`lumia-subscription-${user.id}`);
-        setIsSubscriber(localSubscription === "true");
+        const localSubscription = localStorage.getItem(`lumia-subscription-${userId}`);
+        setIsSubscribed(localSubscription === "active");
         setLoading(false);
         return;
       }
 
       try {
-        // Buscar perfil do usuário no Supabase
+        // Verificar no Supabase se o usuário tem assinatura ativa
         const { data, error } = await supabase
-          .from("profiles")
-          .select("is_subscriber")
-          .eq("user_id", user.id)
+          .from("subscriptions")
+          .select("status")
+          .eq("user_id", userId)
+          .eq("status", "active")
           .single();
 
         if (error) {
-          // Se não encontrou o perfil, criar um novo com is_subscriber = false
-          if (error.code === "PGRST116") {
-            const { error: insertError } = await supabase
-              .from("profiles")
-              .insert({
-                user_id: user.id,
-                is_subscriber: false,
-              });
-
-            if (insertError) {
-              console.error("Erro ao criar perfil:", insertError);
-            }
-            setIsSubscriber(false);
-          } else {
-            console.error("Erro ao buscar perfil:", error);
-            setIsSubscriber(false);
-          }
+          console.error("Erro ao verificar assinatura:", error);
+          setIsSubscribed(false);
         } else {
-          setIsSubscriber(data?.is_subscriber || false);
+          setIsSubscribed(!!data);
         }
       } catch (error) {
         console.error("Erro ao verificar assinatura:", error);
-        setIsSubscriber(false);
+        setIsSubscribed(false);
       } finally {
         setLoading(false);
       }
     }
 
     checkSubscription();
-  }, [user]);
+  }, [userId]);
 
-  return { isSubscriber, loading };
+  return { isSubscribed, loading };
 }
