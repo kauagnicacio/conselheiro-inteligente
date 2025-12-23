@@ -1,44 +1,23 @@
 export function LumLogo({ className = "w-10 h-10" }: { className?: string }) {
   return (
-    <div className={`${className} rounded-full bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 flex items-center justify-center shadow-lg relative overflow-hidden`}>
-      {/* Efeito de brilho */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent" />
-      
-      {/* Logo - Estrela estilizada representando "Lum" (luz) */}
-      <svg 
-        className="w-[60%] h-[60%] text-white relative z-10" 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path 
-          d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
-          fill="currentColor"
-          className="drop-shadow-sm"
-        />
-      </svg>
+    <div className={`${className} rounded-full flex items-center justify-center relative overflow-hidden`}>
+      <img 
+        src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/3c720b80-6d0c-4ce5-a87e-138df68344f3.png" 
+        alt="Lum" 
+        className="w-full h-full object-contain"
+      />
     </div>
   );
 }
 
 export function LumAvatar({ className = "w-8 h-8" }: { className?: string }) {
   return (
-    <div className={`${className} rounded-full bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 flex items-center justify-center shadow-md relative overflow-hidden`}>
-      {/* Efeito de brilho sutil */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
-      
-      {/* Avatar - Estrela menor */}
-      <svg 
-        className="w-[55%] h-[55%] text-white relative z-10" 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path 
-          d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
-          fill="currentColor"
-        />
-      </svg>
+    <div className={`${className} rounded-full flex items-center justify-center relative overflow-hidden`}>
+      <img 
+        src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/3c720b80-6d0c-4ce5-a87e-138df68344f3.png" 
+        alt="Lum" 
+        className="w-full h-full object-contain"
+      />
     </div>
   );
 }
