@@ -73,6 +73,14 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
       });
 
       if (signupError) {
+        // Log detalhado do erro para diagnóstico
+        console.error("❌ Erro no cadastro:", {
+          message: signupError.message,
+          code: signupError.code,
+          status: signupError.status,
+          details: signupError
+        });
+
         // Se o erro for "usuário já existe", mostrar mensagem amigável
         if (signupError.message.includes("already registered") || signupError.message.includes("User already registered")) {
           setMessage({
@@ -86,6 +94,16 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
           }, 2000);
           return;
         }
+        
+        // Se for erro de banco de dados, mostrar mensagem específica
+        if (signupError.message.includes("Database error") || signupError.code === "23505") {
+          setMessage({
+            type: "error",
+            text: "Erro ao criar perfil. Tente novamente em alguns segundos.",
+          });
+          return;
+        }
+        
         throw signupError;
       }
 
@@ -109,7 +127,15 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
         }
       }, 1000);
     } catch (error: any) {
-      console.error("Erro no cadastro:", error);
+      // Log detalhado para diagnóstico
+      console.error("❌ Erro no cadastro:", {
+        message: error.message,
+        code: error.code,
+        status: error.status,
+        name: error.name,
+        details: error
+      });
+      
       setMessage({
         type: "error",
         text: error.message || "Ocorreu um erro. Tente novamente.",
@@ -174,7 +200,15 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
         }
       }, 1000);
     } catch (error: any) {
-      console.error("Erro no login:", error);
+      // Log detalhado para diagnóstico
+      console.error("❌ Erro no login:", {
+        message: error.message,
+        code: error.code,
+        status: error.status,
+        name: error.name,
+        details: error
+      });
+      
       setMessage({
         type: "error",
         text: error.message === "Invalid login credentials" 
@@ -217,7 +251,15 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
         setMessage(null);
       }, 3000);
     } catch (error: any) {
-      console.error("Erro ao recuperar senha:", error);
+      // Log detalhado para diagnóstico
+      console.error("❌ Erro ao recuperar senha:", {
+        message: error.message,
+        code: error.code,
+        status: error.status,
+        name: error.name,
+        details: error
+      });
+      
       setMessage({
         type: "error",
         text: error.message || "Ocorreu um erro. Tente novamente.",
