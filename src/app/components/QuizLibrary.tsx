@@ -5,8 +5,6 @@ import { Brain, Heart, Briefcase, Users, ArrowLeft, MessageCircle, Zap, Target, 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Paywall } from "@/components/Paywall";
-import { useSubscription } from "@/hooks/useSubscription";
 
 interface Quiz {
   id: string;
@@ -1250,17 +1248,9 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
   const [showResult, setShowResult] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [currentFeedback, setCurrentFeedback] = useState("");
-  const [showPaywall, setShowPaywall] = useState(false);
-
-  const { isSubscribed, loading: subscriptionLoading } = useSubscription(userId);
 
   const handleSelectQuiz = (quiz: Quiz) => {
-    // VERIFICAR ASSINATURA ANTES DE INICIAR QUIZ
-    if (!subscriptionLoading && !isSubscribed) {
-      setShowPaywall(true);
-      return;
-    }
-
+    // ACESSO TOTAL LIBERADO - Sem verificação de assinatura
     setSelectedQuiz(quiz);
     setCurrentQuestion(0);
     setAnswers([]);
@@ -1651,14 +1641,6 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-[#212121]">
-      {/* Paywall */}
-      {showPaywall && (
-        <Paywall 
-          onClose={() => setShowPaywall(false)} 
-          trigger="quiz"
-        />
-      )}
-
       <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
         <Button variant="ghost" onClick={onBack} className="mb-2">
           <ArrowLeft className="w-4 h-4 mr-2" />
