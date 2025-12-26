@@ -8,6 +8,49 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Função para garantir que o perfil existe com user_id correto
+  const ensureProfile = async (userId: string) => {
+    if (!isSupabaseConfigured || !supabase) return;
+
+    try {
+      // Verificar se perfil existe
+      const { data: existingProfile, error: fetchError } = await supabase
+        .from("profiles")
+        .select("id, user_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (fetchError) {
+        console.error("Erro ao buscar perfil:", fetchError);
+        return;
+      }
+
+      // Se perfil não existe, criar um novo
+      if (!existingProfile) {
+        console.log("Criando perfil para user_id:", userId);
+        
+        const { error: createError } = await supabase
+          .from("profiles")
+          .insert({
+            user_id: userId,
+            is_subscriber: false,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+
+        if (createError) {
+          console.error("Erro ao criar perfil:", createError);
+        } else {
+          console.log("Perfil criado com sucesso para user_id:", userId);
+        }
+      } else {
+        console.log("Perfil já existe para user_id:", userId);
+      }
+    } catch (error) {
+      console.error("Erro ao garantir perfil:", error);
+    }
+  };
+
   useEffect(() => {
     // Se Supabase não estiver configurado, usar modo local
     if (!isSupabaseConfigured || !supabase) {
@@ -25,15 +68,29 @@ export function useAuth() {
 
     // Verificar sessão atual no Supabase
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      
+      // Garantir que o perfil existe com user_id correto
+      if (currentUser) {
+        ensureProfile(currentUser.id);
+      }
+      
       setLoading(false);
     });
 
     // Escutar mudanças de autenticação
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      
+      // Garantir que o perfil existe quando usuário faz login
+      if (currentUser && _event === "SIGNED_IN") {
+        await ensureProfile(currentUser.id);
+      }
+      
       setLoading(false);
     });
 
