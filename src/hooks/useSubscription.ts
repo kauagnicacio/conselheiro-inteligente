@@ -27,7 +27,6 @@ export function useSubscription(userId?: string) {
         console.log("🔍 Verificando assinatura para user_id:", userId);
         
         // FONTE ÚNICA DE VERDADE: profiles.is_subscriber
-        // Buscar perfil do usuário logado usando user_id
         const { data: profile, error } = await supabase
           .from("profiles")
           .select("is_subscriber, user_id, id")
@@ -41,12 +40,28 @@ export function useSubscription(userId?: string) {
           return;
         }
 
-        // Se perfil não existe, NÃO criar aqui (deixar para useAuth)
-        // Apenas retornar false
         if (!profile) {
           console.log("⚠️ Perfil não encontrado para user_id:", userId);
-          setIsSubscribed(false);
-          setLoading(false);
+          console.log("⏳ Aguardando criação automática pelo trigger...");
+          
+          // Aguardar 2 segundos e tentar novamente (trigger pode estar processando)
+          setTimeout(async () => {
+            const { data: retryProfile } = await supabase
+              .from("profiles")
+              .select("is_subscriber")
+              .eq("user_id", userId)
+              .maybeSingle();
+            
+            if (retryProfile) {
+              console.log("✅ Perfil encontrado após retry:", retryProfile.is_subscriber);
+              setIsSubscribed(retryProfile.is_subscriber || false);
+            } else {
+              console.log("❌ Perfil ainda não existe após retry");
+              setIsSubscribed(false);
+            }
+            setLoading(false);
+          }, 2000);
+          
           return;
         }
 

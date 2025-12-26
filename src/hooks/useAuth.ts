@@ -3,59 +3,12 @@
 import { useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // Função centralizada para garantir que o perfil existe com user_id correto
-  const ensureProfile = async (userId: string): Promise<boolean> => {
-    if (!isSupabaseConfigured || !supabase) return false;
-
-    try {
-      // Verificar se perfil existe
-      const { data: existingProfile, error: fetchError } = await supabase
-        .from("profiles")
-        .select("id, user_id, is_subscriber")
-        .eq("user_id", userId)
-        .maybeSingle();
-
-      if (fetchError) {
-        console.error("❌ Erro ao buscar perfil:", fetchError);
-        return false;
-      }
-
-      // Se perfil não existe, criar um novo
-      if (!existingProfile) {
-        console.log("🔄 Criando perfil para user_id:", userId);
-        
-        const { data: newProfile, error: createError } = await supabase
-          .from("profiles")
-          .insert({
-            user_id: userId,
-            is_subscriber: false,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
-          .select("id, user_id, is_subscriber")
-          .single();
-
-        if (createError) {
-          console.error("❌ Erro ao criar perfil:", createError);
-          return false;
-        } else {
-          console.log("✅ Perfil criado com sucesso:", newProfile);
-          return true;
-        }
-      } else {
-        console.log("✅ Perfil já existe para user_id:", userId, "| is_subscriber:", existingProfile.is_subscriber);
-        return true;
-      }
-    } catch (error) {
-      console.error("❌ Erro ao garantir perfil:", error);
-      return false;
-    }
-  };
+  const router = useRouter();
 
   useEffect(() => {
     // Se Supabase não estiver configurado, usar modo local
@@ -73,34 +26,29 @@ export function useAuth() {
     }
 
     // Verificar sessão atual no Supabase
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       const currentUser = session?.user ?? null;
       setUser(currentUser);
-      
-      // Garantir que o perfil existe com user_id correto
-      if (currentUser) {
-        await ensureProfile(currentUser.id);
-      }
-      
       setLoading(false);
+
+      if (currentUser) {
+        console.log("✅ Usuário autenticado:", currentUser.id, currentUser.email);
+      }
     });
 
     // Escutar mudanças de autenticação
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       const currentUser = session?.user ?? null;
       setUser(currentUser);
       
       console.log("🔐 Auth event:", event, "| User:", currentUser?.id);
       
-      // Garantir que o perfil existe quando usuário faz login ou se registra
+      // O profile é criado AUTOMATICAMENTE pelo trigger do Supabase
+      // Não precisamos criar aqui - apenas logamos para debug
       if (currentUser && (event === "SIGNED_IN" || event === "USER_UPDATED")) {
-        const profileCreated = await ensureProfile(currentUser.id);
-        
-        if (profileCreated) {
-          console.log("✅ Perfil garantido após", event);
-        }
+        console.log("✅ Login detectado. Profile será criado automaticamente pelo trigger.");
       }
       
       setLoading(false);
@@ -114,25 +62,27 @@ export function useAuth() {
       // Modo local - limpar localStorage
       localStorage.removeItem("lumia-local-user");
       setUser(null);
+      router.push("/quiz");
       return;
     }
 
     try {
       console.log("🚪 Iniciando logout...");
       
-      // Limpar estado local primeiro
+      // 1. Limpar estado local primeiro
       setUser(null);
       
-      // Executar signOut do Supabase (limpa cookies e sessão)
+      // 2. Executar signOut do Supabase (limpa cookies e sessão no servidor)
       const { error } = await supabase.auth.signOut();
       
       if (error) {
         console.error("❌ Erro ao fazer logout:", error);
-      } else {
-        console.log("✅ Logout bem-sucedido");
+        throw error;
       }
       
-      // Limpar qualquer dado em cache do localStorage relacionado ao usuário
+      console.log("✅ Logout bem-sucedido no Supabase");
+      
+      // 3. Limpar qualquer dado em cache do localStorage
       const keysToRemove: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
@@ -142,11 +92,22 @@ export function useAuth() {
       }
       keysToRemove.forEach(key => {
         localStorage.removeItem(key);
-        console.log("🗑️ Removido:", key);
+        console.log("🗑️ Removido do localStorage:", key);
       });
+      
+      // 4. Redirecionar para página de login
+      console.log("🔄 Redirecionando para /quiz...");
+      router.push("/quiz");
+      
+      // 5. Forçar refresh para limpar qualquer estado residual
+      setTimeout(() => {
+        router.refresh();
+      }, 100);
       
     } catch (error) {
       console.error("❌ Erro durante logout:", error);
+      // Mesmo com erro, tentar redirecionar
+      router.push("/quiz");
     }
   };
 

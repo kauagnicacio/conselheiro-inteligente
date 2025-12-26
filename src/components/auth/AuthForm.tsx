@@ -60,8 +60,10 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
         return;
       }
 
+      console.log("📝 Iniciando cadastro para:", email);
+
       // Criar conta no Supabase
-      const { error: signupError } = await supabase.auth.signUp({
+      const { data: signupData, error: signupError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -78,6 +80,7 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
           message: signupError.message,
           code: signupError.code,
           status: signupError.status,
+          name: signupError.name,
           details: signupError
         });
 
@@ -85,7 +88,7 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
         if (signupError.message.includes("already registered") || signupError.message.includes("User already registered")) {
           setMessage({
             type: "error",
-            text: "Esse e-mail já está cadastrado.",
+            text: "Esse e-mail já está cadastrado. Tente fazer login.",
           });
           // Oferecer troca para modo login após 2 segundos
           setTimeout(() => {
@@ -99,7 +102,7 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
         if (signupError.message.includes("Database error") || signupError.code === "23505") {
           setMessage({
             type: "error",
-            text: "Erro ao criar perfil. Tente novamente em alguns segundos.",
+            text: "Erro ao criar perfil. Por favor, tente novamente em alguns segundos.",
           });
           return;
         }
@@ -107,13 +110,21 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
         throw signupError;
       }
 
+      console.log("✅ Cadastro realizado com sucesso:", signupData.user?.id);
+
       // Fazer login automático após criar conta
+      console.log("🔐 Fazendo login automático...");
       const { error: loginError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (loginError) throw loginError;
+      if (loginError) {
+        console.error("❌ Erro no login automático:", loginError);
+        throw loginError;
+      }
+
+      console.log("✅ Login automático bem-sucedido");
 
       setMessage({
         type: "success",
@@ -180,13 +191,25 @@ export function AuthForm({ onAuthSuccess, signupOnly = false }: AuthFormProps) {
         return;
       }
 
+      console.log("🔐 Iniciando login para:", email);
+
       // Login com Supabase
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: loginData, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("❌ Erro no login:", {
+          message: error.message,
+          code: error.code,
+          status: error.status,
+          details: error
+        });
+        throw error;
+      }
+
+      console.log("✅ Login bem-sucedido:", loginData.user?.id);
 
       setMessage({
         type: "success",
