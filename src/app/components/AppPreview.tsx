@@ -9,7 +9,6 @@ import {
   Briefcase, 
   Heart, 
   Users, 
-  BookOpen,
   User,
   Target,
   CheckCircle2,
@@ -19,10 +18,9 @@ import {
 
 interface AppPreviewProps {
   responses: Record<string, string>;
-  onCheckout: () => void;
 }
 
-export function AppPreview({ responses, onCheckout }: AppPreviewProps) {
+export function AppPreview({ responses }: AppPreviewProps) {
   const [activePreview, setActivePreview] = useState<"chat" | "quiz" | "categories">("chat");
 
   // Gerar insight personalizado baseado nas respostas
@@ -62,6 +60,10 @@ export function AppPreview({ responses, onCheckout }: AppPreviewProps) {
     insight += "A Lum está aqui para te acompanhar nessa jornada. 💜";
 
     return insight;
+  };
+
+  const handleCheckout = () => {
+    window.location.href = "https://pay.kirvano.com/7b8cc79c-b462-4502-b453-3397e525b603";
   };
 
   return (
@@ -288,7 +290,7 @@ export function AppPreview({ responses, onCheckout }: AppPreviewProps) {
 
         {/* CTA Principal */}
         <Button
-          onClick={onCheckout}
+          onClick={handleCheckout}
           className="w-full h-16 text-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all"
         >
           Desbloquear acesso completo
