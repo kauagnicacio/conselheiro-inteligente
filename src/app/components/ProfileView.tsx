@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, User, Sparkles, Heart, Target, TrendingUp, Award, MessageCircle, Brain, Zap, Star, CheckCircle2, Lightbulb } from "lucide-react";
+import { ArrowLeft, User, Sparkles, Heart, Target, TrendingUp, Award, MessageCircle, Brain, Zap, Star, CheckCircle2, Lightbulb, Edit2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 interface ProfileViewProps {
   onBack: () => void;
@@ -48,6 +49,9 @@ export function ProfileView({ onBack, userId, userEmail }: ProfileViewProps) {
       growthAreas: []
     }
   });
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState("");
 
   useEffect(() => {
     const savedProfile = localStorage.getItem(`lumia-user-profile-${userId}`);
@@ -111,6 +115,25 @@ export function ProfileView({ onBack, userId, userEmail }: ProfileViewProps) {
     return diff;
   };
 
+  const handleEditName = () => {
+    setEditedName(profile.name);
+    setIsEditingName(true);
+  };
+
+  const handleSaveName = () => {
+    if (editedName.trim()) {
+      const updatedProfile = { ...profile, name: editedName.trim() };
+      setProfile(updatedProfile);
+      localStorage.setItem(`lumia-user-profile-${userId}`, JSON.stringify(updatedProfile));
+      setIsEditingName(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingName(false);
+    setEditedName("");
+  };
+
   return (
     <div className="flex flex-col h-full bg-gradient-to-b from-slate-50 to-white dark:from-gray-900 dark:to-[#1a1a1a]">
       {/* Header */}
@@ -145,9 +168,51 @@ export function ProfileView({ onBack, userId, userEmail }: ProfileViewProps) {
                   <User className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">
-                    {profile.name}
-                  </h3>
+                  {!isEditingName ? (
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                        {profile.name}
+                      </h3>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleEditName}
+                        className="h-7 w-7 hover:bg-purple-200 dark:hover:bg-purple-800"
+                      >
+                        <Edit2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={editedName}
+                        onChange={(e) => setEditedName(e.target.value)}
+                        className="h-9 w-48 text-base"
+                        placeholder="Seu nome"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveName();
+                          if (e.key === 'Escape') handleCancelEdit();
+                        }}
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleSaveName}
+                        className="h-7 w-7 hover:bg-green-200 dark:hover:bg-green-800"
+                      >
+                        <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleCancelEdit}
+                        className="h-7 w-7 hover:bg-red-200 dark:hover:bg-red-800"
+                      >
+                        <X className="w-4 h-4 text-red-600 dark:text-red-400" />
+                      </Button>
+                    </div>
+                  )}
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Com a Lum há {getDaysSinceJoined()} dias
                   </p>
