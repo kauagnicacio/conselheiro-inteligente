@@ -24,48 +24,39 @@ export function useSubscription(userId?: string) {
       }
 
       try {
+        console.log("🔍 Verificando assinatura para user_id:", userId);
+        
         // FONTE ÚNICA DE VERDADE: profiles.is_subscriber
         // Buscar perfil do usuário logado usando user_id
         const { data: profile, error } = await supabase
           .from("profiles")
-          .select("is_subscriber, user_id")
+          .select("is_subscriber, user_id, id")
           .eq("user_id", userId)
-          .maybeSingle(); // Usar maybeSingle para não dar erro se não existir
+          .maybeSingle();
 
         if (error) {
-          console.error("Erro ao verificar assinatura:", error);
+          console.error("❌ Erro ao verificar assinatura:", error);
           setIsSubscribed(false);
           setLoading(false);
           return;
         }
 
-        // Se perfil não existe, criar um novo com user_id correto
+        // Se perfil não existe, NÃO criar aqui (deixar para useAuth)
+        // Apenas retornar false
         if (!profile) {
-          console.log("Perfil não encontrado, criando novo perfil para user_id:", userId);
-          
-          const { data: newProfile, error: createError } = await supabase
-            .from("profiles")
-            .insert({
-              user_id: userId,
-              is_subscriber: false,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            })
-            .select("is_subscriber")
-            .single();
-
-          if (createError) {
-            console.error("Erro ao criar perfil:", createError);
-            setIsSubscribed(false);
-          } else {
-            setIsSubscribed(newProfile?.is_subscriber || false);
-          }
-        } else {
-          // Perfil existe - usar is_subscriber como fonte de verdade
-          setIsSubscribed(profile.is_subscriber || false);
+          console.log("⚠️ Perfil não encontrado para user_id:", userId);
+          setIsSubscribed(false);
+          setLoading(false);
+          return;
         }
+
+        // Perfil existe - usar is_subscriber como fonte de verdade
+        const subscriptionStatus = profile.is_subscriber || false;
+        console.log("✅ Status de assinatura:", subscriptionStatus, "| Profile ID:", profile.id);
+        setIsSubscribed(subscriptionStatus);
+        
       } catch (error) {
-        console.error("Erro ao verificar assinatura:", error);
+        console.error("❌ Erro ao verificar assinatura:", error);
         setIsSubscribed(false);
       } finally {
         setLoading(false);
@@ -76,6 +67,8 @@ export function useSubscription(userId?: string) {
 
     // REVALIDAÇÃO EM TEMPO REAL: Escutar mudanças na tabela profiles
     if (isSupabaseConfigured && supabase && userId) {
+      console.log("👂 Escutando mudanças no perfil para user_id:", userId);
+      
       const channel = supabase
         .channel(`profile-changes-${userId}`)
         .on(
@@ -87,26 +80,37 @@ export function useSubscription(userId?: string) {
             filter: `user_id=eq.${userId}`,
           },
           (payload) => {
-            console.log("Mudança detectada no perfil:", payload);
+            console.log("🔔 Mudança detectada no perfil:", payload);
             
             // Atualizar estado imediatamente quando houver mudança
-            if (payload.new && "is_subscriber" in payload.new) {
-              setIsSubscribed(payload.new.is_subscriber || false);
+            if (payload.eventType === "UPDATE" || payload.eventType === "INSERT") {
+              if (payload.new && "is_subscriber" in payload.new) {
+                const newStatus = payload.new.is_subscriber || false;
+                console.log("🔄 Atualizando status de assinatura para:", newStatus);
+                setIsSubscribed(newStatus);
+              }
+            } else if (payload.eventType === "DELETE") {
+              console.log("🗑️ Perfil deletado, definindo assinatura como false");
+              setIsSubscribed(false);
             }
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          console.log("📡 Status da subscription realtime:", status);
+        });
 
       return () => {
+        console.log("🔌 Desconectando listener de mudanças do perfil");
         supabase.removeChannel(channel);
       };
     }
   }, [userId]);
 
-  // Função para forçar revalidação (útil após login)
+  // Função para forçar revalidação (útil após login ou atualização manual)
   const revalidate = async () => {
     if (!userId || !isSupabaseConfigured || !supabase) return;
 
+    console.log("🔄 Revalidando assinatura manualmente para user_id:", userId);
     setLoading(true);
     
     try {
@@ -117,10 +121,15 @@ export function useSubscription(userId?: string) {
         .maybeSingle();
 
       if (!error && profile) {
-        setIsSubscribed(profile.is_subscriber || false);
+        const newStatus = profile.is_subscriber || false;
+        console.log("✅ Revalidação concluída. Novo status:", newStatus);
+        setIsSubscribed(newStatus);
+      } else {
+        console.log("⚠️ Perfil não encontrado durante revalidação");
+        setIsSubscribed(false);
       }
     } catch (error) {
-      console.error("Erro ao revalidar assinatura:", error);
+      console.error("❌ Erro ao revalidar assinatura:", error);
     } finally {
       setLoading(false);
     }
