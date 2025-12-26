@@ -102,12 +102,33 @@ export function useAuth() {
       // Modo local - limpar localStorage
       localStorage.removeItem("lumia-local-user");
       setUser(null);
-      window.location.href = "/quiz";
       return;
     }
 
-    await supabase.auth.signOut();
-    window.location.href = "/quiz";
+    try {
+      // Limpar estado local primeiro
+      setUser(null);
+      
+      // Executar signOut do Supabase (limpa cookies e sessão)
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error("Erro ao fazer logout:", error);
+      }
+      
+      // Limpar qualquer dado em cache do localStorage relacionado ao usuário
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.startsWith("lumia-") || key.includes("supabase"))) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
+    } catch (error) {
+      console.error("Erro durante logout:", error);
+    }
   };
 
   return { user, loading, signOut };

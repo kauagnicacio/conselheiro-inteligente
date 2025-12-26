@@ -104,10 +104,22 @@ export default function Home() {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    setCustomTabs([]);
-    setActiveTab("inicio");
-    router.push("/quiz");
+    try {
+      // Limpar estado local
+      setCustomTabs([]);
+      setActiveTab("inicio");
+      setDisplayName("");
+      
+      // Executar signOut (limpa sessão Supabase e localStorage)
+      await signOut();
+      
+      // Forçar redirecionamento completo (recarrega a página)
+      window.location.href = "/quiz";
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      // Mesmo com erro, redirecionar
+      window.location.href = "/quiz";
+    }
   };
 
   const fixedTabs = [
