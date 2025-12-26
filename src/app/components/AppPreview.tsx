@@ -63,7 +63,9 @@ export function AppPreview({ responses }: AppPreviewProps) {
   };
 
   const handleCheckout = () => {
-    window.location.href = "https://pay.kirvano.com/7b8cc79c-b462-4502-b453-3397e525b603";
+    if (typeof window !== 'undefined') {
+      window.location.href = "https://pay.kirvano.com/7b8cc79c-b462-4502-b453-3397e525b603";
+    }
   };
 
   return (
