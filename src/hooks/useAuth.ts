@@ -62,17 +62,14 @@ export function useAuth() {
       // Modo local - limpar localStorage
       localStorage.removeItem("lumia-local-user");
       setUser(null);
-      router.push("/quiz");
+      router.push("/login");
       return;
     }
 
     try {
       console.log("🚪 Iniciando logout...");
       
-      // 1. Limpar estado local primeiro
-      setUser(null);
-      
-      // 2. Executar signOut do Supabase (limpa cookies e sessão no servidor)
+      // 1. Executar signOut do Supabase (limpa cookies e sessão no servidor)
       const { error } = await supabase.auth.signOut();
       
       if (error) {
@@ -81,6 +78,9 @@ export function useAuth() {
       }
       
       console.log("✅ Logout bem-sucedido no Supabase");
+      
+      // 2. Limpar estado local
+      setUser(null);
       
       // 3. Limpar qualquer dado em cache do localStorage
       const keysToRemove: string[] = [];
@@ -96,18 +96,18 @@ export function useAuth() {
       });
       
       // 4. Redirecionar para página de login
-      console.log("🔄 Redirecionando para /quiz...");
-      router.push("/quiz");
+      console.log("🔄 Redirecionando para /login...");
+      router.replace("/login");
       
       // 5. Forçar refresh para limpar qualquer estado residual
-      setTimeout(() => {
-        router.refresh();
-      }, 100);
+      router.refresh();
       
     } catch (error) {
       console.error("❌ Erro durante logout:", error);
-      // Mesmo com erro, tentar redirecionar
-      router.push("/quiz");
+      // Mesmo com erro, limpar estado e redirecionar
+      setUser(null);
+      router.replace("/login");
+      router.refresh();
     }
   };
 
