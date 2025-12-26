@@ -61,13 +61,9 @@ export function AuthForm() {
         email: data.user.email,
       });
 
-      setSuccess("Conta criada com sucesso! Verifique seu email para confirmar.");
-      
-      // Redirecionar após 2 segundos
-      setTimeout(() => {
-        router.push("/");
-        router.refresh();
-      }, 2000);
+      // Redirecionar imediatamente sem mensagem
+      router.push("/");
+      router.refresh();
 
     } catch (err: any) {
       console.error("❌ Erro completo no signup:", err);
@@ -163,39 +159,39 @@ export function AuthForm() {
 
   return (
     <>
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 dark:from-purple-900 dark:via-blue-900 dark:to-cyan-900 p-4 relative overflow-hidden">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 dark:from-purple-900 dark:via-blue-900 dark:to-cyan-900 p-3 sm:p-4 relative overflow-hidden">
         {/* Elementos decorativos de fundo */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-cyan-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
 
         <Card className="w-full max-w-md backdrop-blur-xl bg-white/95 dark:bg-gray-900/95 shadow-2xl border-0 relative z-10">
-          <CardHeader className="space-y-3 pb-6">
-            <div className="flex justify-center mb-2">
-              <div className="p-3 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-2xl shadow-lg">
-                <Sparkles className="w-8 h-8 text-white" />
+          <CardHeader className="space-y-2 sm:space-y-3 pb-4 sm:pb-6 px-4 sm:px-6 pt-5 sm:pt-6">
+            <div className="flex justify-center mb-1 sm:mb-2">
+              <div className="p-2.5 sm:p-3 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-xl sm:rounded-2xl shadow-lg">
+                <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
               </div>
             </div>
-            <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-purple-600 to-cyan-600 dark:from-purple-400 dark:to-cyan-400 bg-clip-text text-transparent">
+            <CardTitle className="text-2xl sm:text-3xl font-bold text-center bg-gradient-to-r from-purple-600 to-cyan-600 dark:from-purple-400 dark:to-cyan-400 bg-clip-text text-transparent">
               Bem-vindo à Lum
             </CardTitle>
-            <CardDescription className="text-center text-base text-gray-600 dark:text-gray-400">
+            <CardDescription className="text-center text-sm sm:text-base text-gray-600 dark:text-gray-400">
               Sua jornada de autoconhecimento começa aqui
             </CardDescription>
           </CardHeader>
-          <CardContent className="pb-6">
+          <CardContent className="pb-4 sm:pb-6 px-4 sm:px-6">
             <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-xl mb-6">
+              <TabsList className="grid w-full grid-cols-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg sm:rounded-xl mb-4 sm:mb-6">
                 <TabsTrigger 
                   value="signin"
-                  className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-md transition-all duration-200"
+                  className="rounded-md sm:rounded-lg text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-md transition-all duration-200"
                 >
                   Entrar
                 </TabsTrigger>
                 <TabsTrigger 
                   value="signup"
-                  className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-md transition-all duration-200"
+                  className="rounded-md sm:rounded-lg text-sm data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:shadow-md transition-all duration-200"
                 >
                   Criar Conta
                 </TabsTrigger>
@@ -203,13 +199,13 @@ export function AuthForm() {
 
               <TabsContent value="signin" className="mt-0">
                 {!showForgotPassword ? (
-                  <form onSubmit={handleSignIn} className="space-y-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="signin-email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <form onSubmit={handleSignIn} className="space-y-4 sm:space-y-5">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="signin-email" className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                         Email
                       </Label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Mail className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                         <Input
                           id="signin-email"
                           name="signin-email"
@@ -217,16 +213,16 @@ export function AuthForm() {
                           placeholder="seu@email.com"
                           required
                           disabled={isLoading}
-                          className="pl-10 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-purple-500 dark:focus:ring-purple-400 transition-all duration-200"
+                          className="pl-9 sm:pl-10 h-11 sm:h-12 text-sm sm:text-base bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-purple-500 dark:focus:ring-purple-400 transition-all duration-200"
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signin-password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="signin-password" className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                         Senha
                       </Label>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Lock className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                         <Input
                           id="signin-password"
                           name="signin-password"
@@ -234,7 +230,7 @@ export function AuthForm() {
                           placeholder="••••••••"
                           required
                           disabled={isLoading}
-                          className="pl-10 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-purple-500 dark:focus:ring-purple-400 transition-all duration-200"
+                          className="pl-9 sm:pl-10 h-11 sm:h-12 text-sm sm:text-base bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-purple-500 dark:focus:ring-purple-400 transition-all duration-200"
                         />
                       </div>
                     </div>
@@ -244,30 +240,30 @@ export function AuthForm() {
                       <button
                         type="button"
                         onClick={() => setShowForgotPassword(true)}
-                        className="text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 hover:underline transition-colors"
+                        className="text-xs sm:text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 hover:underline transition-colors"
                       >
                         Esqueci minha senha
                       </button>
                     </div>
 
                     {error && (
-                      <div className="p-4 text-sm text-red-700 bg-red-50 dark:bg-red-900/30 dark:text-red-300 rounded-xl border border-red-200 dark:border-red-800">
+                      <div className="p-3 sm:p-4 text-xs sm:text-sm text-red-700 bg-red-50 dark:bg-red-900/30 dark:text-red-300 rounded-lg sm:rounded-xl border border-red-200 dark:border-red-800">
                         {error}
                       </div>
                     )}
                     {success && (
-                      <div className="p-4 text-sm text-green-700 bg-green-50 dark:bg-green-900/30 dark:text-green-300 rounded-xl border border-green-200 dark:border-green-800">
+                      <div className="p-3 sm:p-4 text-xs sm:text-sm text-green-700 bg-green-50 dark:bg-green-900/30 dark:text-green-300 rounded-lg sm:rounded-xl border border-green-200 dark:border-green-800">
                         {success}
                       </div>
                     )}
                     <Button 
                       type="submit" 
-                      className="w-full h-12 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]" 
+                      className="w-full h-11 sm:h-12 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-medium rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]" 
                       disabled={isLoading}
                     >
                       {isLoading ? (
                         <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                           Entrando...
                         </>
                       ) : (
@@ -276,13 +272,13 @@ export function AuthForm() {
                     </Button>
                   </form>
                 ) : (
-                  <form onSubmit={handleForgotPassword} className="space-y-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="reset-email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <form onSubmit={handleForgotPassword} className="space-y-4 sm:space-y-5">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="reset-email" className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                         Email para recuperação
                       </Label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Mail className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                         <Input
                           id="reset-email"
                           type="email"
@@ -291,30 +287,30 @@ export function AuthForm() {
                           onChange={(e) => setResetEmail(e.target.value)}
                           required
                           disabled={isLoading}
-                          className="pl-10 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-purple-500 dark:focus:ring-purple-400 transition-all duration-200"
+                          className="pl-9 sm:pl-10 h-11 sm:h-12 text-sm sm:text-base bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-purple-500 dark:focus:ring-purple-400 transition-all duration-200"
                         />
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 sm:mt-2">
                         Enviaremos um link de recuperação para este email
                       </p>
                     </div>
 
                     {error && (
-                      <div className="p-4 text-sm text-red-700 bg-red-50 dark:bg-red-900/30 dark:text-red-300 rounded-xl border border-red-200 dark:border-red-800">
+                      <div className="p-3 sm:p-4 text-xs sm:text-sm text-red-700 bg-red-50 dark:bg-red-900/30 dark:text-red-300 rounded-lg sm:rounded-xl border border-red-200 dark:border-red-800">
                         {error}
                       </div>
                     )}
                     {success && (
-                      <div className="p-4 text-sm text-green-700 bg-green-50 dark:bg-green-900/30 dark:text-green-300 rounded-xl border border-green-200 dark:border-green-800">
+                      <div className="p-3 sm:p-4 text-xs sm:text-sm text-green-700 bg-green-50 dark:bg-green-900/30 dark:text-green-300 rounded-lg sm:rounded-xl border border-green-200 dark:border-green-800">
                         {success}
                       </div>
                     )}
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-2 sm:gap-3">
                       <Button
                         type="button"
                         variant="outline"
-                        className="w-full h-12 rounded-xl border-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
+                        className="w-full h-11 sm:h-12 text-sm sm:text-base rounded-lg sm:rounded-xl border-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
                         onClick={() => {
                           setShowForgotPassword(false);
                           setResetEmail("");
@@ -327,12 +323,12 @@ export function AuthForm() {
                       </Button>
                       <Button 
                         type="submit" 
-                        className="w-full h-12 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]" 
+                        className="w-full h-11 sm:h-12 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-medium rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]" 
                         disabled={isLoading}
                       >
                         {isLoading ? (
                           <>
-                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                             Enviando...
                           </>
                         ) : (
@@ -345,13 +341,13 @@ export function AuthForm() {
               </TabsContent>
 
               <TabsContent value="signup" className="mt-0">
-                <form onSubmit={handleSignUp} className="space-y-5">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <form onSubmit={handleSignUp} className="space-y-4 sm:space-y-5">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="signup-email" className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                       Email
                     </Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Mail className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                       <Input
                         id="signup-email"
                         name="signup-email"
@@ -359,16 +355,16 @@ export function AuthForm() {
                         placeholder="seu@email.com"
                         required
                         disabled={isLoading}
-                        className="pl-10 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-purple-500 dark:focus:ring-purple-400 transition-all duration-200"
+                        className="pl-9 sm:pl-10 h-11 sm:h-12 text-sm sm:text-base bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-purple-500 dark:focus:ring-purple-400 transition-all duration-200"
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <Label htmlFor="signup-password" className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                       Senha
                     </Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Lock className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                       <Input
                         id="signup-password"
                         name="signup-password"
@@ -377,31 +373,31 @@ export function AuthForm() {
                         required
                         minLength={6}
                         disabled={isLoading}
-                        className="pl-10 h-12 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-purple-500 dark:focus:ring-purple-400 transition-all duration-200"
+                        className="pl-9 sm:pl-10 h-11 sm:h-12 text-sm sm:text-base bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-purple-500 dark:focus:ring-purple-400 transition-all duration-200"
                       />
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 sm:mt-2">
                       Mínimo de 6 caracteres
                     </p>
                   </div>
                   {error && (
-                    <div className="p-4 text-sm text-red-700 bg-red-50 dark:bg-red-900/30 dark:text-red-300 rounded-xl border border-red-200 dark:border-red-800">
+                    <div className="p-3 sm:p-4 text-xs sm:text-sm text-red-700 bg-red-50 dark:bg-red-900/30 dark:text-red-300 rounded-lg sm:rounded-xl border border-red-200 dark:border-red-800">
                       {error}
                     </div>
                   )}
                   {success && (
-                    <div className="p-4 text-sm text-green-700 bg-green-50 dark:bg-green-900/30 dark:text-green-300 rounded-xl border border-green-200 dark:border-green-800">
+                    <div className="p-3 sm:p-4 text-xs sm:text-sm text-green-700 bg-green-50 dark:bg-green-900/30 dark:text-green-300 rounded-lg sm:rounded-xl border border-green-200 dark:border-green-800">
                       {success}
                     </div>
                   )}
                   <Button 
                     type="submit" 
-                    className="w-full h-12 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]" 
+                    className="w-full h-11 sm:h-12 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-medium rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]" 
                     disabled={isLoading}
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                         Criando conta...
                       </>
                     ) : (
@@ -412,7 +408,7 @@ export function AuthForm() {
               </TabsContent>
             </Tabs>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-2 text-center text-sm text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-gray-800 pt-6">
+          <CardFooter className="flex flex-col space-y-2 text-center text-xs sm:text-sm text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-gray-800 pt-4 sm:pt-6 px-4 sm:px-6 pb-4 sm:pb-6">
             <p>
               Ao continuar, você concorda com nossos{" "}
               <button
@@ -427,90 +423,90 @@ export function AuthForm() {
         </Card>
       </div>
 
-      {/* Modal de Termos de Uso */}
+      {/* Modal de Termos de Uso - Otimizado para mobile */}
       {showTermsModal && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-in fade-in duration-200"
           onClick={() => setShowTermsModal(false)}
         >
           <div
-            className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col animate-in zoom-in-95 duration-200"
+            className="bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] sm:max-h-[80vh] flex flex-col animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header do Modal */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 dark:from-purple-400 dark:to-cyan-400 bg-clip-text text-transparent">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-800">
+              <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-cyan-600 dark:from-purple-400 dark:to-cyan-400 bg-clip-text text-transparent">
                 Termos de Uso
               </h2>
               <button
                 onClick={() => setShowTermsModal(false)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4 sm:h-5 sm:w-5" />
               </button>
             </div>
 
             {/* Conteúdo com scroll */}
-            <div className="p-6 overflow-y-auto flex-1">
+            <div className="p-4 sm:p-6 overflow-y-auto flex-1">
               <div className="prose dark:prose-invert max-w-none">
-                <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">1. Aceitação dos Termos</h3>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-gray-100">1. Aceitação dos Termos</h3>
+                <p className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                   Ao acessar e usar este serviço, você aceita e concorda em ficar vinculado aos
                   termos e condições deste acordo. Se você não concordar com qualquer parte destes
                   termos, não deverá usar nosso serviço.
                 </p>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">2. Uso do Serviço</h3>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-gray-100">2. Uso do Serviço</h3>
+                <p className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                   Você concorda em usar o serviço apenas para fins legais e de acordo com estes
                   Termos de Uso. Você concorda em não usar o serviço:
                 </p>
-                <ul className="list-disc pl-6 mb-4 text-gray-700 dark:text-gray-300 space-y-2">
+                <ul className="list-disc pl-5 sm:pl-6 mb-3 sm:mb-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300 space-y-1.5 sm:space-y-2">
                   <li>De qualquer forma que viole qualquer lei ou regulamento aplicável</li>
                   <li>Para transmitir qualquer material publicitário ou promocional não solicitado</li>
                   <li>Para se passar por outra pessoa ou entidade</li>
                   <li>Para interferir ou interromper o serviço ou servidores conectados ao serviço</li>
                 </ul>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">3. Contas de Usuário</h3>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-gray-100">3. Contas de Usuário</h3>
+                <p className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                   Ao criar uma conta conosco, você deve nos fornecer informações precisas, completas
                   e atualizadas. A falha em fazê-lo constitui uma violação dos Termos, o que pode
                   resultar no encerramento imediato de sua conta em nosso serviço.
                 </p>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">4. Privacidade</h3>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-gray-100">4. Privacidade</h3>
+                <p className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                   Sua privacidade é importante para nós. Coletamos e usamos suas informações pessoais
                   de acordo com nossa Política de Privacidade. Ao usar o serviço, você concorda com
                   a coleta e uso de informações de acordo com essa política.
                 </p>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">5. Propriedade Intelectual</h3>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">
-                  O serviço e seu conteúdo original, recursos e funcionalidades são e permanecerão
+                <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-gray-100">5. Propriedade Intelectual</h3>
+                <p className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
+                  O serviço e seu conteúdo original, recursos e funcionalidade são e permanecerão
                   propriedade exclusiva da empresa e seus licenciadores. O serviço é protegido por
                   direitos autorais, marcas registradas e outras leis.
                 </p>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">6. Limitação de Responsabilidade</h3>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-gray-100">6. Limitação de Responsabilidade</h3>
+                <p className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                   Em nenhum caso a empresa, nem seus diretores, funcionários, parceiros, agentes,
                   fornecedores ou afiliados, serão responsáveis por quaisquer danos indiretos,
                   incidentais, especiais, consequenciais ou punitivos, incluindo, sem limitação,
                   perda de lucros, dados, uso, boa vontade ou outras perdas intangíveis.
                 </p>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">7. Modificações dos Termos</h3>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-gray-100">7. Modificações dos Termos</h3>
+                <p className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                   Reservamo-nos o direito, a nosso exclusivo critério, de modificar ou substituir
                   estes Termos a qualquer momento. Se uma revisão for material, tentaremos fornecer
                   um aviso com pelo menos 30 dias de antecedência antes de quaisquer novos termos
                   entrarem em vigor.
                 </p>
 
-                <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">8. Contato</h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-gray-900 dark:text-gray-100">8. Contato</h3>
+                <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                   Se você tiver alguma dúvida sobre estes Termos, entre em contato conosco através
                   dos canais de suporte disponíveis no serviço.
                 </p>
@@ -518,10 +514,10 @@ export function AuthForm() {
             </div>
 
             {/* Footer do Modal */}
-            <div className="p-6 border-t border-gray-200 dark:border-gray-800">
+            <div className="p-4 sm:p-6 border-t border-gray-200 dark:border-gray-800">
               <Button
                 onClick={() => setShowTermsModal(false)}
-                className="w-full h-12 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                className="w-full h-11 sm:h-12 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-medium rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 Fechar
               </Button>
