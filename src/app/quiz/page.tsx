@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { OnboardingQuiz } from "../components/OnboardingQuiz";
-import { WelcomeMessage } from "../components/WelcomeMessage";
+import { AppPreview } from "../components/AppPreview";
 
-type QuizStep = "quiz" | "welcome";
+type QuizStep = "quiz" | "preview";
 
 export default function QuizPage() {
   const router = useRouter();
@@ -19,20 +19,22 @@ export default function QuizPage() {
     localStorage.setItem("lumia-guest-quiz-responses", JSON.stringify(responses));
     localStorage.setItem("lumia-guest-onboarding", "true");
     
-    setStep("welcome");
+    // Ir para preview do app
+    setStep("preview");
   };
 
-  const handleWelcomeContinue = () => {
-    // Redirecionar para cadastro (SEM checkout)
-    router.push("/cadastro");
+  const handleCheckout = () => {
+    // Redirecionar para checkout (Kirvano)
+    // TODO: Substituir pela URL real do checkout
+    window.location.href = "https://pay.kirvano.com/seu-link-de-checkout";
   };
 
   if (step === "quiz") {
     return <OnboardingQuiz onComplete={handleQuizComplete} />;
   }
 
-  if (step === "welcome") {
-    return <WelcomeMessage responses={quizResponses} onContinue={handleWelcomeContinue} />;
+  if (step === "preview") {
+    return <AppPreview responses={quizResponses} onCheckout={handleCheckout} />;
   }
 
   return null;

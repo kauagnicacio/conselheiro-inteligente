@@ -39,6 +39,7 @@ export default function Home() {
   const [displayName, setDisplayName] = useState("");
 
   // REGRA SIMPLES: Se não estiver logado, redirecionar para /quiz
+  // Quem chega aqui já é pagante (passou pelo checkout)
   useEffect(() => {
     if (!loading && !user) {
       router.push("/quiz");
@@ -153,7 +154,8 @@ export default function Home() {
     return null;
   }
 
-  // App principal (após login bem-sucedido)
+  // App principal - ACESSO TOTAL LIBERADO (sem paywall)
+  // Quem chega aqui já pagou e criou conta
   return (
     <div className="flex h-screen bg-white dark:bg-[#1a1a1a] overflow-hidden">
       {/* Sidebar */}

@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { TabType } from "../page";
 import { LumAvatar } from "@/components/LumIcons";
-import { Paywall } from "@/components/Paywall";
-import { useSubscription } from "@/hooks/useSubscription";
+// Paywall removido - todos os usuários logados já são pagantes
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,7 +60,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [newTabName, setNewTabName] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [showPaywall, setShowPaywall] = useState(false);
+  // Paywall removido - todos os usuários logados já são pagantes
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -70,7 +69,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  const { isSubscribed, loading: subscriptionLoading } = useSubscription(userId);
+  // Paywall removido - todos os usuários logados já são pagantes
 
   const greeting = tabGreetings[activeTab] || tabGreetings.inicio;
   const isFixedTab = ["trabalho", "relacionamento", "familia", "estudos", "pessoal", "tomada-decisao"].includes(activeTab);
@@ -262,11 +261,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
   const handleSend = async () => {
     if ((!input.trim() && !selectedFile) || isLoading) return;
 
-    // VERIFICAR ASSINATURA ANTES DE ENVIAR
-    if (!subscriptionLoading && !isSubscribed) {
-      setShowPaywall(true);
-      return;
-    }
+    // Paywall removido - todos os usuários logados já são pagantes
 
     let messageContent = input.trim();
     let messageType: "text" | "audio" | "image" = "text";
