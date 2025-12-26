@@ -15,16 +15,63 @@ export function useSubscription(userId?: string) {
         return;
       }
 
-      // Se Supabase não estiver configurado, verificar localStorage
+      // PRIORIDADE 1: Verificar se veio do checkout (URL params)
+      if (typeof window !== "undefined") {
+        const urlParams = new URLSearchParams(window.location.search);
+        const checkoutSuccess = urlParams.get("checkout") === "success";
+        const activateUser = urlParams.get("user_id");
+        const shouldActivate = urlParams.get("activate") === "true";
+
+        if (checkoutSuccess && activateUser === userId && shouldActivate) {
+          console.log("🎉 Ativação automática detectada via URL para user_id:", userId);
+          
+          // Salvar no localStorage IMEDIATAMENTE
+          localStorage.setItem(`lumia-subscription-${userId}`, "active");
+          setIsSubscribed(true);
+          setLoading(false);
+          
+          // Limpar parâmetros da URL
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, "", cleanUrl);
+          
+          // Se Supabase estiver configurado, atualizar no banco também
+          if (isSupabaseConfigured && supabase) {
+            supabase
+              .from("profiles")
+              .update({ is_subscriber: true, updated_at: new Date().toISOString() })
+              .eq("user_id", userId)
+              .then(({ error }) => {
+                if (error) {
+                  console.error("⚠️ Erro ao sincronizar com Supabase:", error);
+                } else {
+                  console.log("✅ Sincronizado com Supabase");
+                }
+              });
+          }
+          
+          return;
+        }
+      }
+
+      // PRIORIDADE 2: Verificar localStorage (fallback rápido)
+      const localSubscription = localStorage.getItem(`lumia-subscription-${userId}`);
+      if (localSubscription === "active") {
+        console.log("✅ Assinatura ativa encontrada no localStorage");
+        setIsSubscribed(true);
+        setLoading(false);
+        return;
+      }
+
+      // PRIORIDADE 3: Verificar no Supabase (se configurado)
       if (!isSupabaseConfigured || !supabase) {
-        const localSubscription = localStorage.getItem(`lumia-subscription-${userId}`);
-        setIsSubscribed(localSubscription === "active");
+        console.log("⚠️ Supabase não configurado, usando apenas localStorage");
+        setIsSubscribed(false);
         setLoading(false);
         return;
       }
 
       try {
-        console.log("🔍 Verificando assinatura para user_id:", userId);
+        console.log("🔍 Verificando assinatura no Supabase para user_id:", userId);
         
         // FONTE ÚNICA DE VERDADE: profiles.is_subscriber
         const { data: profile, error } = await supabase
@@ -53,8 +100,14 @@ export function useSubscription(userId?: string) {
               .maybeSingle();
             
             if (retryProfile) {
-              console.log("✅ Perfil encontrado após retry:", retryProfile.is_subscriber);
-              setIsSubscribed(retryProfile.is_subscriber || false);
+              const status = retryProfile.is_subscriber || false;
+              console.log("✅ Perfil encontrado após retry:", status);
+              setIsSubscribed(status);
+              
+              // Sincronizar com localStorage
+              if (status) {
+                localStorage.setItem(`lumia-subscription-${userId}`, "active");
+              }
             } else {
               console.log("❌ Perfil ainda não existe após retry");
               setIsSubscribed(false);
@@ -69,6 +122,13 @@ export function useSubscription(userId?: string) {
         const subscriptionStatus = profile.is_subscriber || false;
         console.log("✅ Status de assinatura:", subscriptionStatus, "| Profile ID:", profile.id);
         setIsSubscribed(subscriptionStatus);
+        
+        // Sincronizar com localStorage
+        if (subscriptionStatus) {
+          localStorage.setItem(`lumia-subscription-${userId}`, "active");
+        } else {
+          localStorage.removeItem(`lumia-subscription-${userId}`);
+        }
         
       } catch (error) {
         console.error("❌ Erro ao verificar assinatura:", error);
@@ -103,10 +163,18 @@ export function useSubscription(userId?: string) {
                 const newStatus = payload.new.is_subscriber || false;
                 console.log("🔄 Atualizando status de assinatura para:", newStatus);
                 setIsSubscribed(newStatus);
+                
+                // Sincronizar com localStorage
+                if (newStatus) {
+                  localStorage.setItem(`lumia-subscription-${userId}`, "active");
+                } else {
+                  localStorage.removeItem(`lumia-subscription-${userId}`);
+                }
               }
             } else if (payload.eventType === "DELETE") {
               console.log("🗑️ Perfil deletado, definindo assinatura como false");
               setIsSubscribed(false);
+              localStorage.removeItem(`lumia-subscription-${userId}`);
             }
           }
         )
@@ -123,10 +191,26 @@ export function useSubscription(userId?: string) {
 
   // Função para forçar revalidação (útil após login ou atualização manual)
   const revalidate = async () => {
-    if (!userId || !isSupabaseConfigured || !supabase) return;
+    if (!userId) return;
 
     console.log("🔄 Revalidando assinatura manualmente para user_id:", userId);
     setLoading(true);
+    
+    // Verificar localStorage primeiro
+    const localSubscription = localStorage.getItem(`lumia-subscription-${userId}`);
+    if (localSubscription === "active") {
+      console.log("✅ Assinatura ativa no localStorage");
+      setIsSubscribed(true);
+      setLoading(false);
+      return;
+    }
+
+    // Verificar Supabase se configurado
+    if (!isSupabaseConfigured || !supabase) {
+      setIsSubscribed(false);
+      setLoading(false);
+      return;
+    }
     
     try {
       const { data: profile, error } = await supabase
@@ -139,6 +223,13 @@ export function useSubscription(userId?: string) {
         const newStatus = profile.is_subscriber || false;
         console.log("✅ Revalidação concluída. Novo status:", newStatus);
         setIsSubscribed(newStatus);
+        
+        // Sincronizar com localStorage
+        if (newStatus) {
+          localStorage.setItem(`lumia-subscription-${userId}`, "active");
+        } else {
+          localStorage.removeItem(`lumia-subscription-${userId}`);
+        }
       } else {
         console.log("⚠️ Perfil não encontrado durante revalidação");
         setIsSubscribed(false);
