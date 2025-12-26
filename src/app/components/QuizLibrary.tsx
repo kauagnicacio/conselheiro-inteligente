@@ -1246,49 +1246,37 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [showResult, setShowResult] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [currentFeedback, setCurrentFeedback] = useState("");
 
   const handleSelectQuiz = (quiz: Quiz) => {
-    // ACESSO TOTAL LIBERADO - Sem verificação de assinatura
     setSelectedQuiz(quiz);
     setCurrentQuestion(0);
     setAnswers([]);
     setShowResult(false);
-    setShowFeedback(false);
-    setCurrentFeedback("");
   };
 
   const handleAnswer = (optionIndex: number) => {
     if (!selectedQuiz) return;
 
-    const feedback = selectedQuiz.questions[currentQuestion].options[optionIndex].feedback;
-    setCurrentFeedback(feedback);
-    setShowFeedback(true);
+    const newAnswers = [...answers, optionIndex];
+    setAnswers(newAnswers);
 
-    setTimeout(() => {
-      const newAnswers = [...answers, optionIndex];
-      setAnswers(newAnswers);
-      setShowFeedback(false);
-
-      if (currentQuestion < selectedQuiz.questions.length - 1) {
-        setCurrentQuestion(currentQuestion + 1);
-      } else {
-        setShowResult(true);
-        // Salvar resultado
-        if (userId && selectedQuiz) {
-          const result = {
-            quizId: selectedQuiz.id,
-            answers: newAnswers,
-            date: new Date().toISOString()
-          };
-          const saved = localStorage.getItem(`lumia-quiz-results-${userId}`) || "[]";
-          const results = JSON.parse(saved);
-          results.push(result);
-          localStorage.setItem(`lumia-quiz-results-${userId}`, JSON.stringify(results));
-        }
+    if (currentQuestion < selectedQuiz.questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      setShowResult(true);
+      // Salvar resultado
+      if (userId && selectedQuiz) {
+        const result = {
+          quizId: selectedQuiz.id,
+          answers: newAnswers,
+          date: new Date().toISOString()
+        };
+        const saved = localStorage.getItem(`lumia-quiz-results-${userId}`) || "[]";
+        const results = JSON.parse(saved);
+        results.push(result);
+        localStorage.setItem(`lumia-quiz-results-${userId}`, JSON.stringify(results));
       }
-    }, 2000);
+    }
   };
 
   const generateResult = (): QuizResult => {
@@ -1612,26 +1600,18 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
               <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
                 {question.question}
               </h3>
-              {showFeedback ? (
-                <Card className="p-4 bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800 animate-fade-in">
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    {currentFeedback}
-                  </p>
-                </Card>
-              ) : (
-                <div className="space-y-3">
-                  {question.options.map((option, index) => (
-                    <Button
-                      key={index}
-                      onClick={() => handleAnswer(index)}
-                      variant="outline"
-                      className="w-full justify-start text-left h-auto py-4 px-6 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-700 transition-all"
-                    >
-                      <span className="text-base">{option.text}</span>
-                    </Button>
-                  ))}
-                </div>
-              )}
+              <div className="space-y-3">
+                {question.options.map((option, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => handleAnswer(index)}
+                    variant="outline"
+                    className="w-full justify-start text-left h-auto py-4 px-6 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-700 transition-all"
+                  >
+                    <span className="text-base">{option.text}</span>
+                  </Button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
