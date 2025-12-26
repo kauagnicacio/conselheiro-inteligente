@@ -37,6 +37,12 @@ export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [customTabs, setCustomTabs] = useState<CustomTab[]>([]);
   const [displayName, setDisplayName] = useState("");
+  const [isClient, setIsClient] = useState(false);
+
+  // Marcar que estamos no cliente
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // REGRA SIMPLES: Se não estiver logado, redirecionar para /quiz
   // Quem chega aqui já é pagante (passou pelo checkout)
@@ -46,41 +52,45 @@ export default function Home() {
     }
   }, [user, loading, router]);
 
-  // Carregar nome de exibição
+  // Carregar nome de exibição APENAS no cliente
   useEffect(() => {
-    if (user) {
-      const saved = localStorage.getItem(`lumia-profile-${user.id}`);
-      if (saved) {
-        try {
+    if (isClient && user) {
+      try {
+        const saved = localStorage.getItem(`lumia-profile-${user.id}`);
+        if (saved) {
           const profile = JSON.parse(saved);
           setDisplayName(profile.displayName || "");
-        } catch (e) {
-          console.error("Erro ao carregar perfil:", e);
         }
+      } catch (e) {
+        console.error("Erro ao carregar perfil:", e);
       }
     }
-  }, [user]);
+  }, [user, isClient]);
 
-  // Carregar abas customizadas do localStorage
+  // Carregar abas customizadas do localStorage APENAS no cliente
   useEffect(() => {
-    if (user) {
-      const saved = localStorage.getItem(`lumia-custom-tabs-${user.id}`);
-      if (saved) {
-        try {
+    if (isClient && user) {
+      try {
+        const saved = localStorage.getItem(`lumia-custom-tabs-${user.id}`);
+        if (saved) {
           setCustomTabs(JSON.parse(saved));
-        } catch (e) {
-          console.error("Erro ao carregar abas customizadas:", e);
         }
+      } catch (e) {
+        console.error("Erro ao carregar abas customizadas:", e);
       }
     }
-  }, [user]);
+  }, [user, isClient]);
 
-  // Salvar abas customizadas no localStorage
+  // Salvar abas customizadas no localStorage APENAS no cliente
   useEffect(() => {
-    if (user && customTabs.length > 0) {
-      localStorage.setItem(`lumia-custom-tabs-${user.id}`, JSON.stringify(customTabs));
+    if (isClient && user && customTabs.length > 0) {
+      try {
+        localStorage.setItem(`lumia-custom-tabs-${user.id}`, JSON.stringify(customTabs));
+      } catch (e) {
+        console.error("Erro ao salvar abas customizadas:", e);
+      }
     }
-  }, [customTabs, user]);
+  }, [customTabs, user, isClient]);
 
   const handleCreateCustomTab = (tabName: string) => {
     const newTab: CustomTab = {
@@ -95,8 +105,12 @@ export default function Home() {
   const handleDeleteCustomTab = (tabId: string) => {
     if (confirm("Tem certeza que deseja excluir esta conversa? Todo o histórico será perdido.")) {
       setCustomTabs((prev) => prev.filter((tab) => tab.id !== tabId));
-      if (user) {
-        localStorage.removeItem(`lumia-chat-history-${tabId}-${user.id}`);
+      if (isClient && user) {
+        try {
+          localStorage.removeItem(`lumia-chat-history-${tabId}-${user.id}`);
+        } catch (e) {
+          console.error("Erro ao remover histórico:", e);
+        }
       }
       if (activeTab === tabId) {
         setActiveTab("inicio");
@@ -115,11 +129,15 @@ export default function Home() {
       await signOut();
       
       // Forçar redirecionamento completo (recarrega a página)
-      window.location.href = "/quiz";
+      if (typeof window !== "undefined") {
+        window.location.href = "/quiz";
+      }
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
       // Mesmo com erro, redirecionar
-      window.location.href = "/quiz";
+      if (typeof window !== "undefined") {
+        window.location.href = "/quiz";
+      }
     }
   };
 
@@ -136,7 +154,7 @@ export default function Home() {
   ];
 
   // Mostrar loading enquanto verifica autenticação
-  if (loading) {
+  if (loading || !isClient) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#1a1a1a]">
         <div className="text-center">

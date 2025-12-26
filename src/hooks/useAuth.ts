@@ -13,12 +13,15 @@ export function useAuth() {
   useEffect(() => {
     // Se Supabase não estiver configurado, usar modo local
     if (!isSupabaseConfigured || !supabase) {
-      const localUser = localStorage.getItem("lumia-local-user");
-      if (localUser) {
-        try {
-          setUser(JSON.parse(localUser) as User);
-        } catch (e) {
-          console.error("Erro ao carregar usuário local:", e);
+      // CORREÇÃO: Verificar se window está disponível antes de acessar localStorage
+      if (typeof window !== "undefined") {
+        const localUser = localStorage.getItem("lumia-local-user");
+        if (localUser) {
+          try {
+            setUser(JSON.parse(localUser) as User);
+          } catch (e) {
+            console.error("Erro ao carregar usuário local:", e);
+          }
         }
       }
       setLoading(false);
@@ -60,7 +63,9 @@ export function useAuth() {
   const signOut = async () => {
     if (!isSupabaseConfigured || !supabase) {
       // Modo local - limpar localStorage
-      localStorage.removeItem("lumia-local-user");
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("lumia-local-user");
+      }
       setUser(null);
       router.push("/login");
       return;
@@ -82,18 +87,20 @@ export function useAuth() {
       // 2. Limpar estado local
       setUser(null);
       
-      // 3. Limpar qualquer dado em cache do localStorage
-      const keysToRemove: string[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && (key.startsWith("lumia-") || key.includes("supabase"))) {
-          keysToRemove.push(key);
+      // 3. Limpar qualquer dado em cache do localStorage (APENAS NO CLIENTE)
+      if (typeof window !== "undefined") {
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.startsWith("lumia-") || key.includes("supabase"))) {
+            keysToRemove.push(key);
+          }
         }
+        keysToRemove.forEach(key => {
+          localStorage.removeItem(key);
+          console.log("🗑️ Removido do localStorage:", key);
+        });
       }
-      keysToRemove.forEach(key => {
-        localStorage.removeItem(key);
-        console.log("🗑️ Removido do localStorage:", key);
-      });
       
       // 4. Redirecionar para página de login
       console.log("🔄 Redirecionando para /login...");

@@ -491,14 +491,6 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-[#212121]">
-      {/* Paywall */}
-      {showPaywall && (
-        <Paywall 
-          onClose={() => setShowPaywall(false)} 
-          trigger="message"
-        />
-      )}
-
       {/* Header with Actions */}
       {messages.length > 0 && (
         <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 flex items-center justify-between">

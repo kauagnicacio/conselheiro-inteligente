@@ -9,6 +9,7 @@ export function useSubscription(userId?: string) {
 
   useEffect(() => {
     async function checkSubscription() {
+      // Se não há userId, não está subscrito
       if (!userId) {
         setIsSubscribed(false);
         setLoading(false);
@@ -40,34 +41,49 @@ export function useSubscription(userId?: string) {
           return;
         }
 
+        // TRATAMENTO ROBUSTO: Se profile não existe ou é null/undefined
         if (!profile) {
           console.log("⚠️ Perfil não encontrado para user_id:", userId);
           console.log("⏳ Aguardando criação automática pelo trigger...");
           
           // Aguardar 2 segundos e tentar novamente (trigger pode estar processando)
           setTimeout(async () => {
-            const { data: retryProfile } = await supabase
-              .from("profiles")
-              .select("is_subscriber, email")
-              .eq("user_id", userId)
-              .maybeSingle();
-            
-            if (retryProfile) {
-              const status = retryProfile.is_subscriber || false;
-              console.log("✅ Perfil encontrado após retry:", status, "| Email:", retryProfile.email);
-              setIsSubscribed(status);
-            } else {
-              console.log("❌ Perfil ainda não existe após retry");
+            try {
+              const { data: retryProfile, error: retryError } = await supabase
+                .from("profiles")
+                .select("is_subscriber, email")
+                .eq("user_id", userId)
+                .maybeSingle();
+              
+              if (retryError) {
+                console.error("❌ Erro ao verificar perfil após retry:", retryError);
+                setIsSubscribed(false);
+                setLoading(false);
+                return;
+              }
+              
+              if (retryProfile) {
+                const status = retryProfile.is_subscriber || false;
+                console.log("✅ Perfil encontrado após retry:", status, "| Email:", retryProfile.email);
+                setIsSubscribed(status);
+              } else {
+                console.log("❌ Perfil ainda não existe após retry");
+                setIsSubscribed(false);
+              }
+            } catch (retryErr) {
+              console.error("❌ Erro no retry:", retryErr);
               setIsSubscribed(false);
+            } finally {
+              setLoading(false);
             }
-            setLoading(false);
           }, 2000);
           
           return;
         }
 
         // Perfil existe - usar is_subscriber como fonte de verdade
-        const subscriptionStatus = profile.is_subscriber || false;
+        // TRATAMENTO SEGURO: garantir que is_subscriber não seja null/undefined
+        const subscriptionStatus = profile.is_subscriber === true;
         console.log("✅ Status de assinatura:", subscriptionStatus, "| Email:", profile.email, "| Profile ID:", profile.id);
         setIsSubscribed(subscriptionStatus);
         
@@ -101,7 +117,8 @@ export function useSubscription(userId?: string) {
             // Atualizar estado imediatamente quando houver mudança
             if (payload.eventType === "UPDATE" || payload.eventType === "INSERT") {
               if (payload.new && "is_subscriber" in payload.new) {
-                const newStatus = payload.new.is_subscriber || false;
+                // TRATAMENTO SEGURO: garantir boolean
+                const newStatus = payload.new.is_subscriber === true;
                 console.log("🔄 Atualizando status de assinatura para:", newStatus);
                 setIsSubscribed(newStatus);
               }
@@ -144,16 +161,26 @@ export function useSubscription(userId?: string) {
         .eq("user_id", userId)
         .maybeSingle();
 
-      if (!error && profile) {
-        const newStatus = profile.is_subscriber || false;
-        console.log("✅ Revalidação concluída. Novo status:", newStatus, "| Email:", profile.email);
-        setIsSubscribed(newStatus);
-      } else {
+      if (error) {
+        console.error("❌ Erro ao revalidar:", error);
+        setIsSubscribed(false);
+        setLoading(false);
+        return;
+      }
+
+      // TRATAMENTO ROBUSTO: verificar se profile existe
+      if (!profile) {
         console.log("⚠️ Perfil não encontrado durante revalidação");
         setIsSubscribed(false);
+      } else {
+        // TRATAMENTO SEGURO: garantir boolean
+        const newStatus = profile.is_subscriber === true;
+        console.log("✅ Revalidação concluída. Novo status:", newStatus, "| Email:", profile.email);
+        setIsSubscribed(newStatus);
       }
     } catch (error) {
       console.error("❌ Erro ao revalidar assinatura:", error);
+      setIsSubscribed(false);
     } finally {
       setLoading(false);
     }
