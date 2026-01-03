@@ -394,18 +394,18 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
   };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#212121]">
+    <div className="flex flex-col h-full bg-[#1a1a1a]">
       {/* Header */}
-      <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 flex items-center justify-between bg-white dark:bg-[#212121]">
+      <div className="border-b border-gray-800 px-4 sm:px-6 py-3 flex items-center justify-between bg-[#212121]">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700">
-            <ThemeIcon className="w-5 h-5 text-white" />
+          <div className="p-2 rounded-lg bg-gray-800/50">
+            <ThemeIcon className="w-5 h-5 text-purple-400" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <h2 className="text-lg font-semibold text-gray-100">
               {themeName}
             </h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-gray-400">
               Chat contextualizado
             </p>
           </div>
@@ -413,12 +413,12 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <MoreVertical className="w-4 h-4" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-gray-800">
+              <MoreVertical className="w-4 h-4 text-gray-400" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleClearHistory} className="text-red-600 dark:text-red-400">
+          <DropdownMenuContent align="end" className="bg-[#212121] border-gray-800">
+            <DropdownMenuItem onClick={handleClearHistory} className="text-red-400 focus:text-red-300 focus:bg-red-900/20">
               <Trash2 className="w-4 h-4 mr-2" />
               Limpar histórico
             </DropdownMenuItem>
@@ -444,10 +444,10 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
                       <img 
                         src={userAvatar} 
                         alt="Você" 
-                        className="w-7 h-7 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
+                        className="w-7 h-7 rounded-full object-cover ring-2 ring-gray-700"
                       />
                     ) : (
-                      <div className="w-7 h-7 rounded-full bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 flex items-center justify-center text-xs font-medium">
+                      <div className="w-7 h-7 rounded-full bg-gray-700 text-gray-300 flex items-center justify-center text-xs font-medium">
                         V
                       </div>
                     )}
@@ -468,7 +468,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
                 ) : (
                   <LumAvatar className="w-7 h-7" />
                 )}
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <span className="text-sm font-medium text-gray-100">
                   {message.role === "user" ? "Você" : "Lum"}
                 </span>
               </div>
@@ -483,15 +483,15 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
                   />
                 )}
                 {message.type === "audio" && (
-                  <div className="flex items-center gap-2 mb-2 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center gap-2 mb-2 text-sm text-gray-400">
                     <Mic className="w-4 h-4" />
                     <span>Áudio enviado</span>
                   </div>
                 )}
                 <div className="prose prose-gray dark:prose-invert max-w-none">
-                  <p className="text-[15px] leading-[1.7] text-gray-900 dark:text-gray-100 whitespace-pre-wrap m-0">
+                  <p className="text-[15px] leading-[1.7] text-gray-100 whitespace-pre-wrap m-0">
                     {message.content}
-                    {message.isStreaming && <span className="inline-block w-1 h-4 bg-purple-500 ml-1 animate-pulse"></span>}
+                    {message.isStreaming && <span className="inline-block w-1 h-4 bg-purple-400 ml-1 animate-pulse"></span>}
                   </p>
                 </div>
 
@@ -503,16 +503,16 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
                         variant="ghost"
                         size="sm"
                         onClick={() => handleCopy(message.content, index)}
-                        className="h-8 px-2 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                        className="h-8 px-2 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-800"
                       >
                         {copiedIndex === index ? (
-                          <Check className="w-4 h-4 text-purple-600" />
+                          <Check className="w-4 h-4 text-purple-400" />
                         ) : (
-                          <Copy className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                          <Copy className="w-4 h-4 text-gray-400" />
                         )}
                       </Button>
                     )}
-                    <span className="text-xs text-gray-400 dark:text-gray-500">
+                    <span className="text-xs text-gray-500">
                       {message.timestamp.toLocaleTimeString("pt-BR", {
                         hour: "2-digit",
                         minute: "2-digit",
@@ -529,13 +529,13 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
             <div className="group mb-8 animate-fade-in">
               <div className="flex items-center gap-2 mb-2">
                 <LumAvatar className="w-7 h-7" />
-                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Lum</span>
+                <span className="text-sm font-medium text-gray-100">Lum</span>
               </div>
               <div className="ml-9">
                 <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
                 </div>
               </div>
             </div>
@@ -546,37 +546,37 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
       </div>
 
       {/* Privacy Message */}
-      <div className="border-t border-gray-200 dark:border-gray-700 bg-purple-50/30 dark:bg-purple-900/10">
+      <div className="border-t border-gray-800 bg-purple-500/5">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-2">
-          <div className="flex items-center justify-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-            <Shield className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+          <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
+            <Shield className="w-3.5 h-3.5 text-purple-400" />
             <span>Suas conversas são privadas e seguras. Ninguém tem acesso ao que você escreve aqui.</span>
           </div>
         </div>
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#212121]">
+      <div className="border-t border-gray-800 bg-[#212121]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4">
           {/* File Preview */}
           {(selectedFile || filePreview) && (
-            <div className="mb-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg flex items-center gap-3 animate-fade-in border border-purple-200 dark:border-purple-800">
+            <div className="mb-3 p-3 bg-purple-500/10 rounded-lg flex items-center gap-3 animate-fade-in border border-purple-500/20">
               {filePreview ? (
                 <img src={filePreview} alt="Preview" className="w-12 h-12 rounded object-cover" />
               ) : (
-                <div className="w-12 h-12 rounded bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                <div className="w-12 h-12 rounded bg-purple-500/20 flex items-center justify-center">
                   {selectedFile?.type.startsWith("audio/") ? (
-                    <Mic className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    <Mic className="w-5 h-5 text-purple-400" />
                   ) : (
-                    <ImageIcon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    <ImageIcon className="w-5 h-5 text-purple-400" />
                   )}
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                <p className="text-sm font-medium text-gray-100 truncate">
                   {selectedFile?.name}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-400">
                   {selectedFile?.type.startsWith("image/") ? "Imagem" : "Áudio"}
                 </p>
               </div>
@@ -584,9 +584,9 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
                 variant="ghost"
                 size="sm"
                 onClick={handleRemoveFile}
-                className="hover:bg-purple-100 dark:hover:bg-purple-900/30"
+                className="hover:bg-purple-500/20"
               >
-                <X className="w-4 h-4 text-gray-500" />
+                <X className="w-4 h-4 text-gray-400" />
               </Button>
             </div>
           )}
@@ -606,9 +606,9 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
               size="icon"
               onClick={() => fileInputRef.current?.click()}
               disabled={isLoading || isRecording}
-              className="h-10 w-10 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 shrink-0"
+              className="h-10 w-10 rounded-lg hover:bg-gray-800 shrink-0"
             >
-              <ImageIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <ImageIcon className="w-5 h-5 text-gray-400" />
             </Button>
 
             {/* Audio Recording */}
@@ -624,11 +624,11 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
               size="icon"
               onClick={isRecording ? stopRecording : startRecording}
               disabled={isLoading}
-              className={`h-10 w-10 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 shrink-0 ${
-                isRecording ? "bg-red-50 dark:bg-red-900/20" : ""
+              className={`h-10 w-10 rounded-lg hover:bg-gray-800 shrink-0 ${
+                isRecording ? "bg-red-900/20" : ""
               }`}
             >
-              <Mic className={`w-5 h-5 ${isRecording ? "text-red-600 animate-pulse" : "text-gray-600 dark:text-gray-400"}`} />
+              <Mic className={`w-5 h-5 ${isRecording ? "text-red-400 animate-pulse" : "text-gray-400"}`} />
             </Button>
 
             {/* Text Input */}
@@ -639,14 +639,14 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Digite sua mensagem..."
-                className="min-h-[44px] max-h-[200px] resize-none border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:border-purple-400 dark:focus:border-purple-500 focus:ring-1 focus:ring-purple-400 dark:focus:ring-purple-500 rounded-xl text-[15px] py-3 pr-12"
+                className="min-h-[44px] max-h-[200px] resize-none border-gray-700 bg-gray-800 text-gray-100 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl text-[15px] py-3 pr-12"
                 disabled={isLoading}
               />
               <Button
                 onClick={handleSend}
                 disabled={(!input.trim() && !selectedFile) || isLoading}
                 size="icon"
-                className="absolute right-2 bottom-2 h-8 w-8 rounded-lg bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white disabled:opacity-30 disabled:hover:bg-purple-600 dark:disabled:hover:bg-purple-500 shadow-sm"
+                className="absolute right-2 bottom-2 h-8 w-8 rounded-lg bg-purple-500 hover:bg-purple-600 text-white disabled:opacity-30 disabled:hover:bg-purple-500 shadow-sm"
               >
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

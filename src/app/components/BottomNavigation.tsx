@@ -20,7 +20,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
     <nav className="fixed bottom-0 left-0 right-0 z-50 pb-safe">
       {/* Glass/Floating Effect Container */}
       <div className="mx-4 mb-4">
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50">
+        <div className="bg-[#212121]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-800">
           <div className="flex items-center justify-around px-2 py-3">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -32,11 +32,11 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
                   onClick={() => onTabChange(tab.id)}
                   className={`flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-all duration-300 ${
                     isActive
-                      ? "bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg scale-105"
-                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "bg-purple-500/20 text-purple-400 shadow-lg scale-105 border border-purple-500/30"
+                      : "text-gray-400 hover:bg-gray-800/50 hover:text-gray-300"
                   }`}
                 >
-                  <Icon className={`w-6 h-6 ${isActive ? "animate-pulse" : ""}`} />
+                  <Icon className={`w-6 h-6 ${isActive ? "" : ""}`} />
                   <span className="text-xs font-medium">{tab.label}</span>
                 </button>
               );
