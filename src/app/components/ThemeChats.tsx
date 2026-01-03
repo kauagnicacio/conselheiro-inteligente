@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronLeft, Plus, MessageSquare, Trash2 } from "lucide-react";
+import { ChevronLeft, Plus, MessageSquare, Trash2, Edit2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -25,6 +25,8 @@ export function ThemeChats({ themeId, themeName, userId, onBack, onSelectChat }:
   const [chats, setChats] = useState<Chat[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [newChatName, setNewChatName] = useState("");
+  const [editingChatId, setEditingChatId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
 
   // Carregar chats do tema
   useEffect(() => {
@@ -42,7 +44,7 @@ export function ThemeChats({ themeId, themeName, userId, onBack, onSelectChat }:
 
   // Salvar chats
   useEffect(() => {
-    if (typeof window !== "undefined" && chats.length > 0) {
+    if (typeof window !== "undefined" && chats.length >= 0) {
       try {
         localStorage.setItem(`lumia-theme-chats-${themeId}-${userId}`, JSON.stringify(chats));
       } catch (e) {
@@ -52,11 +54,11 @@ export function ThemeChats({ themeId, themeName, userId, onBack, onSelectChat }:
   }, [chats, themeId, userId]);
 
   const handleCreateChat = () => {
-    if (!newChatName.trim()) return;
+    const chatName = newChatName.trim() || `Conversa em ${themeName}`;
 
     const newChat: Chat = {
       id: `${themeId}-${Date.now()}`,
-      name: newChatName.trim(),
+      name: chatName,
       themeId,
       createdAt: Date.now(),
     };
@@ -65,6 +67,18 @@ export function ThemeChats({ themeId, themeName, userId, onBack, onSelectChat }:
     setNewChatName("");
     setIsCreating(false);
     onSelectChat(newChat.id);
+  };
+
+  const handleRenameChat = (chatId: string) => {
+    if (!editingName.trim()) return;
+
+    setChats((prev) =>
+      prev.map((chat) =>
+        chat.id === chatId ? { ...chat, name: editingName.trim() } : chat
+      )
+    );
+    setEditingChatId(null);
+    setEditingName("");
   };
 
   const handleDeleteChat = (chatId: string) => {
@@ -130,13 +144,13 @@ export function ThemeChats({ themeId, themeName, userId, onBack, onSelectChat }:
 
           {/* Input para criar nova conversa */}
           {isCreating && (
-            <div className="flex gap-2">
+            <div className="space-y-2">
               <Input
                 type="text"
                 value={newChatName}
                 onChange={(e) => setNewChatName(e.target.value)}
-                placeholder="Nome da conversa..."
-                className="flex-1"
+                placeholder={`Ex: Conversa sobre ${themeName.toLowerCase()}`}
+                className="w-full"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleCreateChat();
@@ -146,18 +160,21 @@ export function ThemeChats({ themeId, themeName, userId, onBack, onSelectChat }:
                   }
                 }}
               />
-              <Button onClick={handleCreateChat} disabled={!newChatName.trim()}>
-                Criar
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setIsCreating(false);
-                  setNewChatName("");
-                }}
-              >
-                Cancelar
-              </Button>
+              <div className="flex gap-2">
+                <Button onClick={handleCreateChat} className="flex-1">
+                  Criar
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsCreating(false);
+                    setNewChatName("");
+                  }}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -191,28 +208,79 @@ export function ThemeChats({ themeId, themeName, userId, onBack, onSelectChat }:
                   className="group bg-white dark:bg-[#212121] border border-gray-200 dark:border-gray-800 rounded-xl p-4 hover:shadow-lg transition-all duration-200"
                 >
                   <div className="flex items-start gap-3">
-                    <button
-                      onClick={() => onSelectChat(chat.id)}
-                      className="flex-1 text-left"
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <MessageSquare className="w-4 h-4 text-purple-500" />
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                          {chat.name}
-                        </h3>
+                    {editingChatId === chat.id ? (
+                      <div className="flex-1 flex gap-2">
+                        <Input
+                          type="text"
+                          value={editingName}
+                          onChange={(e) => setEditingName(e.target.value)}
+                          className="flex-1"
+                          autoFocus
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleRenameChat(chat.id);
+                            if (e.key === "Escape") {
+                              setEditingChatId(null);
+                              setEditingName("");
+                            }
+                          }}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRenameChat(chat.id)}
+                        >
+                          <Check className="w-4 h-4 text-green-600" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setEditingChatId(null);
+                            setEditingName("");
+                          }}
+                        >
+                          <X className="w-4 h-4 text-gray-600" />
+                        </Button>
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatDate(chat.createdAt)}
-                      </p>
-                    </button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteChat(chat.id)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 dark:hover:bg-red-900/20"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
-                    </Button>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => onSelectChat(chat.id)}
+                          className="flex-1 text-left"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <MessageSquare className="w-4 h-4 text-purple-500" />
+                            <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                              {chat.name}
+                            </h3>
+                          </div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {formatDate(chat.createdAt)}
+                          </p>
+                        </button>
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setEditingChatId(chat.id);
+                              setEditingName(chat.name);
+                            }}
+                            className="hover:bg-blue-100 dark:hover:bg-blue-900/20"
+                          >
+                            <Edit2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteChat(chat.id)}
+                            className="hover:bg-red-100 dark:hover:bg-red-900/20"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
+                          </Button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}

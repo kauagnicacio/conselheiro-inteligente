@@ -1,14 +1,11 @@
 "use client";
 
 import { 
+  MessageCircle, 
   Heart, 
-  Sparkles, 
-  Target, 
   Users, 
   Briefcase, 
-  BookOpen,
-  Brain,
-  Smile
+  Target
 } from "lucide-react";
 
 interface Theme {
@@ -21,60 +18,39 @@ interface Theme {
 
 const themes: Theme[] = [
   {
-    id: "emocoes",
-    name: "Emoções",
+    id: "espaco-livre",
+    name: "Espaço Livre",
+    icon: MessageCircle,
+    gradient: "from-purple-500 to-purple-600",
+    description: "Para conversar sobre qualquer coisa"
+  },
+  {
+    id: "relacionamento",
+    name: "Relacionamento",
     icon: Heart,
     gradient: "from-pink-500 to-rose-600",
-    description: "Sentimentos e estados emocionais"
+    description: "Amor, namoro e conexões afetivas"
   },
   {
-    id: "gratidao",
-    name: "Gratidão",
-    icon: Sparkles,
-    gradient: "from-amber-500 to-orange-600",
-    description: "Momentos de reconhecimento"
-  },
-  {
-    id: "medo",
-    name: "Medo",
-    icon: Brain,
-    gradient: "from-indigo-500 to-purple-600",
-    description: "Ansiedades e preocupações"
-  },
-  {
-    id: "desejos",
-    name: "Desejos",
-    icon: Target,
-    gradient: "from-cyan-500 to-blue-600",
-    description: "Sonhos e objetivos"
-  },
-  {
-    id: "relacionamentos",
-    name: "Relacionamentos",
+    id: "familia",
+    name: "Família",
     icon: Users,
     gradient: "from-emerald-500 to-teal-600",
-    description: "Conexões e vínculos"
+    description: "Relações familiares e vínculos"
   },
   {
     id: "trabalho",
     name: "Trabalho",
     icon: Briefcase,
-    gradient: "from-violet-500 to-purple-600",
-    description: "Carreira e projetos"
+    gradient: "from-blue-500 to-indigo-600",
+    description: "Carreira, projetos e vida profissional"
   },
   {
-    id: "crescimento",
-    name: "Crescimento",
-    icon: BookOpen,
-    gradient: "from-green-500 to-emerald-600",
-    description: "Aprendizado e evolução"
-  },
-  {
-    id: "bem-estar",
-    name: "Bem-estar",
-    icon: Smile,
-    gradient: "from-yellow-500 to-amber-600",
-    description: "Saúde e autocuidado"
+    id: "tomada-decisao",
+    name: "Tomada de decisão",
+    icon: Target,
+    gradient: "from-amber-500 to-orange-600",
+    description: "Escolhas importantes e dilemas"
   }
 ];
 
@@ -90,15 +66,15 @@ export function ThemeSelector({ onSelectTheme, chatCounts }: ThemeSelectorProps)
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-            Seus Espaços Mentais
+            Suas Conversas
           </h1>
           <p className="text-base md:text-lg text-gray-600 dark:text-gray-400">
-            Escolha um tema para começar ou continuar suas conversas
+            Escolha um tema para começar ou continuar
           </p>
         </div>
 
         {/* Grid de Temas */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
           {themes.map((theme) => {
             const Icon = theme.icon;
             const count = chatCounts[theme.id] || 0;
@@ -113,7 +89,7 @@ export function ThemeSelector({ onSelectTheme, chatCounts }: ThemeSelectorProps)
                 <div className={`absolute inset-0 bg-gradient-to-br ${theme.gradient} opacity-90 group-hover:opacity-100 transition-opacity`} />
                 
                 {/* Content */}
-                <div className="relative p-6 flex flex-col items-start text-left min-h-[160px]">
+                <div className="relative p-6 flex flex-col items-start text-left min-h-[180px]">
                   {/* Icon */}
                   <div className="mb-4 p-3 bg-white/20 rounded-xl backdrop-blur-sm">
                     <Icon className="w-7 h-7 text-white" />
@@ -132,7 +108,7 @@ export function ThemeSelector({ onSelectTheme, chatCounts }: ThemeSelectorProps)
                   {/* Count Badge */}
                   <div className="flex items-center gap-2 text-xs text-white/90 bg-white/20 px-3 py-1.5 rounded-full backdrop-blur-sm">
                     <span className="font-medium">
-                      {count === 0 ? "Novo" : `${count} conversa${count !== 1 ? "s" : ""}`}
+                      {count === 0 ? "Começar" : `${count} conversa${count !== 1 ? "s" : ""}`}
                     </span>
                   </div>
                 </div>
@@ -147,7 +123,7 @@ export function ThemeSelector({ onSelectTheme, chatCounts }: ThemeSelectorProps)
         {/* Footer Info */}
         <div className="mt-12 text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            💡 Cada tema organiza suas conversas de forma independente
+            💡 Organize sua vida por contextos emocionais
           </p>
         </div>
       </div>

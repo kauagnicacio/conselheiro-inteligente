@@ -8,20 +8,30 @@ import { ChatInterface } from "./components/ChatInterface";
 import { QuizLibrary } from "./components/QuizLibrary";
 import { ProfileView } from "./components/ProfileView";
 import { ThemeSelector } from "./components/ThemeSelector";
+import { ThemeChats } from "./components/ThemeChats";
 import { BottomNavigation, BottomNavTab } from "./components/BottomNavigation";
 import { useAuth } from "@/hooks/useAuth";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LumLogo } from "@/components/LumIcons";
 
-type ViewType = "chat-list" | "chat-active" | "perfil" | "quiz";
+type ViewType = "chat-list" | "theme-chats" | "chat-active" | "perfil" | "quiz";
+
+const themeNames: Record<string, string> = {
+  "espaco-livre": "Espaço Livre",
+  "relacionamento": "Relacionamento",
+  "familia": "Família",
+  "trabalho": "Trabalho",
+  "tomada-decisao": "Tomada de decisão"
+};
 
 export default function Home() {
   const router = useRouter();
   const { user, loading, signOut } = useAuth();
   const [currentView, setCurrentView] = useState<ViewType>("chat-list");
   const [activeBottomTab, setActiveBottomTab] = useState<BottomNavTab>("chat");
-  const [activeTheme, setActiveTheme] = useState<string>("geral");
+  const [activeTheme, setActiveTheme] = useState<string>("");
+  const [activeChatId, setActiveChatId] = useState<string>("");
   const [displayName, setDisplayName] = useState("");
   const [isClient, setIsClient] = useState(false);
   const [chatCounts, setChatCounts] = useState<Record<string, number>>({});
@@ -53,16 +63,16 @@ export default function Home() {
   // Calcular contadores de conversas por tema
   useEffect(() => {
     if (isClient && user) {
-      const themes = ["geral", "emocoes", "gratidao", "medo", "desejos", "relacionamentos", "trabalho", "crescimento", "bem-estar"];
+      const themes = ["espaco-livre", "relacionamento", "familia", "trabalho", "tomada-decisao"];
       const counts: Record<string, number> = {};
       
       themes.forEach(theme => {
-        const storageKey = `lumia-chat-history-${theme}-${user.id}`;
-        const history = localStorage.getItem(storageKey);
-        if (history && history !== "[]") {
+        const storageKey = `lumia-theme-chats-${theme}-${user.id}`;
+        const chats = localStorage.getItem(storageKey);
+        if (chats) {
           try {
-            const parsed = JSON.parse(history);
-            counts[theme] = parsed.length > 0 ? 1 : 0;
+            const parsed = JSON.parse(chats);
+            counts[theme] = parsed.length || 0;
           } catch (e) {
             counts[theme] = 0;
           }
@@ -89,12 +99,24 @@ export default function Home() {
 
   const handleSelectTheme = (themeId: string) => {
     setActiveTheme(themeId);
+    setCurrentView("theme-chats");
+  };
+
+  const handleSelectChat = (chatId: string) => {
+    setActiveChatId(chatId);
     setCurrentView("chat-active");
   };
 
   const handleBackToThemeList = () => {
     setCurrentView("chat-list");
     setActiveBottomTab("chat");
+    setActiveTheme("");
+    setActiveChatId("");
+  };
+
+  const handleBackToThemeChats = () => {
+    setCurrentView("theme-chats");
+    setActiveChatId("");
   };
 
   if (loading || !isClient) {
@@ -119,11 +141,11 @@ export default function Home() {
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#212121]">
         <div className="flex items-center gap-3">
-          {currentView === "chat-active" && (
+          {(currentView === "theme-chats" || currentView === "chat-active") && (
             <Button
               variant="ghost"
               size="icon"
-              onClick={handleBackToThemeList}
+              onClick={currentView === "chat-active" ? handleBackToThemeChats : handleBackToThemeList}
               className="h-9 w-9"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -134,6 +156,7 @@ export default function Home() {
             <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Lum IA</h1>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               {currentView === "chat-list" && "Escolha um tema"}
+              {currentView === "theme-chats" && themeNames[activeTheme]}
               {currentView === "chat-active" && "Conversando"}
               {currentView === "perfil" && "Seu perfil"}
               {currentView === "quiz" && "Biblioteca de quizzes"}
@@ -152,14 +175,24 @@ export default function Home() {
           />
         )}
         
+        {currentView === "theme-chats" && (
+          <ThemeChats
+            themeId={activeTheme}
+            themeName={themeNames[activeTheme]}
+            userId={user?.id || ""}
+            onBack={handleBackToThemeList}
+            onSelectChat={handleSelectChat}
+          />
+        )}
+        
         {currentView === "chat-active" && (
           <ChatInterface
-            activeTab={activeTheme}
+            activeTab={activeChatId}
             onCreateCustomTab={() => {}}
             userId={user?.id || ""}
-            activeTheme={activeTheme}
-            onThemeChange={setActiveTheme}
-            onBack={handleBackToThemeList}
+            activeTheme={activeChatId}
+            onThemeChange={setActiveChatId}
+            onBack={handleBackToThemeChats}
           />
         )}
         
