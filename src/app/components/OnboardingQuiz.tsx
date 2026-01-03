@@ -1,378 +1,315 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { LumLogo } from "@/components/LumIcons";
-import { ChevronRight, Loader2 } from "lucide-react";
+import { LumLogo, LumAvatar } from "@/components/LumIcons";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 
-interface Message {
+interface Question {
   id: string;
-  type: "text" | "question" | "input" | "processing";
-  content: string;
-  options?: { value: string; label: string }[];
-  inputType?: "text" | "name";
+  question: string;
+  options: {
+    value: string;
+    label: string;
+  }[];
 }
+
+const questions: Question[] = [
+  {
+    id: "momento_vida",
+    question: "Como você descreveria o momento atual da sua vida?",
+    options: [
+      { value: "crescimento", label: "Em crescimento e evolução" },
+      { value: "transicao", label: "Em transição ou mudança" },
+      { value: "estagnado", label: "Estagnado ou sem direção clara" },
+      { value: "desafiador", label: "Desafiador e intenso" },
+      { value: "equilibrado", label: "Equilibrado e tranquilo" },
+    ],
+  },
+  {
+    id: "rotina_emocional",
+    question: "Como tem sido sua rotina emocional nos últimos dias?",
+    options: [
+      { value: "estavel", label: "Estável, me sinto no controle" },
+      { value: "altos_baixos", label: "Com altos e baixos frequentes" },
+      { value: "sobrecarregado", label: "Sobrecarregado(a) e exausto(a)" },
+      { value: "ansioso", label: "Ansioso(a) e preocupado(a)" },
+      { value: "leve", label: "Leve e em paz" },
+    ],
+  },
+  {
+    id: "apoio_emocional",
+    question: "Você sente que tem apoio emocional suficiente?",
+    options: [
+      { value: "sim_muito", label: "Sim, tenho pessoas em quem confio" },
+      { value: "as_vezes", label: "Às vezes, mas nem sempre" },
+      { value: "pouco", label: "Pouco, me sinto sozinho(a)" },
+      { value: "nao", label: "Não, sinto falta de alguém para conversar" },
+      { value: "nao_sei", label: "Não sei dizer ao certo" },
+    ],
+  },
+  {
+    id: "preocupacoes",
+    question: "O que mais tem ocupado seus pensamentos ultimamente?",
+    options: [
+      { value: "trabalho", label: "Trabalho e carreira" },
+      { value: "relacionamentos", label: "Relacionamentos e afetos" },
+      { value: "familia", label: "Família e dinâmicas familiares" },
+      { value: "futuro", label: "Futuro e incertezas" },
+      { value: "autoconhecimento", label: "Autoconhecimento e propósito" },
+    ],
+  },
+  {
+    id: "sensacao_predominante",
+    question: "Qual sensação tem sido mais presente em você?",
+    options: [
+      { value: "esperanca", label: "Esperança e motivação" },
+      { value: "medo", label: "Medo ou insegurança" },
+      { value: "cansaco", label: "Cansaço emocional" },
+      { value: "confusao", label: "Confusão ou dúvida" },
+      { value: "gratidao", label: "Gratidão e leveza" },
+    ],
+  },
+  {
+    id: "situacao_familiar",
+    question: "Como você descreveria sua situação familiar/relacional atual?",
+    options: [
+      { value: "harmoniosa", label: "Harmoniosa e conectada" },
+      { value: "distante", label: "Distante ou desconectada" },
+      { value: "conflituosa", label: "Conflituosa ou tensa" },
+      { value: "em_construcao", label: "Em construção ou mudança" },
+      { value: "independente", label: "Independente e autônoma" },
+    ],
+  },
+  {
+    id: "busca_principal",
+    question: "O que você mais busca neste momento?",
+    options: [
+      { value: "clareza", label: "Clareza mental e direção" },
+      { value: "acolhimento", label: "Acolhimento e compreensão" },
+      { value: "motivacao", label: "Motivação e energia" },
+      { value: "paz", label: "Paz interior e equilíbrio" },
+      { value: "transformacao", label: "Transformação e crescimento" },
+    ],
+  },
+  {
+    id: "como_se_sente",
+    question: "Ao pensar em compartilhar suas emoções, como você se sente?",
+    options: [
+      { value: "confortavel", label: "Confortável e aberto(a)" },
+      { value: "receoso", label: "Receoso(a) mas disposto(a)" },
+      { value: "vulneravel", label: "Vulnerável e com medo de julgamento" },
+      { value: "aliviado", label: "Aliviado(a) por ter um espaço seguro" },
+      { value: "esperancoso", label: "Esperançoso(a) por mudanças" },
+    ],
+  },
+  {
+    id: "autocuidado",
+    question: "Como você tem cuidado de si mesmo(a) ultimamente?",
+    options: [
+      { value: "bem", label: "Tenho me dedicado ao autocuidado" },
+      { value: "irregular", label: "De forma irregular, quando dá" },
+      { value: "pouco", label: "Pouco, me coloco em último lugar" },
+      { value: "tentando", label: "Estou tentando melhorar nisso" },
+      { value: "nao_sei", label: "Não sei por onde começar" },
+    ],
+  },
+  {
+    id: "expectativa",
+    question: "O que você espera ao conversar com a Lum?",
+    options: [
+      { value: "compreensao", label: "Ser compreendido(a) sem julgamentos" },
+      { value: "orientacao", label: "Receber orientação prática" },
+      { value: "desabafo", label: "Ter um espaço seguro para desabafar" },
+      { value: "clareza", label: "Ganhar clareza sobre minhas questões" },
+      { value: "apoio", label: "Sentir apoio e acolhimento" },
+    ],
+  },
+];
 
 interface OnboardingQuizProps {
   onComplete: (responses: Record<string, string>) => void;
 }
 
 export function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-  const [isTyping, setIsTyping] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState<Record<string, string>>({});
-  const [inputValue, setInputValue] = useState("");
-  const [selectedOption, setSelectedOption] = useState("");
-  const [showInput, setShowInput] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<string>("");
 
-  // Fluxo de mensagens do onboarding
-  const conversationFlow: Message[] = [
-    {
-      id: "welcome",
-      type: "text",
-      content: "Olá! Eu sou a Lum 👋",
-    },
-    {
-      id: "intro",
-      type: "text",
-      content: "Vou te fazer algumas perguntas rápidas para personalizar sua experiência.",
-    },
-    {
-      id: "name_question",
-      type: "input",
-      content: "Como posso te chamar?",
-      inputType: "name",
-    },
-    {
-      id: "greeting",
-      type: "text",
-      content: "", // Será preenchido dinamicamente com o nome
-    },
-    {
-      id: "pronoun_question",
-      type: "question",
-      content: "Como devo me dirigir a você?",
-      options: [
-        { value: "feminino", label: "No feminino (você é única)" },
-        { value: "masculino", label: "No masculino (você é único)" },
-        { value: "neutro", label: "De forma neutra" },
-      ],
-    },
-    {
-      id: "personalizing",
-      type: "text",
-      content: "Agora estamos personalizando o ambiente para você.",
-    },
-    {
-      id: "adapting",
-      type: "text",
-      content: "Vou adaptar a Lum ao seu jeito de pensar e ao momento que você está vivendo.",
-    },
-    {
-      id: "time_info",
-      type: "text",
-      content: "Isso leva menos de 1 minuto e muda totalmente sua experiência.",
-    },
-    {
-      id: "main_feeling",
-      type: "question",
-      content: "O que mais pesa hoje?",
-      options: [
-        { value: "ansiedade", label: "Ansiedade" },
-        { value: "overthinking", label: "Overthinking" },
-        { value: "cansaco", label: "Cansaço" },
-        { value: "inseguranca", label: "Insegurança" },
-        { value: "desanimo", label: "Desânimo" },
-        { value: "raiva", label: "Raiva" },
-      ],
-    },
-    {
-      id: "response_style",
-      type: "question",
-      content: "Você prefere respostas mais diretas ou mais reflexivas?",
-      options: [
-        { value: "diretas", label: "Diretas e práticas" },
-        { value: "reflexivas", label: "Reflexivas e profundas" },
-        { value: "equilibradas", label: "Um equilíbrio entre as duas" },
-      ],
-    },
-    {
-      id: "need_now",
-      type: "question",
-      content: "O que você precisa agora?",
-      options: [
-        { value: "clareza", label: "Clareza mental" },
-        { value: "acolhimento", label: "Acolhimento" },
-        { value: "plano", label: "Um plano prático" },
-      ],
-    },
-    {
-      id: "processing_1",
-      type: "processing",
-      content: "Criando um espaço seguro...",
-    },
-    {
-      id: "processing_2",
-      type: "processing",
-      content: "Organizando seus primeiros insights...",
-    },
-    {
-      id: "processing_3",
-      type: "processing",
-      content: "Preparando sua primeira leitura...",
-    },
-    {
-      id: "final_reading",
-      type: "text",
-      content: "", // Será preenchido dinamicamente com base nas respostas
-    },
-  ];
+  const handleNext = () => {
+    if (!selectedOption) return;
 
-  // Iniciar o fluxo
-  useEffect(() => {
-    if (messages.length === 0) {
-      showNextMessage();
-    }
-  }, []);
-
-  // Mostrar próxima mensagem com efeito de digitação
-  const showNextMessage = () => {
-    if (currentMessageIndex >= conversationFlow.length) {
-      // Finalizar onboarding
-      generateFinalReading();
-      return;
-    }
-
-    setIsTyping(true);
-    
-    // Simular delay de digitação
-    setTimeout(() => {
-      const nextMessage = conversationFlow[currentMessageIndex];
-      
-      // Personalizar mensagem de saudação
-      if (nextMessage.id === "greeting" && responses.name) {
-        nextMessage.content = `Prazer em te conhecer, ${responses.name}! ✨`;
-      }
-
-      setMessages((prev) => [...prev, nextMessage]);
-      setIsTyping(false);
-      
-      // Se for input ou question, mostrar interface de resposta
-      if (nextMessage.type === "input") {
-        setShowInput(true);
-      } else if (nextMessage.type === "question") {
-        setShowInput(true);
-      } else if (nextMessage.type === "processing") {
-        // Auto-avançar mensagens de processamento
-        setTimeout(() => {
-          setCurrentMessageIndex((prev) => prev + 1);
-          showNextMessage();
-        }, 1500);
-      } else {
-        // Auto-avançar mensagens de texto
-        setTimeout(() => {
-          setCurrentMessageIndex((prev) => prev + 1);
-          showNextMessage();
-        }, 1200);
-      }
-    }, 800);
-  };
-
-  // Lidar com resposta de input
-  const handleInputSubmit = () => {
-    if (!inputValue.trim()) return;
-
-    const currentMessage = conversationFlow[currentMessageIndex];
-    
-    if (currentMessage.inputType === "name") {
-      setResponses((prev) => ({ ...prev, name: inputValue }));
-    }
-
-    setInputValue("");
-    setShowInput(false);
-    setCurrentMessageIndex((prev) => prev + 1);
-    showNextMessage();
-  };
-
-  // Lidar com resposta de opção
-  const handleOptionSelect = (value: string) => {
-    const currentMessage = conversationFlow[currentMessageIndex];
-    setResponses((prev) => ({ ...prev, [currentMessage.id]: value }));
-    setSelectedOption("");
-    setShowInput(false);
-    setCurrentMessageIndex((prev) => prev + 1);
-    
-    setTimeout(() => {
-      showNextMessage();
-    }, 300);
-  };
-
-  // Gerar leitura final personalizada
-  const generateFinalReading = () => {
-    const { main_feeling, response_style, need_now, pronoun_question } = responses;
-    
-    let reading = "";
-    const userName = responses.name || "você";
-    
-    // Construir leitura baseada nas respostas
-    if (main_feeling === "ansiedade") {
-      reading = `Pelo que você respondeu, ${userName}, parece que a ansiedade tem ocupado muito espaço na sua mente. `;
-    } else if (main_feeling === "overthinking") {
-      reading = `Pelo que você respondeu, ${userName}, parece que você tem pensado demais sobre as coisas. `;
-    } else if (main_feeling === "cansaco") {
-      reading = `Pelo que você respondeu, ${userName}, parece que você está carregando um peso emocional grande. `;
-    } else if (main_feeling === "inseguranca") {
-      reading = `Pelo que você respondeu, ${userName}, parece que a insegurança tem te impedido de avançar. `;
-    } else if (main_feeling === "desanimo") {
-      reading = `Pelo que você respondeu, ${userName}, parece que você está sem energia para seguir. `;
-    } else {
-      reading = `Pelo que você respondeu, ${userName}, parece que a raiva tem sido uma companheira constante. `;
-    }
-
-    if (need_now === "clareza") {
-      reading += "O padrão que aparece aqui é a necessidade de organizar os pensamentos e ter mais clareza mental. ";
-    } else if (need_now === "acolhimento") {
-      reading += "O padrão que aparece aqui é a necessidade de se sentir compreendido e acolhido. ";
-    } else {
-      reading += "O padrão que aparece aqui é a necessidade de ter um plano concreto para seguir. ";
-    }
-
-    reading += "Se você quiser, a gente pode começar por entender melhor o que está acontecendo e encontrar caminhos juntos.";
-
-    // Adicionar mensagem final
-    const finalMessage: Message = {
-      id: "final_reading",
-      type: "text",
-      content: reading,
+    const newResponses = {
+      ...responses,
+      [questions[currentQuestion].id]: selectedOption,
     };
+    setResponses(newResponses);
 
-    setIsTyping(true);
-    setTimeout(() => {
-      setMessages((prev) => [...prev, finalMessage]);
-      setIsTyping(false);
-      
-      // Aguardar 3 segundos e finalizar
-      setTimeout(() => {
-        onComplete(responses);
-      }, 3000);
-    }, 1000);
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+      setSelectedOption("");
+    } else {
+      onComplete(newResponses);
+    }
   };
 
-  // Scroll automático para última mensagem
-  useEffect(() => {
-    const container = document.getElementById("messages-container");
-    if (container) {
-      container.scrollTop = container.scrollHeight;
+  const handleBack = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+      setSelectedOption(responses[questions[currentQuestion - 1].id] || "");
     }
-  }, [messages, isTyping]);
+  };
 
-  const currentMessage = conversationFlow[currentMessageIndex];
-  const isQuestion = currentMessage?.type === "question";
-  const isInput = currentMessage?.type === "input";
+  const handleStartQuiz = () => {
+    setShowWelcome(false);
+  };
 
-  return (
-    <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
-      {/* Header com logo */}
-      <div className="flex justify-center pt-6 pb-4">
-        <LumLogo className="w-12 h-12" />
-      </div>
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
 
-      {/* Container de mensagens */}
-      <div
-        id="messages-container"
-        className="flex-1 overflow-y-auto px-4 pb-32 pt-4 space-y-4"
-      >
-        {messages.map((message, index) => (
-          <div
-            key={`${message.id}-${index}`}
-            className="animate-[slideUp_0.5s_ease-out] opacity-0"
-            style={{
-              animation: "slideUp 0.5s ease-out forwards",
-              animationDelay: "0.1s",
-            }}
-          >
-            {message.type === "processing" ? (
-              <div className="flex items-center gap-3 text-gray-400 text-sm">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>{message.content}</span>
-              </div>
-            ) : (
-              <div className="bg-[#1a1a1a] rounded-2xl p-4 md:p-5 max-w-2xl">
-                <p className="text-gray-100 text-base md:text-lg leading-relaxed">
-                  {message.content}
-                </p>
-              </div>
-            )}
-          </div>
-        ))}
-
-        {/* Indicador de digitação */}
-        {isTyping && (
-          <div className="flex items-center gap-2 text-gray-400">
-            <div className="flex gap-1">
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0s" }} />
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }} />
+  // Tela de boas-vindas (etapa 0)
+  if (showWelcome) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 dark:from-gray-900 dark:via-[#1a1a1a] dark:to-gray-900 flex items-center justify-center p-4">
+        <div className="w-full max-w-2xl">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-6">
+              <LumLogo className="w-20 h-20" />
             </div>
-          </div>
-        )}
-      </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Responda algumas perguntas rápidas pra Lum te conhecer melhor ✨
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto mb-8">
+              Esse questionário vai te ajudar a refletir sobre você e mostrar padrões da sua vida que às vezes passam despercebidos.
+            </p>
+            
+            {/* Bullets */}
+            <div className="bg-white dark:bg-[#212121] rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-lg">
+              <ul className="text-left space-y-3 text-base text-gray-700 dark:text-gray-300">
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-500 mt-0.5 text-xl">✓</span>
+                  <span>Entender melhor como você reage em situações</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-500 mt-0.5 text-xl">✓</span>
+                  <span>Reconhecer padrões emocionais</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-500 mt-0.5 text-xl">✓</span>
+                  <span>Ter conversas mais personalizadas com a Lum</span>
+                </li>
+              </ul>
+            </div>
 
-      {/* Input/Opções fixas na parte inferior */}
-      {showInput && !isTyping && (
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a] to-transparent p-4 md:p-6">
-          <div className="max-w-2xl mx-auto">
-            {isInput && (
-              <div className="flex gap-2">
-                <Input
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleInputSubmit()}
-                  placeholder="Digite aqui..."
-                  className="flex-1 h-12 md:h-14 bg-[#1a1a1a] border-gray-700 text-gray-100 text-base md:text-lg"
-                  autoFocus
-                />
-                <Button
-                  onClick={handleInputSubmit}
-                  disabled={!inputValue.trim()}
-                  className="h-12 md:h-14 px-6 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </Button>
-              </div>
-            )}
+            {/* Botão de começar */}
+            <Button
+              onClick={handleStartQuiz}
+              className="h-14 px-8 text-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all"
+            >
+              Começar perguntas
+              <ChevronRight className="w-5 h-5 ml-2" />
+            </Button>
 
-            {isQuestion && currentMessage.options && (
-              <div className="space-y-2">
-                {currentMessage.options.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => handleOptionSelect(option.value)}
-                    className="w-full text-left p-4 rounded-xl bg-[#1a1a1a] border border-gray-700 hover:border-purple-500 hover:bg-[#212121] transition-all text-gray-100 text-base md:text-lg"
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            )}
+            {/* Privacy Note */}
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-8">
+              🔒 Suas respostas são privadas e seguras. Ninguém tem acesso ao que você compartilha aqui.
+            </p>
           </div>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      <style jsx global>{`
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
+  // Tela das perguntas (layout limpo)
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 dark:from-gray-900 dark:via-[#1a1a1a] dark:to-gray-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl">
+        {/* Progress Bar */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              Pergunta {currentQuestion + 1} de {questions.length}
+            </span>
+            <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
+              {Math.round(progress)}%
+            </span>
+          </div>
+          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-500 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Question Card */}
+        <div className="bg-white dark:bg-[#212121] rounded-2xl shadow-xl p-6 md:p-8 mb-6">
+          <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+            {questions[currentQuestion].question}
+          </h2>
+
+          <div className="space-y-3">
+            {questions[currentQuestion].options.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => setSelectedOption(option.value)}
+                className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${
+                  selectedOption === option.value
+                    ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20 shadow-md"
+                    : "border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                      selectedOption === option.value
+                        ? "border-purple-500 bg-purple-500"
+                        : "border-gray-300 dark:border-gray-600"
+                    }`}
+                  >
+                    {selectedOption === option.value && (
+                      <div className="w-2 h-2 bg-white rounded-full" />
+                    )}
+                  </div>
+                  <span className="text-gray-900 dark:text-gray-100 font-medium">
+                    {option.label}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex gap-3">
+          {currentQuestion > 0 && (
+            <Button
+              onClick={handleBack}
+              variant="outline"
+              className="flex-1 h-12 text-base"
+            >
+              <ChevronLeft className="w-5 h-5 mr-2" />
+              Voltar
+            </Button>
+          )}
+          <Button
+            onClick={handleNext}
+            disabled={!selectedOption}
+            className={`h-12 text-base bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 ${
+              currentQuestion === 0 ? "flex-1" : "flex-1"
+            }`}
+          >
+            {currentQuestion === questions.length - 1 ? "Finalizar" : "Próxima"}
+            <ChevronRight className="w-5 h-5 ml-2" />
+          </Button>
+        </div>
+
+        {/* Privacy Note */}
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
+          🔒 Suas respostas são privadas e seguras.
+        </p>
+      </div>
     </div>
   );
 }
