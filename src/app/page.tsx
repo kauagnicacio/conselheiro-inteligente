@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ChatInterface } from "./components/ChatInterface";
 import { QuizLibrary } from "./components/QuizLibrary";
 import { ProfileView } from "./components/ProfileView";
+import { ThemeSelector } from "./components/ThemeSelector";
+import { ThemeChats } from "./components/ThemeChats";
 import { useAuth } from "@/hooks/useAuth";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -38,6 +40,12 @@ export default function Home() {
   const [customTabs, setCustomTabs] = useState<CustomTab[]>([]);
   const [displayName, setDisplayName] = useState("");
   const [isClient, setIsClient] = useState(false);
+  
+  // Novos estados para navegação por temas
+  const [currentView, setCurrentView] = useState<"themes" | "chats" | "chat">("themes");
+  const [selectedTheme, setSelectedTheme] = useState<string>("");
+  const [selectedChatId, setSelectedChatId] = useState<string>("");
+  const [themeChatCounts, setThemeChatCounts] = useState<Record<string, number>>({});
 
   // Marcar que estamos no cliente
   useEffect(() => {
@@ -66,6 +74,30 @@ export default function Home() {
       }
     }
   }, [user, isClient]);
+
+  // Carregar contadores de chats por tema
+  useEffect(() => {
+    if (isClient && user) {
+      try {
+        const themes = ["emocoes", "gratidao", "medo", "desejos", "relacionamentos", "trabalho", "crescimento", "bem-estar"];
+        const counts: Record<string, number> = {};
+        
+        themes.forEach((themeId) => {
+          const saved = localStorage.getItem(`lumia-theme-chats-${themeId}-${user.id}`);
+          if (saved) {
+            const chats = JSON.parse(saved);
+            counts[themeId] = chats.length;
+          } else {
+            counts[themeId] = 0;
+          }
+        });
+        
+        setThemeChatCounts(counts);
+      } catch (e) {
+        console.error("Erro ao carregar contadores:", e);
+      }
+    }
+  }, [user, isClient, currentView]);
 
   // Carregar abas customizadas do localStorage APENAS no cliente
   useEffect(() => {
@@ -141,17 +173,43 @@ export default function Home() {
     }
   };
 
+  const handleSelectTheme = (themeId: string) => {
+    setSelectedTheme(themeId);
+    setCurrentView("chats");
+  };
+
+  const handleSelectChat = (chatId: string) => {
+    setSelectedChatId(chatId);
+    setCurrentView("chat");
+  };
+
+  const handleBackToThemes = () => {
+    setCurrentView("themes");
+    setSelectedTheme("");
+    setSelectedChatId("");
+  };
+
+  const handleBackToChats = () => {
+    setCurrentView("chats");
+    setSelectedChatId("");
+  };
+
   const fixedTabs = [
-    { id: "inicio", name: "Início", icon: HomeIcon },
-    { id: "trabalho", name: "Trabalho", icon: WorkIcon },
-    { id: "relacionamento", name: "Relacionamento", icon: RelationshipIcon },
-    { id: "familia", name: "Família", icon: FamilyIcon },
-    { id: "estudos", name: "Estudos", icon: StudyIcon },
-    { id: "pessoal", name: "Pessoal", icon: PersonalIcon },
-    { id: "tomada-decisao", name: "Tomada de decisão", icon: DecisionIcon },
     { id: "quiz", name: "Quiz", icon: QuizIcon },
     { id: "perfil", name: "Perfil", icon: PersonalIcon },
   ];
+
+  // Mapeamento de nomes de temas
+  const themeNames: Record<string, string> = {
+    emocoes: "Emoções",
+    gratidao: "Gratidão",
+    medo: "Medo",
+    desejos: "Desejos",
+    relacionamentos: "Relacionamentos",
+    trabalho: "Trabalho",
+    crescimento: "Crescimento",
+    "bem-estar": "Bem-estar"
+  };
 
   // Mostrar loading enquanto verifica autenticação
   if (loading || !isClient) {
@@ -215,6 +273,7 @@ export default function Home() {
                     key={tab.id}
                     onClick={() => {
                       setActiveTab(tab.id);
+                      setCurrentView("themes");
                       setIsSidebarOpen(false);
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
@@ -229,45 +288,6 @@ export default function Home() {
                 );
               })}
             </div>
-
-            {/* Custom Tabs */}
-            {customTabs.length > 0 && (
-              <div className="mt-6">
-                <h3 className="px-3 mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Minhas Conversas
-                </h3>
-                <div className="space-y-1">
-                  {customTabs.map((tab) => (
-                    <div
-                      key={tab.id}
-                      className={`group flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                        activeTab === tab.id
-                          ? "bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-900/20 text-purple-700 dark:text-purple-300 shadow-sm"
-                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                      }`}
-                    >
-                      <button
-                        onClick={() => {
-                          setActiveTab(tab.id);
-                          setIsSidebarOpen(false);
-                        }}
-                        className="flex-1 text-left truncate"
-                      >
-                        {tab.name}
-                      </button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeleteCustomTab(tab.id)}
-                        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 dark:hover:bg-red-900/20"
-                      >
-                        <X className="w-3 h-3 text-red-600 dark:text-red-400" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </nav>
 
           {/* User Info & Logout */}
@@ -328,7 +348,10 @@ export default function Home() {
           {activeTab === "quiz" ? (
             <QuizLibrary 
               onBack={() => setActiveTab("inicio")}
-              onStartChat={() => setActiveTab("inicio")}
+              onStartChat={() => {
+                setActiveTab("inicio");
+                setCurrentView("themes");
+              }}
               userId={user?.id || ""}
             />
           ) : activeTab === "perfil" ? (
@@ -338,11 +361,36 @@ export default function Home() {
               userEmail={user?.email || ""}
             />
           ) : (
-            <ChatInterface 
-              activeTab={activeTab} 
-              onCreateCustomTab={handleCreateCustomTab}
-              userId={user?.id || ""}
-            />
+            <>
+              {/* Navegação por Temas */}
+              {currentView === "themes" && (
+                <ThemeSelector 
+                  onSelectTheme={handleSelectTheme}
+                  chatCounts={themeChatCounts}
+                />
+              )}
+
+              {/* Lista de Conversas do Tema */}
+              {currentView === "chats" && (
+                <ThemeChats
+                  themeId={selectedTheme}
+                  themeName={themeNames[selectedTheme] || selectedTheme}
+                  userId={user?.id || ""}
+                  onBack={handleBackToThemes}
+                  onSelectChat={handleSelectChat}
+                />
+              )}
+
+              {/* Chat Individual */}
+              {currentView === "chat" && (
+                <ChatInterface 
+                  activeTab={selectedChatId}
+                  onCreateCustomTab={handleCreateCustomTab}
+                  userId={user?.id || ""}
+                  onBack={handleBackToChats}
+                />
+              )}
+            </>
           )}
         </div>
       </main>

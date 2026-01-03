@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Copy, Check, Mic, Image as ImageIcon, X, Shield, Camera, Save, Trash2, MoreVertical } from "lucide-react";
+import { Send, Loader2, Copy, Check, Mic, Image as ImageIcon, X, Shield, Camera, Save, Trash2, MoreVertical, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { TabType } from "../page";
@@ -36,6 +36,7 @@ interface ChatInterfaceProps {
   activeTab: TabType;
   onCreateCustomTab: (tabName: string) => void;
   userId?: string;
+  onBack?: () => void;
 }
 
 const tabGreetings: Record<string, string> = {
@@ -48,7 +49,7 @@ const tabGreetings: Record<string, string> = {
   "tomada-decisao": "Estou aqui para te ajudar a pensar com clareza. Qual decisão está te travando?",
 };
 
-export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInterfaceProps) {
+export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -494,15 +495,27 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId }: ChatInte
       {/* Header with Actions */}
       {messages.length > 0 && (
         <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 flex items-center justify-between">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {activeTab === "inicio" ? "Início" : 
-             activeTab === "trabalho" ? "Trabalho" :
+          <div className="flex items-center gap-3">
+            {onBack && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onBack}
+                className="h-8 w-8"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </Button>
+            )}
+            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+              {activeTab === "inicio" ? "Início" : 
+               activeTab === "trabalho" ? "Trabalho" :
              activeTab === "relacionamento" ? "Relacionamento" :
              activeTab === "familia" ? "Família" :
              activeTab === "estudos" ? "Estudos" :
              activeTab === "pessoal" ? "Pessoal" :
              activeTab === "tomada-decisao" ? "Tomada de decisão" : "Conversa"}
-          </h2>
+            </h2>
+          </div>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
