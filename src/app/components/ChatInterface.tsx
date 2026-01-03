@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Copy, Check, Mic, Image as ImageIcon, X, Shield, Camera, Save, Trash2, MoreVertical, ChevronLeft, Heart, Sparkles, Target, Users, Briefcase, BookOpen, Brain, Smile } from "lucide-react";
+import { Send, Loader2, Copy, Check, Mic, Image as ImageIcon, X, Shield, Camera, Trash2, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { LumAvatar } from "@/components/LumIcons";
@@ -11,15 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Heart, Sparkles, Target, Users, Briefcase, BookOpen, Brain, Smile } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -36,6 +28,7 @@ interface ChatInterfaceProps {
   userId?: string;
   activeTheme: string;
   onThemeChange: (theme: string) => void;
+  onBack?: () => void;
 }
 
 const themes = [
@@ -62,7 +55,7 @@ const themeGreetings: Record<string, string> = {
   "bem-estar": "Como você está cuidando de si mesmo?",
 };
 
-export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeTheme, onThemeChange }: ChatInterfaceProps) {
+export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeTheme, onThemeChange, onBack }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -71,8 +64,6 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
-  const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [newTabName, setNewTabName] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -584,33 +575,6 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
           )}
           
           <div ref={messagesEndRef} />
-        </div>
-      </div>
-
-      {/* Theme Selector - Botões Inferiores */}
-      <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1a1a1a] overflow-x-auto">
-        <div className="max-w-3xl mx-auto px-4 py-3">
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {themes.map((theme) => {
-              const Icon = theme.icon;
-              const isActive = activeTheme === theme.id;
-              
-              return (
-                <button
-                  key={theme.id}
-                  onClick={() => onThemeChange(theme.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                    isActive
-                      ? `bg-gradient-to-r ${theme.color} text-white shadow-md`
-                      : "bg-white dark:bg-[#212121] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700"
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{theme.name}</span>
-                </button>
-              );
-            })}
-          </div>
         </div>
       </div>
 
