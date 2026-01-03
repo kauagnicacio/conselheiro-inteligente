@@ -1,8 +1,8 @@
 "use client";
 
-import { MessageCircle, User, HelpCircle } from "lucide-react";
+import { MessageCircle, User, HelpCircle, Sparkles } from "lucide-react";
 
-export type BottomNavTab = "perfil" | "chat" | "quiz";
+export type BottomNavTab = "perfil" | "chat" | "quiz" | "reflexao";
 
 interface BottomNavigationProps {
   activeTab: BottomNavTab;
@@ -14,6 +14,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
     { id: "perfil" as BottomNavTab, icon: User, label: "Perfil" },
     { id: "chat" as BottomNavTab, icon: MessageCircle, label: "Chat" },
     { id: "quiz" as BottomNavTab, icon: HelpCircle, label: "Quiz" },
+    { id: "reflexao" as BottomNavTab, icon: Sparkles, label: "Reflexão" },
   ];
 
   return (
@@ -30,7 +31,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
                 <button
                   key={tab.id}
                   onClick={() => onTabChange(tab.id)}
-                  className={`flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-all duration-300 ${
+                  className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all duration-300 ${
                     isActive
                       ? "bg-purple-500/20 text-purple-400 shadow-lg scale-105 border border-purple-500/30"
                       : "text-gray-400 hover:bg-gray-800/50 hover:text-gray-300"

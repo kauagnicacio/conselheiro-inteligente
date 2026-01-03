@@ -9,6 +9,7 @@ import { QuizLibrary } from "./components/QuizLibrary";
 import { ProfileView } from "./components/ProfileView";
 import { ThemeSelector } from "./components/ThemeSelector";
 import { ThemeChats } from "./components/ThemeChats";
+import { DailyReflection } from "./components/DailyReflection";
 import { BottomNavigation, BottomNavTab } from "./components/BottomNavigation";
 import { useAuth } from "@/hooks/useAuth";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
@@ -16,7 +17,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { LumLogo } from "@/components/LumIcons";
 import { v4 as uuidv4 } from "uuid";
 
-type ViewType = "chat-list" | "theme-chats" | "chat-active" | "perfil" | "quiz";
+type ViewType = "chat-list" | "theme-chats" | "chat-active" | "perfil" | "quiz" | "reflexao";
 
 const themeNames: Record<string, string> = {
   "espaco-livre": "Espaço Livre",
@@ -103,6 +104,8 @@ export default function Home() {
       setCurrentView("perfil");
     } else if (tab === "quiz") {
       setCurrentView("quiz");
+    } else if (tab === "reflexao") {
+      setCurrentView("reflexao");
     }
   };
 
@@ -165,6 +168,56 @@ export default function Home() {
     setActiveChatId("");
   };
 
+  const handleStartChatFromReflection = (question: string, answer: string) => {
+    // Criar novo chat no tema "Espaço Livre" com contexto da reflexão
+    const themeId = "espaco-livre";
+    const newChatId = `${themeId}-${uuidv4()}`;
+    const newChat = {
+      id: newChatId,
+      name: `Reflexão: ${question.substring(0, 50)}...`,
+      timestamp: new Date(),
+    };
+
+    // Salvar na lista de chats do tema
+    const storageKey = `lumia-theme-chats-${themeId}-${user?.id}`;
+    const existingChats = localStorage.getItem(storageKey);
+    let chats = [];
+    
+    if (existingChats) {
+      try {
+        chats = JSON.parse(existingChats);
+      } catch (e) {
+        chats = [];
+      }
+    }
+    
+    chats.unshift(newChat);
+    localStorage.setItem(storageKey, JSON.stringify(chats));
+
+    // Criar histórico inicial com contexto da reflexão
+    const initialMessages = [
+      {
+        role: "user",
+        content: `Pergunta da reflexão: "${question}"\n\nMinha resposta: ${answer}`,
+        timestamp: new Date(),
+      },
+      {
+        role: "assistant",
+        content: "Conte-me mais sobre isso.",
+        timestamp: new Date(),
+      }
+    ];
+    
+    const historyKey = `lumia-chat-history-${newChatId}-${user?.id}`;
+    localStorage.setItem(historyKey, JSON.stringify(initialMessages));
+
+    // Abrir chat diretamente
+    setActiveTheme(themeId);
+    setActiveChatId(newChatId);
+    setCurrentView("chat-active");
+    setActiveBottomTab("chat");
+  };
+
   if (loading || !isClient) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white dark:bg-[#1a1a1a]">
@@ -206,6 +259,7 @@ export default function Home() {
               {currentView === "chat-active" && "Conversando"}
               {currentView === "perfil" && "Seu perfil"}
               {currentView === "quiz" && "Biblioteca de quizzes"}
+              {currentView === "reflexao" && "Reflexão do dia"}
             </p>
           </div>
         </div>
@@ -257,6 +311,14 @@ export default function Home() {
               setCurrentView("chat-list");
               setActiveBottomTab("chat");
             }}
+            userId={user?.id || ""}
+          />
+        )}
+
+        {currentView === "reflexao" && (
+          <DailyReflection
+            onBack={() => handleBottomNavChange("chat")}
+            onStartChat={handleStartChatFromReflection}
             userId={user?.id || ""}
           />
         )}
