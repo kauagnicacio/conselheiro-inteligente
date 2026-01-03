@@ -39,7 +39,7 @@ const quizzes: Quiz[] = [
     title: "Autoconhecimento",
     description: "Descubra mais sobre você mesmo e seus padrões de comportamento",
     icon: Brain,
-    color: "from-purple-500 to-purple-700",
+    color: "purple",
     questions: [
       {
         id: 1,
@@ -148,7 +148,7 @@ const quizzes: Quiz[] = [
     title: "Inteligência Emocional",
     description: "Avalie sua capacidade de reconhecer e gerenciar emoções",
     icon: Heart,
-    color: "from-pink-500 to-pink-700",
+    color: "pink",
     questions: [
       {
         id: 1,
@@ -257,7 +257,7 @@ const quizzes: Quiz[] = [
     title: "Estilo de Trabalho",
     description: "Entenda como você funciona melhor no ambiente profissional",
     icon: Briefcase,
-    color: "from-blue-500 to-blue-700",
+    color: "yellow",
     questions: [
       {
         id: 1,
@@ -366,7 +366,7 @@ const quizzes: Quiz[] = [
     title: "Padrões de Relacionamento",
     description: "Descubra como você se conecta com outras pessoas",
     icon: Users,
-    color: "from-green-500 to-green-700",
+    color: "green",
     questions: [
       {
         id: 1,
@@ -475,7 +475,7 @@ const quizzes: Quiz[] = [
     title: "Resiliência",
     description: "Descubra como você lida com adversidades e desafios",
     icon: Shield,
-    color: "from-orange-500 to-orange-700",
+    color: "orange",
     questions: [
       {
         id: 1,
@@ -584,7 +584,7 @@ const quizzes: Quiz[] = [
     title: "Criatividade",
     description: "Explore como você pensa e resolve problemas de forma criativa",
     icon: Lightbulb,
-    color: "from-yellow-500 to-yellow-700",
+    color: "cyan",
     questions: [
       {
         id: 1,
@@ -693,7 +693,7 @@ const quizzes: Quiz[] = [
     title: "Liderança",
     description: "Entenda seu estilo de liderança e influência",
     icon: Target,
-    color: "from-indigo-500 to-indigo-700",
+    color: "blue",
     questions: [
       {
         id: 1,
@@ -802,7 +802,7 @@ const quizzes: Quiz[] = [
     title: "Comunicação",
     description: "Descubra seu estilo de comunicação e expressão",
     icon: MessageCircle,
-    color: "from-cyan-500 to-cyan-700",
+    color: "teal",
     questions: [
       {
         id: 1,
@@ -911,7 +911,7 @@ const quizzes: Quiz[] = [
     title: "Propósito de Vida",
     description: "Explore o que dá sentido e direção à sua vida",
     icon: Wind,
-    color: "from-teal-500 to-teal-700",
+    color: "indigo",
     questions: [
       {
         id: 1,
@@ -1020,7 +1020,7 @@ const quizzes: Quiz[] = [
     title: "Gestão de Tempo",
     description: "Entenda como você organiza e prioriza seu tempo",
     icon: TrendingUp,
-    color: "from-red-500 to-red-700",
+    color: "red",
     questions: [
       {
         id: 1,
@@ -1129,7 +1129,7 @@ const quizzes: Quiz[] = [
     title: "Valores Pessoais",
     description: "Identifique o que realmente importa para você",
     icon: Zap,
-    color: "from-violet-500 to-violet-700",
+    color: "violet",
     questions: [
       {
         id: 1,
@@ -1234,6 +1234,65 @@ const quizzes: Quiz[] = [
     ]
   }
 ];
+
+// Mapeamento de cores para classes Tailwind
+const colorClasses: Record<string, { border: string; icon: string; hover: string }> = {
+  purple: {
+    border: "border-purple-500/30",
+    icon: "text-purple-500",
+    hover: "hover:border-purple-500/50 hover:shadow-purple-500/20"
+  },
+  pink: {
+    border: "border-pink-500/30",
+    icon: "text-pink-500",
+    hover: "hover:border-pink-500/50 hover:shadow-pink-500/20"
+  },
+  yellow: {
+    border: "border-yellow-500/30",
+    icon: "text-yellow-500",
+    hover: "hover:border-yellow-500/50 hover:shadow-yellow-500/20"
+  },
+  green: {
+    border: "border-green-500/30",
+    icon: "text-green-500",
+    hover: "hover:border-green-500/50 hover:shadow-green-500/20"
+  },
+  orange: {
+    border: "border-orange-500/30",
+    icon: "text-orange-500",
+    hover: "hover:border-orange-500/50 hover:shadow-orange-500/20"
+  },
+  cyan: {
+    border: "border-cyan-500/30",
+    icon: "text-cyan-500",
+    hover: "hover:border-cyan-500/50 hover:shadow-cyan-500/20"
+  },
+  blue: {
+    border: "border-blue-500/30",
+    icon: "text-blue-500",
+    hover: "hover:border-blue-500/50 hover:shadow-blue-500/20"
+  },
+  teal: {
+    border: "border-teal-500/30",
+    icon: "text-teal-500",
+    hover: "hover:border-teal-500/50 hover:shadow-teal-500/20"
+  },
+  indigo: {
+    border: "border-indigo-500/30",
+    icon: "text-indigo-500",
+    hover: "hover:border-indigo-500/50 hover:shadow-indigo-500/20"
+  },
+  red: {
+    border: "border-red-500/30",
+    icon: "text-red-500",
+    hover: "hover:border-red-500/50 hover:shadow-red-500/20"
+  },
+  violet: {
+    border: "border-violet-500/30",
+    icon: "text-violet-500",
+    hover: "hover:border-violet-500/50 hover:shadow-violet-500/20"
+  }
+};
 
 interface QuizLibraryProps {
   onBack: () => void;
@@ -1492,62 +1551,62 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
   if (showResult && selectedQuiz) {
     const result = generateResult();
     return (
-      <div className="flex flex-col h-full bg-white dark:bg-[#212121]">
-        <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
+      <div className="flex flex-col h-full bg-[#0A0A0A]">
+        <div className="border-b border-gray-800 px-4 sm:px-6 py-4">
           <Button
             variant="ghost"
             onClick={() => {
               setSelectedQuiz(null);
               setShowResult(false);
             }}
-            className="mb-2"
+            className="mb-2 text-gray-400 hover:text-gray-200"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar para biblioteca
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl font-bold text-gray-100">
             {result.title}
           </h2>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           <div className="max-w-2xl mx-auto space-y-6">
-            <Card className="p-6 bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/20 dark:to-gray-800 border-purple-200 dark:border-purple-800">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <Card className="p-6 bg-[#1A1A1A] border-purple-500/30">
+              <h3 className="text-lg font-semibold text-gray-100 mb-4">
                 Suas Características
               </h3>
               <ul className="space-y-2">
                 {result.characteristics.map((char, index) => (
-                  <li key={index} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
-                    <span className="text-purple-600 dark:text-purple-400 mt-1">•</span>
+                  <li key={index} className="flex items-start gap-2 text-gray-300">
+                    <span className="text-purple-400 mt-1">•</span>
                     <span>{char}</span>
                   </li>
                 ))}
               </ul>
             </Card>
 
-            <Card className="p-6 bg-gradient-to-br from-green-50 to-white dark:from-green-900/20 dark:to-gray-800 border-green-200 dark:border-green-800">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <Card className="p-6 bg-[#1A1A1A] border-green-500/30">
+              <h3 className="text-lg font-semibold text-gray-100 mb-4">
                 Seus Pontos Fortes
               </h3>
               <ul className="space-y-2">
                 {result.strengths.map((strength, index) => (
-                  <li key={index} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
-                    <span className="text-green-600 dark:text-green-400 mt-1">✓</span>
+                  <li key={index} className="flex items-start gap-2 text-gray-300">
+                    <span className="text-green-400 mt-1">✓</span>
                     <span>{strength}</span>
                   </li>
                 ))}
               </ul>
             </Card>
 
-            <Card className="p-6 bg-gradient-to-br from-amber-50 to-white dark:from-amber-900/20 dark:to-gray-800 border-amber-200 dark:border-amber-800">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <Card className="p-6 bg-[#1A1A1A] border-amber-500/30">
+              <h3 className="text-lg font-semibold text-gray-100 mb-4">
                 Pontos de Atenção
               </h3>
               <ul className="space-y-2">
                 {result.attentionPoints.map((point, index) => (
-                  <li key={index} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
-                    <span className="text-amber-600 dark:text-amber-400 mt-1">→</span>
+                  <li key={index} className="flex items-start gap-2 text-gray-300">
+                    <span className="text-amber-400 mt-1">→</span>
                     <span>{point}</span>
                   </li>
                 ))}
@@ -1556,7 +1615,7 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
 
             <Button
               onClick={onStartChat}
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
               size="lg"
             >
               <MessageCircle className="w-5 h-5 mr-2" />
@@ -1573,21 +1632,21 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
     const progress = ((currentQuestion + 1) / selectedQuiz.questions.length) * 100;
 
     return (
-      <div className="flex flex-col h-full bg-white dark:bg-[#212121]">
-        <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
+      <div className="flex flex-col h-full bg-[#0A0A0A]">
+        <div className="border-b border-gray-800 px-4 sm:px-6 py-4">
           <Button
             variant="ghost"
             onClick={() => setSelectedQuiz(null)}
-            className="mb-2"
+            className="mb-2 text-gray-400 hover:text-gray-200"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Button>
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+            <h2 className="text-xl font-bold text-gray-100">
               {selectedQuiz.title}
             </h2>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-gray-400">
               {currentQuestion + 1} de {selectedQuiz.questions.length}
             </span>
           </div>
@@ -1597,7 +1656,7 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           <div className="max-w-2xl mx-auto">
             <div className="mb-8">
-              <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+              <h3 className="text-2xl font-semibold text-gray-100 mb-6">
                 {question.question}
               </h3>
               <div className="space-y-3">
@@ -1606,7 +1665,7 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
                     key={index}
                     onClick={() => handleAnswer(index)}
                     variant="outline"
-                    className="w-full justify-start text-left h-auto py-4 px-6 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-700 transition-all"
+                    className="w-full justify-start text-left h-auto py-4 px-6 bg-[#1A1A1A] border-gray-700 hover:bg-[#252525] hover:border-purple-500/50 transition-all text-gray-200"
                   >
                     <span className="text-base">{option.text}</span>
                   </Button>
@@ -1620,16 +1679,16 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#212121]">
-      <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
-        <Button variant="ghost" onClick={onBack} className="mb-2">
+    <div className="flex flex-col h-full bg-[#0A0A0A]">
+      <div className="border-b border-gray-800 px-4 sm:px-6 py-4">
+        <Button variant="ghost" onClick={onBack} className="mb-2 text-gray-400 hover:text-gray-200">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Voltar
         </Button>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h2 className="text-2xl font-bold text-gray-100">
           Biblioteca de Quizzes
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
+        <p className="text-gray-400 mt-1">
           Descubra mais sobre você através de questionários guiados
         </p>
       </div>
@@ -1638,22 +1697,23 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
           {quizzes.map((quiz) => {
             const Icon = quiz.icon;
+            const colors = colorClasses[quiz.color];
             return (
               <Card
                 key={quiz.id}
-                className="p-6 cursor-pointer hover:shadow-lg transition-all hover:scale-[1.02] border-2 hover:border-purple-300 dark:hover:border-purple-700"
+                className={`p-6 cursor-pointer bg-[#1A1A1A] border-2 ${colors.border} ${colors.hover} hover:shadow-lg transition-all hover:scale-[1.02]`}
                 onClick={() => handleSelectQuiz(quiz)}
               >
-                <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${quiz.color} flex items-center justify-center mb-4`}>
-                  <Icon className="w-6 h-6 text-white" />
+                <div className="flex items-center gap-3 mb-4">
+                  <Icon className={`w-6 h-6 ${colors.icon}`} />
+                  <h3 className="text-lg font-semibold text-gray-100">
+                    {quiz.title}
+                  </h3>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  {quiz.title}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-sm text-gray-400 mb-4">
                   {quiz.description}
                 </p>
-                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
+                <div className="flex items-center justify-between text-xs text-gray-500">
                   <span>{quiz.questions.length} perguntas</span>
                   <span>~5 min</span>
                 </div>
