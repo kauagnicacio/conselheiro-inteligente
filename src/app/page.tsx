@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LumLogo } from "@/components/LumIcons";
+import { v4 as uuidv4 } from "uuid";
 
 type ViewType = "chat-list" | "theme-chats" | "chat-active" | "perfil" | "quiz";
 
@@ -23,6 +24,14 @@ const themeNames: Record<string, string> = {
   "familia": "Família",
   "trabalho": "Trabalho",
   "tomada-decisao": "Tomada de decisão"
+};
+
+const themeGreetings: Record<string, string> = {
+  "espaco-livre": "Esse é seu espaço. Me conta o que você está sentindo.",
+  "relacionamento": "Vamos conversar sobre seus relacionamentos? Como você está se sentindo?",
+  "familia": "Como estão as coisas com sua família?",
+  "trabalho": "O que está acontecendo no trabalho?",
+  "tomada-decisao": "Que decisão está te ocupando agora?",
 };
 
 export default function Home() {
@@ -98,8 +107,45 @@ export default function Home() {
   };
 
   const handleSelectTheme = (themeId: string) => {
+    // Criar novo chat automaticamente e abrir direto
+    const newChatId = `${themeId}-${uuidv4()}`;
+    const newChat = {
+      id: newChatId,
+      name: `Conversa em ${themeNames[themeId]}`,
+      timestamp: new Date(),
+    };
+
+    // Salvar na lista de chats do tema
+    const storageKey = `lumia-theme-chats-${themeId}-${user?.id}`;
+    const existingChats = localStorage.getItem(storageKey);
+    let chats = [];
+    
+    if (existingChats) {
+      try {
+        chats = JSON.parse(existingChats);
+      } catch (e) {
+        chats = [];
+      }
+    }
+    
+    chats.unshift(newChat);
+    localStorage.setItem(storageKey, JSON.stringify(chats));
+
+    // Criar histórico inicial com mensagem da Lum
+    const greeting = themeGreetings[themeId] || themeGreetings["espaco-livre"];
+    const initialMessage = {
+      role: "assistant",
+      content: greeting,
+      timestamp: new Date(),
+    };
+    
+    const historyKey = `lumia-chat-history-${newChatId}-${user?.id}`;
+    localStorage.setItem(historyKey, JSON.stringify([initialMessage]));
+
+    // Abrir chat diretamente
     setActiveTheme(themeId);
-    setCurrentView("theme-chats");
+    setActiveChatId(newChatId);
+    setCurrentView("chat-active");
   };
 
   const handleSelectChat = (chatId: string) => {
@@ -145,7 +191,7 @@ export default function Home() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={currentView === "chat-active" ? handleBackToThemeChats : handleBackToThemeList}
+              onClick={currentView === "chat-active" ? handleBackToThemeList : handleBackToThemeList}
               className="h-9 w-9"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -192,7 +238,7 @@ export default function Home() {
             userId={user?.id || ""}
             activeTheme={activeChatId}
             onThemeChange={setActiveChatId}
-            onBack={handleBackToThemeChats}
+            onBack={handleBackToThemeList}
           />
         )}
         

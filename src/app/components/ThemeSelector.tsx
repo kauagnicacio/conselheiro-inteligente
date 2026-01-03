@@ -12,7 +12,6 @@ interface Theme {
   id: string;
   name: string;
   icon: any;
-  gradient: string;
   description: string;
 }
 
@@ -21,35 +20,30 @@ const themes: Theme[] = [
     id: "espaco-livre",
     name: "Espaço Livre",
     icon: MessageCircle,
-    gradient: "from-purple-500 to-purple-600",
     description: "Para conversar sobre qualquer coisa"
   },
   {
     id: "relacionamento",
     name: "Relacionamento",
     icon: Heart,
-    gradient: "from-pink-500 to-rose-600",
     description: "Amor, namoro e conexões afetivas"
   },
   {
     id: "familia",
     name: "Família",
     icon: Users,
-    gradient: "from-emerald-500 to-teal-600",
     description: "Relações familiares e vínculos"
   },
   {
     id: "trabalho",
     name: "Trabalho",
     icon: Briefcase,
-    gradient: "from-blue-500 to-indigo-600",
     description: "Carreira, projetos e vida profissional"
   },
   {
     id: "tomada-decisao",
     name: "Tomada de decisão",
     icon: Target,
-    gradient: "from-amber-500 to-orange-600",
     description: "Escolhas importantes e dilemas"
   }
 ];
@@ -61,7 +55,7 @@ interface ThemeSelectorProps {
 
 export function ThemeSelector({ onSelectTheme, chatCounts }: ThemeSelectorProps) {
   return (
-    <div className="h-full overflow-y-auto bg-gradient-to-br from-purple-50 via-white to-purple-50 dark:from-[#1a1a1a] dark:via-[#212121] dark:to-[#1a1a1a]">
+    <div className="h-full overflow-y-auto bg-gradient-to-br from-gray-50 via-white to-purple-50/30 dark:from-[#1a1a1a] dark:via-[#212121] dark:to-[#1a1a1a]">
       <div className="max-w-6xl mx-auto p-4 md:p-8">
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
@@ -83,11 +77,8 @@ export function ThemeSelector({ onSelectTheme, chatCounts }: ThemeSelectorProps)
               <button
                 key={theme.id}
                 onClick={() => onSelectTheme(theme.id)}
-                className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-purple-500/90 to-purple-600/90 dark:from-purple-600/80 dark:to-purple-700/80"
               >
-                {/* Gradient Background */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${theme.gradient} opacity-90 group-hover:opacity-100 transition-opacity`} />
-                
                 {/* Content */}
                 <div className="relative p-6 flex flex-col items-start text-left min-h-[180px]">
                   {/* Icon */}

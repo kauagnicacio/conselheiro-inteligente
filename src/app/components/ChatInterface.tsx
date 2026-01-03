@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Heart, Sparkles, Target, Users, Briefcase, BookOpen, Brain, Smile } from "lucide-react";
+import { MessageCircle, Heart, Users, Briefcase, Target } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -31,28 +31,20 @@ interface ChatInterfaceProps {
   onBack?: () => void;
 }
 
-const themes = [
-  { id: "geral", name: "Geral", icon: Sparkles, color: "from-purple-500 to-purple-600" },
-  { id: "emocoes", name: "Emoções", icon: Heart, color: "from-pink-500 to-rose-600" },
-  { id: "gratidao", name: "Gratidão", icon: Sparkles, color: "from-amber-500 to-orange-600" },
-  { id: "medo", name: "Medo", icon: Brain, color: "from-indigo-500 to-purple-600" },
-  { id: "desejos", name: "Desejos", icon: Target, color: "from-cyan-500 to-blue-600" },
-  { id: "relacionamentos", name: "Relacionamentos", icon: Users, color: "from-emerald-500 to-teal-600" },
-  { id: "trabalho", name: "Trabalho", icon: Briefcase, color: "from-violet-500 to-purple-600" },
-  { id: "crescimento", name: "Crescimento", icon: BookOpen, color: "from-green-500 to-emerald-600" },
-  { id: "bem-estar", name: "Bem-estar", icon: Smile, color: "from-yellow-500 to-amber-600" },
-];
+const themeIcons: Record<string, any> = {
+  "espaco-livre": MessageCircle,
+  "relacionamento": Heart,
+  "familia": Users,
+  "trabalho": Briefcase,
+  "tomada-decisao": Target,
+};
 
-const themeGreetings: Record<string, string> = {
-  geral: "Esse é seu espaço. Me conta o que você está sentindo.",
-  emocoes: "Como você está se sentindo agora?",
-  gratidao: "O que te trouxe gratidão hoje?",
-  medo: "O que está te preocupando?",
-  desejos: "Quais são seus sonhos e objetivos?",
-  relacionamentos: "O que você quer compartilhar sobre seus relacionamentos?",
-  trabalho: "O que está acontecendo no trabalho?",
-  crescimento: "O que você está aprendendo ultimamente?",
-  "bem-estar": "Como você está cuidando de si mesmo?",
+const themeNames: Record<string, string> = {
+  "espaco-livre": "Espaço Livre",
+  "relacionamento": "Relacionamento",
+  "familia": "Família",
+  "trabalho": "Trabalho",
+  "tomada-decisao": "Tomada de decisão",
 };
 
 export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeTheme, onThemeChange, onBack }: ChatInterfaceProps) {
@@ -73,8 +65,10 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  const greeting = themeGreetings[activeTheme] || themeGreetings.geral;
-  const currentTheme = themes.find(t => t.id === activeTheme) || themes[0];
+  // Extrair o tema do ID do chat (formato: tema-uuid)
+  const themeId = activeTheme.split("-")[0];
+  const ThemeIcon = themeIcons[themeId] || MessageCircle;
+  const themeName = themeNames[themeId] || "Chat";
 
   // Carregar avatar do usuário
   useEffect(() => {
@@ -84,28 +78,12 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
     }
   }, []);
 
-  // Carregar histórico do tema ativo
+  // Carregar histórico do chat ativo
   useEffect(() => {
     const storageKey = userId ? `lumia-chat-history-${activeTheme}-${userId}` : `lumia-chat-history-${activeTheme}`;
     const savedHistory = localStorage.getItem(storageKey);
     
-    if (!savedHistory || savedHistory === "[]") {
-      setIsTyping(true);
-      
-      const typingDelay = 1500 + Math.random() * 1000;
-      
-      const typingTimer = setTimeout(() => {
-        setIsTyping(false);
-        const initialMessage: Message = {
-          role: "assistant",
-          content: greeting,
-          timestamp: new Date(),
-        };
-        setMessages([initialMessage]);
-      }, typingDelay);
-
-      return () => clearTimeout(typingTimer);
-    } else {
+    if (savedHistory) {
       try {
         const parsed = JSON.parse(savedHistory);
         if (parsed.length > 0) {
@@ -120,7 +98,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
         setMessages([]);
       }
     }
-  }, [activeTheme, greeting, userId]);
+  }, [activeTheme, userId]);
 
   // Salvar histórico
   useEffect(() => {
@@ -273,7 +251,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
     try {
       const formData = new FormData();
       formData.append("messages", JSON.stringify([...messages, userMessage]));
-      formData.append("tabContext", activeTheme);
+      formData.append("tabContext", themeId);
       if (userId) {
         formData.append("userId", userId);
       }
@@ -412,17 +390,6 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
       setMessages([]);
       const storageKey = userId ? `lumia-chat-history-${activeTheme}-${userId}` : `lumia-chat-history-${activeTheme}`;
       localStorage.removeItem(storageKey);
-      
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        const initialMessage: Message = {
-          role: "assistant",
-          content: greeting,
-          timestamp: new Date(),
-        };
-        setMessages([initialMessage]);
-      }, 1500);
     }
   };
 
@@ -431,12 +398,12 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
       {/* Header */}
       <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 flex items-center justify-between bg-white dark:bg-[#212121]">
         <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg bg-gradient-to-br ${currentTheme.color}`}>
-            <currentTheme.icon className="w-5 h-5 text-white" />
+          <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700">
+            <ThemeIcon className="w-5 h-5 text-white" />
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              {currentTheme.name}
+              {themeName}
             </h2>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Chat contextualizado
