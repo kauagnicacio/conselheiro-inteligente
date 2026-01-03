@@ -7,45 +7,28 @@ import { Button } from "@/components/ui/button";
 import { ChatInterface } from "./components/ChatInterface";
 import { QuizLibrary } from "./components/QuizLibrary";
 import { ProfileView } from "./components/ProfileView";
-import { ThemeSelector } from "./components/ThemeSelector";
-import { ThemeChats } from "./components/ThemeChats";
 import { useAuth } from "@/hooks/useAuth";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { 
   LumLogo, 
   LumAvatar,
-  HomeIcon,
-  WorkIcon,
-  RelationshipIcon,
-  FamilyIcon,
-  StudyIcon,
-  PersonalIcon,
-  DecisionIcon,
-  QuizIcon
+  QuizIcon,
+  PersonalIcon
 } from "@/components/LumIcons";
 
-export type TabType = "inicio" | "trabalho" | "relacionamento" | "familia" | "estudos" | "pessoal" | "tomada-decisao" | "quiz" | "perfil" | string;
-
-interface CustomTab {
-  id: string;
-  name: string;
-}
+export type TabType = "inicio" | "quiz" | "perfil";
 
 export default function Home() {
   const router = useRouter();
   const { user, loading, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("inicio");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [customTabs, setCustomTabs] = useState<CustomTab[]>([]);
   const [displayName, setDisplayName] = useState("");
   const [isClient, setIsClient] = useState(false);
   
-  // Novos estados para navegação por temas
-  const [currentView, setCurrentView] = useState<"themes" | "chats" | "chat">("themes");
-  const [selectedTheme, setSelectedTheme] = useState<string>("");
-  const [selectedChatId, setSelectedChatId] = useState<string>("");
-  const [themeChatCounts, setThemeChatCounts] = useState<Record<string, number>>({});
+  // Estado para tema/contexto ativo do chat
+  const [activeTheme, setActiveTheme] = useState<string>("geral");
 
   // Marcar que estamos no cliente
   useEffect(() => {
@@ -53,7 +36,6 @@ export default function Home() {
   }, []);
 
   // REGRA SIMPLES: Se não estiver logado, redirecionar para /quiz
-  // Quem chega aqui já é pagante (passou pelo checkout)
   useEffect(() => {
     if (!loading && !user) {
       router.push("/quiz");
@@ -75,141 +57,27 @@ export default function Home() {
     }
   }, [user, isClient]);
 
-  // Carregar contadores de chats por tema
-  useEffect(() => {
-    if (isClient && user) {
-      try {
-        const themes = ["emocoes", "gratidao", "medo", "desejos", "relacionamentos", "trabalho", "crescimento", "bem-estar"];
-        const counts: Record<string, number> = {};
-        
-        themes.forEach((themeId) => {
-          const saved = localStorage.getItem(`lumia-theme-chats-${themeId}-${user.id}`);
-          if (saved) {
-            const chats = JSON.parse(saved);
-            counts[themeId] = chats.length;
-          } else {
-            counts[themeId] = 0;
-          }
-        });
-        
-        setThemeChatCounts(counts);
-      } catch (e) {
-        console.error("Erro ao carregar contadores:", e);
-      }
-    }
-  }, [user, isClient, currentView]);
-
-  // Carregar abas customizadas do localStorage APENAS no cliente
-  useEffect(() => {
-    if (isClient && user) {
-      try {
-        const saved = localStorage.getItem(`lumia-custom-tabs-${user.id}`);
-        if (saved) {
-          setCustomTabs(JSON.parse(saved));
-        }
-      } catch (e) {
-        console.error("Erro ao carregar abas customizadas:", e);
-      }
-    }
-  }, [user, isClient]);
-
-  // Salvar abas customizadas no localStorage APENAS no cliente
-  useEffect(() => {
-    if (isClient && user && customTabs.length > 0) {
-      try {
-        localStorage.setItem(`lumia-custom-tabs-${user.id}`, JSON.stringify(customTabs));
-      } catch (e) {
-        console.error("Erro ao salvar abas customizadas:", e);
-      }
-    }
-  }, [customTabs, user, isClient]);
-
-  const handleCreateCustomTab = (tabName: string) => {
-    const newTab: CustomTab = {
-      id: `custom-${Date.now()}`,
-      name: tabName,
-    };
-    setCustomTabs((prev) => [...prev, newTab]);
-    setActiveTab(newTab.id);
-    setIsSidebarOpen(false);
-  };
-
-  const handleDeleteCustomTab = (tabId: string) => {
-    if (confirm("Tem certeza que deseja excluir esta conversa? Todo o histórico será perdido.")) {
-      setCustomTabs((prev) => prev.filter((tab) => tab.id !== tabId));
-      if (isClient && user) {
-        try {
-          localStorage.removeItem(`lumia-chat-history-${tabId}-${user.id}`);
-        } catch (e) {
-          console.error("Erro ao remover histórico:", e);
-        }
-      }
-      if (activeTab === tabId) {
-        setActiveTab("inicio");
-      }
-    }
-  };
-
   const handleSignOut = async () => {
     try {
-      // Limpar estado local
-      setCustomTabs([]);
       setActiveTab("inicio");
       setDisplayName("");
-      
-      // Executar signOut (limpa sessão Supabase e localStorage)
       await signOut();
       
-      // Forçar redirecionamento completo (recarrega a página)
       if (typeof window !== "undefined") {
         window.location.href = "/quiz";
       }
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
-      // Mesmo com erro, redirecionar
       if (typeof window !== "undefined") {
         window.location.href = "/quiz";
       }
     }
-  };
-
-  const handleSelectTheme = (themeId: string) => {
-    setSelectedTheme(themeId);
-    setCurrentView("chats");
-  };
-
-  const handleSelectChat = (chatId: string) => {
-    setSelectedChatId(chatId);
-    setCurrentView("chat");
-  };
-
-  const handleBackToThemes = () => {
-    setCurrentView("themes");
-    setSelectedTheme("");
-    setSelectedChatId("");
-  };
-
-  const handleBackToChats = () => {
-    setCurrentView("chats");
-    setSelectedChatId("");
   };
 
   const fixedTabs = [
     { id: "quiz", name: "Quiz", icon: QuizIcon },
     { id: "perfil", name: "Perfil", icon: PersonalIcon },
   ];
-
-  // Mapeamento de nomes de temas
-  const themeNames: Record<string, string> = {
-    emocoes: "Emoções",
-    gratidao: "Gratidão",
-    medo: "Medo",
-    desejos: "Desejos",
-    relacionamentos: "Relacionamentos",
-    trabalho: "Trabalho",
-    crescimento: "Crescimento",
-    "bem-estar": "Bem-estar"
-  };
 
   // Mostrar loading enquanto verifica autenticação
   if (loading || !isClient) {
@@ -225,13 +93,11 @@ export default function Home() {
     );
   }
 
-  // Se não estiver logado, não renderizar (o useEffect vai redirecionar)
+  // Se não estiver logado, não renderizar
   if (!user) {
     return null;
   }
 
-  // App principal - ACESSO TOTAL LIBERADO (sem paywall)
-  // Quem chega aqui já pagou e criou conta
   return (
     <div className="flex h-screen bg-white dark:bg-[#1a1a1a] overflow-hidden">
       {/* Sidebar */}
@@ -272,8 +138,7 @@ export default function Home() {
                   <button
                     key={tab.id}
                     onClick={() => {
-                      setActiveTab(tab.id);
-                      setCurrentView("themes");
+                      setActiveTab(tab.id as TabType);
                       setIsSidebarOpen(false);
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
@@ -343,15 +208,12 @@ export default function Home() {
           <ThemeToggle />
         </header>
 
-        {/* Content Area - Navegação interna sem alterar URL */}
+        {/* Content Area */}
         <div className="flex-1 overflow-hidden">
           {activeTab === "quiz" ? (
             <QuizLibrary 
               onBack={() => setActiveTab("inicio")}
-              onStartChat={() => {
-                setActiveTab("inicio");
-                setCurrentView("themes");
-              }}
+              onStartChat={() => setActiveTab("inicio")}
               userId={user?.id || ""}
             />
           ) : activeTab === "perfil" ? (
@@ -361,36 +223,13 @@ export default function Home() {
               userEmail={user?.email || ""}
             />
           ) : (
-            <>
-              {/* Navegação por Temas */}
-              {currentView === "themes" && (
-                <ThemeSelector 
-                  onSelectTheme={handleSelectTheme}
-                  chatCounts={themeChatCounts}
-                />
-              )}
-
-              {/* Lista de Conversas do Tema */}
-              {currentView === "chats" && (
-                <ThemeChats
-                  themeId={selectedTheme}
-                  themeName={themeNames[selectedTheme] || selectedTheme}
-                  userId={user?.id || ""}
-                  onBack={handleBackToThemes}
-                  onSelectChat={handleSelectChat}
-                />
-              )}
-
-              {/* Chat Individual */}
-              {currentView === "chat" && (
-                <ChatInterface 
-                  activeTab={selectedChatId}
-                  onCreateCustomTab={handleCreateCustomTab}
-                  userId={user?.id || ""}
-                  onBack={handleBackToChats}
-                />
-              )}
-            </>
+            <ChatInterface 
+              activeTab={activeTheme}
+              onCreateCustomTab={() => {}}
+              userId={user?.id || ""}
+              activeTheme={activeTheme}
+              onThemeChange={setActiveTheme}
+            />
           )}
         </div>
       </main>

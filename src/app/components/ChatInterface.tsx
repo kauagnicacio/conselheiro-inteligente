@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Copy, Check, Mic, Image as ImageIcon, X, Shield, Camera, Save, Trash2, MoreVertical, ChevronLeft } from "lucide-react";
+import { Send, Loader2, Copy, Check, Mic, Image as ImageIcon, X, Shield, Camera, Save, Trash2, MoreVertical, ChevronLeft, Heart, Sparkles, Target, Users, Briefcase, BookOpen, Brain, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { TabType } from "../page";
 import { LumAvatar } from "@/components/LumIcons";
-// Paywall removido - todos os usuários logados já são pagantes
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,23 +31,38 @@ interface Message {
 }
 
 interface ChatInterfaceProps {
-  activeTab: TabType;
+  activeTab: string;
   onCreateCustomTab: (tabName: string) => void;
   userId?: string;
-  onBack?: () => void;
+  activeTheme: string;
+  onThemeChange: (theme: string) => void;
 }
 
-const tabGreetings: Record<string, string> = {
-  inicio: "Esse é seu espaço. Me conta o que você está sentindo.",
+const themes = [
+  { id: "geral", name: "Geral", icon: Sparkles, color: "from-purple-500 to-purple-600" },
+  { id: "emocoes", name: "Emoções", icon: Heart, color: "from-pink-500 to-rose-600" },
+  { id: "gratidao", name: "Gratidão", icon: Sparkles, color: "from-amber-500 to-orange-600" },
+  { id: "medo", name: "Medo", icon: Brain, color: "from-indigo-500 to-purple-600" },
+  { id: "desejos", name: "Desejos", icon: Target, color: "from-cyan-500 to-blue-600" },
+  { id: "relacionamentos", name: "Relacionamentos", icon: Users, color: "from-emerald-500 to-teal-600" },
+  { id: "trabalho", name: "Trabalho", icon: Briefcase, color: "from-violet-500 to-purple-600" },
+  { id: "crescimento", name: "Crescimento", icon: BookOpen, color: "from-green-500 to-emerald-600" },
+  { id: "bem-estar", name: "Bem-estar", icon: Smile, color: "from-yellow-500 to-amber-600" },
+];
+
+const themeGreetings: Record<string, string> = {
+  geral: "Esse é seu espaço. Me conta o que você está sentindo.",
+  emocoes: "Como você está se sentindo agora?",
+  gratidao: "O que te trouxe gratidão hoje?",
+  medo: "O que está te preocupando?",
+  desejos: "Quais são seus sonhos e objetivos?",
+  relacionamentos: "O que você quer compartilhar sobre seus relacionamentos?",
   trabalho: "O que está acontecendo no trabalho?",
-  relacionamento: "O que você quer compartilhar sobre seus relacionamentos?",
-  familia: "O que está na sua cabeça sobre sua família?",
-  estudos: "Como posso te ajudar com os estudos?",
-  pessoal: "Esse é seu espaço pessoal. O que você quer conversar?",
-  "tomada-decisao": "Estou aqui para te ajudar a pensar com clareza. Qual decisão está te travando?",
+  crescimento: "O que você está aprendendo ultimamente?",
+  "bem-estar": "Como você está cuidando de si mesmo?",
 };
 
-export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: ChatInterfaceProps) {
+export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeTheme, onThemeChange }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +74,6 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [newTabName, setNewTabName] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  // Paywall removido - todos os usuários logados já são pagantes
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -70,11 +82,8 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  // Paywall removido - todos os usuários logados já são pagantes
-
-  const greeting = tabGreetings[activeTab] || tabGreetings.inicio;
-  const isFixedTab = ["trabalho", "relacionamento", "familia", "estudos", "pessoal", "tomada-decisao"].includes(activeTab);
-  const isInicio = activeTab === "inicio";
+  const greeting = themeGreetings[activeTheme] || themeGreetings.geral;
+  const currentTheme = themes.find(t => t.id === activeTheme) || themes[0];
 
   // Carregar avatar do usuário
   useEffect(() => {
@@ -84,30 +93,9 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
     }
   }, []);
 
-  // Mostrar mensagem inicial da Lum quando não há histórico
+  // Carregar histórico do tema ativo
   useEffect(() => {
-    // Para "Início", NUNCA carregar histórico - sempre começar novo
-    if (isInicio) {
-      setMessages([]);
-      setIsTyping(true);
-      
-      const typingDelay = 1500 + Math.random() * 1000;
-      
-      const typingTimer = setTimeout(() => {
-        setIsTyping(false);
-        const initialMessage: Message = {
-          role: "assistant",
-          content: greeting,
-          timestamp: new Date(),
-        };
-        setMessages([initialMessage]);
-      }, typingDelay);
-
-      return () => clearTimeout(typingTimer);
-    }
-    
-    // Para temas fixos, carregar histórico normalmente
-    const storageKey = userId ? `lumia-chat-history-${activeTab}-${userId}` : `lumia-chat-history-${activeTab}`;
+    const storageKey = userId ? `lumia-chat-history-${activeTheme}-${userId}` : `lumia-chat-history-${activeTheme}`;
     const savedHistory = localStorage.getItem(storageKey);
     
     if (!savedHistory || savedHistory === "[]") {
@@ -141,15 +129,15 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
         setMessages([]);
       }
     }
-  }, [activeTab, greeting, isInicio, userId]);
+  }, [activeTheme, greeting, userId]);
 
-  // Salvar histórico APENAS para temas fixos (não para "Início")
+  // Salvar histórico
   useEffect(() => {
-    if (messages.length > 0 && !isInicio && userId) {
-      const storageKey = `lumia-chat-history-${activeTab}-${userId}`;
+    if (messages.length > 0 && userId) {
+      const storageKey = `lumia-chat-history-${activeTheme}-${userId}`;
       localStorage.setItem(storageKey, JSON.stringify(messages));
     }
-  }, [messages, activeTab, isInicio, userId]);
+  }, [messages, activeTheme, userId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -157,7 +145,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
 
   useEffect(() => {
     textareaRef.current?.focus();
-  }, [activeTab]);
+  }, [activeTheme]);
 
   const handleCopy = async (content: string, index: number) => {
     try {
@@ -262,8 +250,6 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
   const handleSend = async () => {
     if ((!input.trim() && !selectedFile) || isLoading) return;
 
-    // Paywall removido - todos os usuários logados já são pagantes
-
     let messageContent = input.trim();
     let messageType: "text" | "audio" | "image" = "text";
     let mediaUrl: string | undefined;
@@ -291,14 +277,12 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
     setInput("");
     handleRemoveFile();
     setIsLoading(true);
-    
-    // Mostrar indicador de digitação IMEDIATAMENTE
     setIsTyping(true);
 
     try {
       const formData = new FormData();
       formData.append("messages", JSON.stringify([...messages, userMessage]));
-      formData.append("tabContext", activeTab);
+      formData.append("tabContext", activeTheme);
       if (userId) {
         formData.append("userId", userId);
       }
@@ -308,7 +292,6 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
         formData.append("fileType", messageType);
       }
 
-      // Fazer requisição
       const response = await fetch("/api/chat", {
         method: "POST",
         body: formData,
@@ -318,11 +301,9 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
         throw new Error("Erro na resposta da API");
       }
 
-      // Verificar se é streaming ou JSON
       const contentType = response.headers.get("content-type");
       
       if (contentType?.includes("text/event-stream")) {
-        // Processar streaming
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
         
@@ -330,14 +311,11 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
           throw new Error("Não foi possível ler o stream");
         }
 
-        // Delay natural para simular "pensamento" (1-2 segundos)
         const naturalDelay = 1000 + Math.random() * 1000;
         await new Promise(resolve => setTimeout(resolve, naturalDelay));
 
-        // Remover indicador de digitação
         setIsTyping(false);
 
-        // Criar mensagem vazia que será preenchida gradualmente
         const assistantMessage: Message = {
           role: "assistant",
           content: "",
@@ -363,7 +341,6 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
               const data = line.slice(6);
               
               if (data === "[DONE]") {
-                // Finalizar streaming
                 setMessages((prev) => {
                   const newMessages = [...prev];
                   if (newMessages[messageIndex]) {
@@ -382,7 +359,6 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
                 if (parsed.content) {
                   fullContent += parsed.content;
                   
-                  // Atualizar mensagem com novo conteúdo
                   setMessages((prev) => {
                     const newMessages = [...prev];
                     if (newMessages[messageIndex]) {
@@ -401,14 +377,11 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
           }
         }
       } else {
-        // Processar resposta JSON (fallback ou limite atingido)
         const data = await response.json();
 
-        // Delay natural para simular "pensamento"
         const naturalDelay = 1000 + Math.random() * 1000;
         await new Promise(resolve => setTimeout(resolve, naturalDelay));
 
-        // Remover indicador de digitação
         setIsTyping(false);
 
         const assistantMessage: Message = {
@@ -425,7 +398,6 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
       
       setIsTyping(false);
       
-      // Garantir que SEMPRE haja uma resposta, mesmo em caso de erro
       const errorMessage: Message = {
         role: "assistant",
         content: "Tive um problema agora, mas já estou aqui de novo. Pode tentar mais uma vez?",
@@ -444,39 +416,12 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
     }
   };
 
-  const handleSaveConversation = () => {
-    if (newTabName.trim() && isInicio) {
-      // Salvar histórico do Início como uma nova aba customizada
-      const newTabId = `custom-${Date.now()}`;
-      const storageKey = userId ? `lumia-chat-history-${newTabId}-${userId}` : `lumia-chat-history-${newTabId}`;
-      localStorage.setItem(storageKey, JSON.stringify(messages));
-      
-      onCreateCustomTab(newTabName.trim());
-      setShowSaveDialog(false);
-      setNewTabName("");
-      
-      // Limpar o Início após salvar
-      setMessages([]);
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        const initialMessage: Message = {
-          role: "assistant",
-          content: greeting,
-          timestamp: new Date(),
-        };
-        setMessages([initialMessage]);
-      }, 1500);
-    }
-  };
-
   const handleClearHistory = () => {
     if (confirm("Tem certeza que deseja limpar todo o histórico desta conversa? Esta ação não pode ser desfeita.")) {
       setMessages([]);
-      const storageKey = userId ? `lumia-chat-history-${activeTab}-${userId}` : `lumia-chat-history-${activeTab}`;
+      const storageKey = userId ? `lumia-chat-history-${activeTheme}-${userId}` : `lumia-chat-history-${activeTheme}`;
       localStorage.removeItem(storageKey);
       
-      // Mostrar mensagem inicial novamente
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
@@ -492,54 +437,36 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-[#212121]">
-      {/* Header with Actions */}
-      {messages.length > 0 && (
-        <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {onBack && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onBack}
-                className="h-8 w-8"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </Button>
-            )}
-            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              {activeTab === "inicio" ? "Início" : 
-               activeTab === "trabalho" ? "Trabalho" :
-             activeTab === "relacionamento" ? "Relacionamento" :
-             activeTab === "familia" ? "Família" :
-             activeTab === "estudos" ? "Estudos" :
-             activeTab === "pessoal" ? "Pessoal" :
-             activeTab === "tomada-decisao" ? "Tomada de decisão" : "Conversa"}
-            </h2>
+      {/* Header */}
+      <div className="border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 flex items-center justify-between bg-white dark:bg-[#212121]">
+        <div className="flex items-center gap-3">
+          <div className={`p-2 rounded-lg bg-gradient-to-br ${currentTheme.color}`}>
+            <currentTheme.icon className="w-5 h-5 text-white" />
           </div>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreVertical className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {isInicio && messages.length > 1 && (
-                <DropdownMenuItem onClick={() => setShowSaveDialog(true)}>
-                  <Save className="w-4 h-4 mr-2" />
-                  Salvar conversa
-                </DropdownMenuItem>
-              )}
-              {isFixedTab && (
-                <DropdownMenuItem onClick={handleClearHistory} className="text-red-600 dark:text-red-400">
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Limpar histórico
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              {currentTheme.name}
+            </h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Chat contextualizado
+            </p>
+          </div>
         </div>
-      )}
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <MoreVertical className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleClearHistory} className="text-red-600 dark:text-red-400">
+              <Trash2 className="w-4 h-4 mr-2" />
+              Limpar histórico
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
@@ -660,6 +587,33 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
         </div>
       </div>
 
+      {/* Theme Selector - Botões Inferiores */}
+      <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1a1a1a] overflow-x-auto">
+        <div className="max-w-3xl mx-auto px-4 py-3">
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {themes.map((theme) => {
+              const Icon = theme.icon;
+              const isActive = activeTheme === theme.id;
+              
+              return (
+                <button
+                  key={theme.id}
+                  onClick={() => onThemeChange(theme.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                    isActive
+                      ? `bg-gradient-to-r ${theme.color} text-white shadow-md`
+                      : "bg-white dark:bg-[#212121] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{theme.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       {/* Privacy Message */}
       <div className="border-t border-gray-200 dark:border-gray-700 bg-purple-50/30 dark:bg-purple-900/10">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-2">
@@ -773,36 +727,6 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, onBack }: 
           </div>
         </div>
       </div>
-
-      {/* Save Conversation Dialog */}
-      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Salvar conversa</DialogTitle>
-            <DialogDescription>
-              Dê um nome para esta conversa. Ela aparecerá no menu como uma nova aba.
-            </DialogDescription>
-          </DialogHeader>
-          <Input
-            value={newTabName}
-            onChange={(e) => setNewTabName(e.target.value)}
-            placeholder="Ex: Minha decisão importante"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSaveConversation();
-              }
-            }}
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleSaveConversation} disabled={!newTabName.trim()}>
-              Salvar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
