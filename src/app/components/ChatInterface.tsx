@@ -31,20 +31,32 @@ interface ChatInterfaceProps {
   onBack?: () => void;
 }
 
-const themeIcons: Record<string, any> = {
-  "espaco-livre": MessageCircle,
-  "relacionamento": Heart,
-  "familia": Users,
-  "trabalho": Briefcase,
-  "tomada-decisao": Target,
-};
-
-const themeNames: Record<string, string> = {
-  "espaco-livre": "Espaço Livre",
-  "relacionamento": "Relacionamento",
-  "familia": "Família",
-  "trabalho": "Trabalho",
-  "tomada-decisao": "Tomada de decisão",
+const themeConfig: Record<string, { icon: any; name: string; color: string }> = {
+  "espaco-livre": {
+    icon: MessageCircle,
+    name: "Espaço Livre",
+    color: "text-blue-400"
+  },
+  "relacionamento": {
+    icon: Heart,
+    name: "Relacionamento",
+    color: "text-pink-400"
+  },
+  "familia": {
+    icon: Users,
+    name: "Família",
+    color: "text-emerald-400"
+  },
+  "trabalho": {
+    icon: Briefcase,
+    name: "Trabalho",
+    color: "text-amber-400"
+  },
+  "tomada-decisao": {
+    icon: Target,
+    name: "Tomada de decisão",
+    color: "text-purple-400"
+  }
 };
 
 export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeTheme, onThemeChange, onBack }: ChatInterfaceProps) {
@@ -67,8 +79,14 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
 
   // Extrair o tema do ID do chat (formato: tema-uuid)
   const themeId = activeTheme.split("-")[0];
-  const ThemeIcon = themeIcons[themeId] || MessageCircle;
-  const themeName = themeNames[themeId] || "Chat";
+  const currentTheme = themeConfig[themeId] || {
+    icon: MessageCircle,
+    name: "Chat",
+    color: "text-purple-400"
+  };
+  const ThemeIcon = currentTheme.icon;
+  const themeName = currentTheme.name;
+  const themeColor = currentTheme.color;
 
   // Carregar avatar do usuário
   useEffect(() => {
@@ -399,7 +417,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
       <div className="border-b border-gray-800 px-4 sm:px-6 py-3 flex items-center justify-between bg-[#212121]">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-gray-800/50">
-            <ThemeIcon className="w-5 h-5 text-purple-400" />
+            <ThemeIcon className={`w-5 h-5 ${themeColor}`} />
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-100">
