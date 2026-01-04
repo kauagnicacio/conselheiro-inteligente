@@ -1296,7 +1296,7 @@ const colorClasses: Record<string, { border: string; icon: string; hover: string
 
 interface QuizLibraryProps {
   onBack: () => void;
-  onStartChat: () => void;
+  onStartChat: (question: string, answer: string) => void;
   userId?: string;
 }
 
@@ -1548,6 +1548,27 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
     return results[selectedQuiz.id] || results.autoconhecimento;
   };
 
+  // Gerar resumo contextual do quiz para o chat
+  const generateQuizSummary = (): string => {
+    if (!selectedQuiz) return "";
+
+    const result = generateResult();
+    const answeredQuestions = selectedQuiz.questions.map((q, index) => {
+      const selectedOption = q.options[answers[index]];
+      return `${q.question}\nSua resposta: ${selectedOption.text}`;
+    });
+
+    return `**Quiz: ${selectedQuiz.title}**\n\n${result.title}\n\n**Suas respostas:**\n\n${answeredQuestions.slice(0, 3).join('\n\n')}\n\n... e mais ${answeredQuestions.length - 3} respostas.`;
+  };
+
+  const handleStartConversation = () => {
+    const summary = generateQuizSummary();
+    const lumMessage = "Vi suas respostas e acho importante a gente conversar sobre isso. Me conta um pouco mais sobre o que você descobriu sobre si mesmo nesse quiz...";
+    
+    // Passar o resumo como "pergunta" e a mensagem da Lum como "resposta"
+    onStartChat(summary, lumMessage);
+  };
+
   if (showResult && selectedQuiz) {
     const result = generateResult();
     return (
@@ -1614,12 +1635,12 @@ export function QuizLibrary({ onBack, onStartChat, userId }: QuizLibraryProps) {
             </Card>
 
             <Button
-              onClick={onStartChat}
+              onClick={handleStartConversation}
               className="w-full bg-purple-600 hover:bg-purple-700 text-white"
               size="lg"
             >
               <MessageCircle className="w-5 h-5 mr-2" />
-              Vamos conversar sobre isso?
+              Vamos conversar sobre isso
             </Button>
           </div>
         </div>
