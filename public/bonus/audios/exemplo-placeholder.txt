@@ -1,0 +1,14 @@
+Para ativar os áudios guiados, adicione os arquivos MP3 nesta pasta:
+
+- 01-acalmar-agora.mp3
+- 02-mente-acelerada.mp3
+- 03-antes-de-dormir.mp3
+- 04-acordei-ansioso.mp3
+- 05-quando-estiver-triste.mp3
+- 06-raiva-limite.mp3
+- 07-autocobranca.mp3
+- 08-culpa-reparo-ou-perdao.mp3
+- 09-vergonha-acolhimento.mp3
+- 10-confusao-clareza.mp3
+
+Os botões Play/Pause já estão configurados para tocar esses arquivos.

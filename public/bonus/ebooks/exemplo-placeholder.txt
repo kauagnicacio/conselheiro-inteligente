@@ -1,0 +1,8 @@
+Para ativar os ebooks, adicione os arquivos PDF nesta pasta:
+
+- ebook-01-chat.pdf
+- ebook-02-100-perguntas.pdf
+- ebook-03-minha-jornada.pdf
+- ebook-04-7-emocoes.pdf
+
+Os botões "Abrir PDF" já estão configurados para abrir esses arquivos.

@@ -16,15 +16,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 
 import { LumLogo } from "@/components/LumIcons";
-import { MessageCircle, BookOpen, Sparkles, Map, Heart, Home } from "lucide-react";
+import { MessageCircle, BookOpen, Sparkles, Map, Heart, Home, Library } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { WeekCalendar } from "../components/WeekCalendar";
 import { DailySteps } from "../components/DailySteps";
 import { WeeklySummary } from "../components/WeeklySummary";
 import { InicioView } from "../components/InicioView";
+import { BibliotecaView } from "../components/BibliotecaView";
 
-type ViewType = "inicio" | "chat-list" | "theme-chats" | "chat-active" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes";
-type SidebarTab = "inicio" | "chat" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes";
+type ViewType = "inicio" | "chat-list" | "theme-chats" | "chat-active" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca";
+type SidebarTab = "inicio" | "chat" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca";
 
 const themeNames: Record<string, string> = {
   "espaco-livre": "Espaço Livre",
@@ -296,7 +297,7 @@ export default function HomePage() {
     const navigationFn = () => {
       setActiveSidebarTab(tab);
       setIsSidebarOpen(false);
-      
+
       if (tab === "inicio") {
         setCurrentView("inicio");
       } else if (tab === "chat") {
@@ -312,6 +313,8 @@ export default function HomePage() {
         setShowWeeklySummary(false);
       } else if (tab === "emocoes") {
         setCurrentView("emocoes");
+      } else if (tab === "biblioteca") {
+        setCurrentView("biblioteca");
       }
     };
 
@@ -566,7 +569,7 @@ export default function HomePage() {
   };
 
   // Handler para navegação da aba Início
-  const handleInicioNavigate = (destination: "chat" | "quiz" | "reflexao" | "jornada" | "emocoes") => {
+  const handleInicioNavigate = (destination: "chat" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca") => {
     handleSidebarTabChange(destination);
   };
 
@@ -723,6 +726,18 @@ export default function HomePage() {
             <Heart className="w-5 h-5" />
             <span className="font-medium">As 7 Emoções</span>
           </button>
+
+          <button
+            onClick={() => handleSidebarTabChange("biblioteca")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+              activeSidebarTab === "biblioteca"
+                ? "bg-purple-500/10 text-purple-500"
+                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+            }`}
+          >
+            <Library className="w-5 h-5" />
+            <span className="font-medium">Meu Material</span>
+          </button>
         </nav>
 
         {/* User Area - Parte Inferior */}
@@ -811,6 +826,7 @@ export default function HomePage() {
                 {currentView === "reflexao" && "Reflexão do Dia"}
                 {currentView === "jornada" && (showWeeklySummary ? "Seu Mapa da Semana" : "Minha Jornada")}
                 {currentView === "emocoes" && "As 7 Emoções"}
+                {currentView === "biblioteca" && "Meu Material"}
               </h1>
             </div>
           </div>
@@ -916,7 +932,7 @@ export default function HomePage() {
                 // Criar novo chat no tema "Espaço Livre" com mensagem inicial da Lum
                 const themeId = "espaco-livre";
                 const newChatId = `${themeId}-${uuidv4()}`;
-                
+
                 // Criar histórico inicial com mensagem da Lum
                 const initialMessages = [
                   {
@@ -925,7 +941,7 @@ export default function HomePage() {
                     timestamp: new Date(),
                   }
                 ];
-                
+
                 const historyKey = `lumia-chat-history-${newChatId}-${user?.id}`;
                 localStorage.setItem(historyKey, JSON.stringify(initialMessages));
 
@@ -936,6 +952,10 @@ export default function HomePage() {
                 setActiveSidebarTab("chat");
               }}
             />
+          )}
+
+          {currentView === "biblioteca" && (
+            <BibliotecaView userId={user?.id || ""} />
           )}
         </main>
       </div>
