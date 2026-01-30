@@ -12,6 +12,7 @@ import { DailyReflection } from "../components/DailyReflection";
 import { EmocoesView } from "../components/EmocoesView";
 import { CheckoutModal } from "@/components/CheckoutModal";
 import { LumLogo } from "@/components/LumIcons";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { MessageCircle, BookOpen, Sparkles, Map, Heart, Home, Library } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { WeekCalendar } from "../components/WeekCalendar";
@@ -356,8 +357,8 @@ export default function TestePage() {
 
       {/* Main Content */}
       <div className="flex flex-col flex-1">
-        {/* Header */}
-        <header className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#212121]">
+        {/* Header - Fixo no topo */}
+        <header className="sticky top-0 z-30 flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#212121]">
           <div className="flex items-center gap-3">
             {/* Botão Hambúrguer */}
             <Button
@@ -396,10 +397,15 @@ export default function TestePage() {
               </h1>
             </div>
           </div>
+
+          {/* Ícone do tema no lado direito */}
+          <div className="flex items-center">
+            <ThemeToggle />
+          </div>
         </header>
 
-        {/* Content Area */}
-        <main className="flex-1 overflow-hidden">
+        {/* Content Area - Conteúdo rola por baixo do header */}
+        <main className="flex-1 overflow-y-auto">
           {currentView === "inicio" && (
             <InicioView onNavigate={handleInicioNavigate} isDemo={true} onDemoAction={openCheckoutModal} />
           )}

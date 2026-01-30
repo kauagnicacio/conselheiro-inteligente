@@ -14,6 +14,7 @@ import { UnsavedChatAlert } from "../components/UnsavedChatAlert";
 import { EmocoesView } from "../components/EmocoesView";
 import { useAuth } from "@/hooks/useAuth";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 import { LumLogo } from "@/components/LumIcons";
 import { MessageCircle, BookOpen, Sparkles, Map, Heart, Home, Library } from "lucide-react";
@@ -790,8 +791,8 @@ export default function HomePage() {
 
       {/* Main Content */}
       <div className="flex flex-col flex-1">
-        {/* Header */}
-        <header className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#212121]">
+        {/* Header - Fixo no topo */}
+        <header className="sticky top-0 z-30 flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#212121]">
           <div className="flex items-center gap-3">
             {/* Botão Hambúrguer */}
             <Button
@@ -831,10 +832,14 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* Ícone do tema no lado direito */}
+          <div className="flex items-center">
+            <ThemeToggle />
+          </div>
         </header>
 
-        {/* Content Area */}
-        <main className="flex-1 overflow-hidden">
+        {/* Content Area - Conteúdo rola por baixo do header */}
+        <main className="flex-1 overflow-y-auto">
           {currentView === "inicio" && (
             <InicioView onNavigate={handleInicioNavigate} />
           )}
