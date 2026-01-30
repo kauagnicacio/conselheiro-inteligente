@@ -62,11 +62,19 @@ Evite: Frases genéricas, clichês de autoajuda, tom professoral.
 Análise:`;
 
   try {
+    // Verificar se a chave da OpenAI está disponível
+    const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+
+    if (!apiKey) {
+      console.warn('OpenAI API key não configurada - usando análise básica');
+      return generateBasicAnalysis(daysWithData);
+    }
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         model: 'gpt-4o',
@@ -86,14 +94,15 @@ Análise:`;
     });
 
     if (!response.ok) {
-      throw new Error('Erro ao gerar análise');
+      console.warn('Erro na resposta da OpenAI - usando análise básica');
+      return generateBasicAnalysis(daysWithData);
     }
 
     const data = await response.json();
     return data.choices[0].message.content.trim();
   } catch (error) {
-    console.error('Erro ao gerar análise:', error);
-    
+    console.warn('Erro ao gerar análise com IA - usando análise básica:', error);
+
     // Fallback: análise básica sem IA
     return generateBasicAnalysis(daysWithData);
   }

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
+// Usar a chave da OpenAI se disponível, caso contrário fallback gracioso
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-});
+}) : null;
 
 interface Message {
   role: "user" | "assistant";
@@ -472,10 +473,10 @@ function generateMemoryContext(messages: Message[], conversationCount: number): 
 export async function POST(request: NextRequest) {
   try {
     // Verificar se a API key está configurada
-    if (!process.env.OPENAI_API_KEY) {
-      console.error("OPENAI_API_KEY não configurada");
-      return NextResponse.json({ 
-        message: "Entendi o que você disse. Deixa eu pensar melhor sobre isso... O que mais você quer me contar?" 
+    if (!openai || !process.env.OPENAI_API_KEY) {
+      console.error("OPENAI_API_KEY não configurada - usando fallback");
+      return NextResponse.json({
+        message: "Entendi o que você disse. Deixa eu pensar melhor sobre isso... O que mais você quer me contar?"
       });
     }
 
