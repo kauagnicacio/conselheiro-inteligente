@@ -17,16 +17,17 @@ import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 import { LumLogo } from "@/components/LumIcons";
-import { MessageCircle, BookOpen, Sparkles, Map, Heart, Home, Library } from "lucide-react";
+import { MessageCircle, BookOpen, Sparkles, Map, Heart, Home, Library, Users } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { WeekCalendar } from "../components/WeekCalendar";
 import { DailySteps } from "../components/DailySteps";
 import { WeeklySummary } from "../components/WeeklySummary";
 import { InicioView } from "../components/InicioView";
 import { BibliotecaView } from "../components/BibliotecaView";
+import { PsicologosView } from "../components/PsicologosView";
 
-type ViewType = "inicio" | "chat-list" | "theme-chats" | "chat-active" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca";
-type SidebarTab = "inicio" | "chat" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca";
+type ViewType = "inicio" | "chat-list" | "theme-chats" | "chat-active" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca" | "psicologos";
+type SidebarTab = "inicio" | "chat" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca" | "psicologos";
 
 const themeNames: Record<string, string> = {
   "espaco-livre": "Espaço Livre",
@@ -316,6 +317,8 @@ export default function HomePage() {
         setCurrentView("emocoes");
       } else if (tab === "biblioteca") {
         setCurrentView("biblioteca");
+      } else if (tab === "psicologos") {
+        setCurrentView("psicologos");
       }
     };
 
@@ -570,7 +573,7 @@ export default function HomePage() {
   };
 
   // Handler para navegação da aba Início
-  const handleInicioNavigate = (destination: "chat" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca") => {
+  const handleInicioNavigate = (destination: "chat" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca" | "psicologos") => {
     handleSidebarTabChange(destination);
   };
 
@@ -739,6 +742,18 @@ export default function HomePage() {
             <Library className="w-5 h-5" />
             <span className="font-medium">Meu Material</span>
           </button>
+
+          <button
+            onClick={() => handleSidebarTabChange("psicologos")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+              activeSidebarTab === "psicologos"
+                ? "bg-purple-500/10 text-purple-500"
+                : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+            }`}
+          >
+            <Users className="w-5 h-5" />
+            <span className="font-medium">Psicólogos</span>
+          </button>
         </nav>
 
         {/* User Area - Parte Inferior */}
@@ -828,6 +843,7 @@ export default function HomePage() {
                 {currentView === "jornada" && (showWeeklySummary ? "Seu Mapa da Semana" : "Minha Jornada")}
                 {currentView === "emocoes" && "As 7 Emoções"}
                 {currentView === "biblioteca" && "Meu Material"}
+                {currentView === "psicologos" && "Psicólogos"}
               </h1>
             </div>
           </div>
@@ -961,6 +977,10 @@ export default function HomePage() {
 
           {currentView === "biblioteca" && (
             <BibliotecaView userId={user?.id || ""} />
+          )}
+
+          {currentView === "psicologos" && (
+            <PsicologosView userId={user?.id || ""} />
           )}
         </main>
       </div>
