@@ -1,9 +1,9 @@
 "use client";
 
-import { MessageCircle, Brain, Pen, Sprout, Heart } from "lucide-react";
+import { MessageCircle, Brain, Pen, Sprout, Heart, BookOpen, Users } from "lucide-react";
 
 interface InicioViewProps {
-  onNavigate: (destination: "chat" | "quiz" | "reflexao" | "jornada" | "emocoes") => void;
+  onNavigate: (destination: "chat" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca" | "psicologos") => void;
 }
 
 export function InicioView({ onNavigate }: InicioViewProps) {
@@ -42,6 +42,20 @@ export function InicioView({ onNavigate }: InicioViewProps) {
       description: "As 7 Emoções",
       destination: "emocoes" as const,
       gradient: "from-rose-500 to-pink-500",
+    },
+    {
+      icon: BookOpen,
+      label: "Meu Material",
+      description: "Ebooks e áudios",
+      destination: "biblioteca" as const,
+      gradient: "from-indigo-500 to-purple-500",
+    },
+    {
+      icon: Users,
+      label: "Psicólogos",
+      description: "Profissionais indicados",
+      destination: "psicologos" as const,
+      gradient: "from-violet-500 to-fuchsia-500",
     },
   ];
 
