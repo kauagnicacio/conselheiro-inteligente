@@ -997,8 +997,8 @@ export default function HomePage() {
       {/* PWA Install Prompt */}
       <PWAInstallPrompt />
 
-      {/* Botão Flutuante de Suporte - Apenas na tela Início */}
-      {currentView === "inicio" && <SupportButton />}
+      {/* Botão Flutuante de Suporte - Visível em todas as abas do /home */}
+      <SupportButton />
     </div>
   );
 }
