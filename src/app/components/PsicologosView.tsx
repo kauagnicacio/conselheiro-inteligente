@@ -34,6 +34,30 @@ const psychologists: Psychologist[] = [
     audience: ["Adolescentes", "Adultos", "Idosos"],
     about: "Me chamo Yasmin, sou formada em Psicologia, apesar de não ser especializada, sigo na abordagem fenomenológica existencial, que se baseia em deixar o paciente ditar seu próprio \"eu\", sem deixar estigmas definirem-o. Farei o possível para ajudar você a se encontrar, não tenho vergonha de procurar por ajuda, todo sofrimento é válido! Vamos juntos?",
     phone: "11951948441"
+  },
+  {
+    id: "laiana-macedo-de-amorim",
+    name: "Laiana Macêdo de Amorim",
+    profession: "Psicóloga",
+    crp: "03/34332",
+    photo: "/laiana-macedo.webp",
+    price: "R$ 30",
+    tags: [
+      "Angústia",
+      "Procrastinação",
+      "Doenças crônicas",
+      "Autismo",
+      "Ciúmes",
+      "Alterações de humor",
+      "Compulsões",
+      "Depressão",
+      "Ansiedade",
+      "Acompanhamento psicológico"
+    ],
+    approach: "Terapia Cognitivo Comportamental - TCC",
+    audience: ["Adolescentes", "Adultos", "Idosos"],
+    about: "Sou Laiana Macêdo, psicóloga graduada pela Universidade Estadual de Feira de Santana (UEFS). Acredito que a terapia é um espaço de encontro e escuta, onde cada pessoa pode se escutar com gentileza, se compreender com mais profundidade e se permitir viver com mais leveza.\n\nMeu trabalho é guiado por uma escuta sensível, empática e respeitosa, que reconhece a singularidade de cada história e o valor de cada experiência humana. Nos encontramos sobre, um mesmo teto, sem pressa, sem julgamentos, e com o cuidado que você merece. Acredito na potência do vínculo terapêutico e no poder da palavra quando encontramos um espaço seguro para nos expressar, sentir e reconstruir o que a vida, às vezes, fragmenta.\n\nAcredito que o cuidado psicológico é um processo de construção conjunta — um espaço de escuta, aprendizado e transformação. Meu compromisso é caminhar ao seu lado, ajudando você a encontrar novas saídas, caminhos ou formas para o que te leva a estar conosco como mundo. Vejo o processo terapêutico como um espaço para reconhecer as próprias forças, acolher as dores e ressignificar experiências, construindo, assim, novas saídas de ser e viver com mais autenticidade, sentido e liberdade.\n\nMinha prática clínica é fundamentada na Terapia Cognitivo-Comportamental (TCC), uma abordagem que compreende a relação entre pensamentos, emoções e comportamentos. A partir dessa perspectiva, o processo terapêutico busca identificar padrões de pensamento que podem gerar sofrimento e, de forma colaborativa, desenvolver novas formas de lidar com as situações da vida. A TCC valoriza o autoconhecimento e o fortalecimento emocional, promovendo uma compreensão mais gentil e realista de si mesmo.\n\nDurante o acompanhamento, trabalhamos juntos(as) para ampliar a consciência sobre o que você sente, pensa e faz — construindo estratégias que favoreçam o bem-estar, a autonomia e uma vida com mais equilíbrio e sentido.",
+    phone: "75991572543"
   }
 ];
 
