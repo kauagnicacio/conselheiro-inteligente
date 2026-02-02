@@ -25,6 +25,7 @@ import { WeeklySummary } from "../components/WeeklySummary";
 import { InicioView } from "../components/InicioView";
 import { BibliotecaView } from "../components/BibliotecaView";
 import { PsicologosView } from "../components/PsicologosView";
+import { SupportButton } from "@/components/SupportButton";
 
 type ViewType = "inicio" | "chat-list" | "theme-chats" | "chat-active" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca" | "psicologos";
 type SidebarTab = "inicio" | "chat" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca" | "psicologos";
@@ -995,6 +996,9 @@ export default function HomePage() {
 
       {/* PWA Install Prompt */}
       <PWAInstallPrompt />
+
+      {/* Botão Flutuante de Suporte - Apenas na tela Início */}
+      {currentView === "inicio" && <SupportButton />}
     </div>
   );
 }
