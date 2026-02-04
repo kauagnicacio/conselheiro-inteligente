@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { Shield, Lock, Heart, Check, ChevronDown } from "lucide-react";
+import { trackViewContent } from "@/lib/meta-pixel";
 
 export default function RootPage() {
   const router = useRouter();
@@ -17,6 +18,8 @@ export default function RootPage() {
         router.replace("/home");
       } else {
         setShowLanding(true);
+        // Disparar ViewContent quando landing page é exibida
+        trackViewContent('Landing Page - Lum IA');
       }
     }
   }, [user, loading, router]);

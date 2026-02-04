@@ -68,6 +68,35 @@ export const trackInitiateCheckout = () => {
   console.warn('⚠️ trackInitiateCheckout foi chamada mas está DESATIVADA. A Kirvano dispara automaticamente.');
 };
 
+// Evento: ViewContent (quando visualiza conteúdo da landing)
+export const trackViewContent = (contentName: string = 'Landing Page') => {
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', 'ViewContent', {
+      content_name: contentName,
+      content_type: 'product'
+    });
+    console.log(`Meta Pixel: ViewContent event tracked - ${contentName}`);
+  }
+};
+
+// Evento: InitiateCheckout (quando abre o popup/checkout)
+// ATENÇÃO: Este evento é para rastreamento manual quando necessário
+// A Kirvano também dispara automaticamente, use com cuidado para evitar duplicação
+export const trackInitiateCheckoutManual = () => {
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', 'InitiateCheckout');
+    console.log('Meta Pixel: InitiateCheckout event tracked manually');
+  }
+};
+
+// Evento: CompleteRegistration (quando conclui cadastro)
+export const trackCompleteRegistration = () => {
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', 'CompleteRegistration');
+    console.log('Meta Pixel: CompleteRegistration event tracked');
+  }
+};
+
 // Evento: Purchase (quando pagamento aprovado)
 export const trackPurchase = (value: number, currency: string = 'BRL') => {
   if (typeof window !== 'undefined' && window.fbq) {

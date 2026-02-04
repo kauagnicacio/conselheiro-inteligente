@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { LumLogo } from "@/components/LumIcons";
 import { CheckCircle2 } from "lucide-react";
-import { trackPurchase } from "@/lib/meta-pixel";
+import { trackPurchase, trackCompleteRegistration } from "@/lib/meta-pixel";
 
 function CadastroContent() {
   const router = useRouter();
@@ -36,9 +36,12 @@ function CadastroContent() {
   }, [isPaymentConfirmed, searchParams]);
 
   const handleAuthSuccess = async () => {
+    // Disparar evento CompleteRegistration quando cadastro é concluído
+    trackCompleteRegistration();
+
     // Mostrar mensagem de sucesso
     setShowSuccess(true);
-    
+
     // Redirecionar para home após 2 segundos
     setTimeout(() => {
       router.push("/home");
