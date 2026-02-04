@@ -106,6 +106,29 @@ const psychologists: Psychologist[] = [
     audience: ["Adolescentes", "Adultos", "Idosos"],
     about: "Olá, eu sou Joele Pantoja, psicóloga formada pela UniGuairacá, pós-graduanda em Psicologia Clínica pela PUC-PR e pós-graduanda em Psicanálise pelo Instituto ESPE.\n\nAtuo a partir da psicanálise, com experiência no acompanhamento de mulheres em situações de violência doméstica e sexual, em vivências da maternidade, na preparação psicossocial de pretendentes à adoção e em demandas relacionadas a relacionamentos, autoestima, corpo, identidade e sexualidade.\n\nTambém acolho mulheres que enfrentam ansiedade, depressão, sobrecarga emocional, culpa, medos, crises, conflitos afetivos e dificuldades para se colocar, se priorizar e se reconhecer na própria história.\n\nMeu propósito é oferecer um espaço seguro, sensível e acolhedor, onde cada mulher possa falar com liberdade, compreender seus sentimentos, fortalecer-se emocionalmente e reconstruir caminhos com respeito ao seu tempo e à sua singularidade.\n\nAtendimento presencial e online.",
     phone: "41992613919"
+  },
+  {
+    id: "marcio-goncalves",
+    name: "Márcio Gonçalves",
+    profession: "Psicólogo",
+    crp: "06/201241",
+    photo: "/marcio-goncalves.webp",
+    price: "R$ 30",
+    tags: [
+      "LGBTQIA+",
+      "Mudança de país",
+      "Autoconhecimento",
+      "Acompanhamento psicológico",
+      "Autonomia",
+      "Autoaceitação",
+      "Relacionamentos",
+      "Empoderamento",
+      "Dependência emocional"
+    ],
+    approach: "Fenomenológico-existencial, Análise Existencial, Daseinsanalyse",
+    audience: ["Adultos", "Idosos"],
+    about: "Olá, como você está? Meu nome é Márcio, sou brasileiro e tenho 54 anos. Escolhi a psicologia desde muito jovem, pois já sentia a necessidade de atuar, promovendo saúde e qualidade na vida das pessoas. Atualmente, realizo atendimentos de psicoterapia de maneira on-line para mulheres, inclusive expatriadas e população idosa.\n\nA abordagem que orienta meus atendimentos é a Fenomenologia-Existencial, que propõe uma psicoterapia pautada em uma relação horizontal. Consiste em abrir caminho para que \"o outro\" se conquiste em sua singularidade, tornando-se consciente de suas potencialidades, favorecendo sua condição de ser-no-mundo.\n\nSeja para segurar a lanterna, ou amparar na subida de uma trilha mais íngreme, mas nunca para lhe indicar por onde andar. Pois a escolha é, e sempre será sua.",
+    phone: "11984611572"
   }
 ];
 
