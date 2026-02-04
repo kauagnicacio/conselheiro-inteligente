@@ -82,6 +82,30 @@ const psychologists: Psychologist[] = [
     audience: ["Adolescentes", "Adultos", "Casais", "Idosos"],
     about: "Psicóloga com formação em Psicanálise, dedicada ao cuidado emocional de adolescentes, adultos, casais e idosos.\n\nAtuo com escuta qualificada, ética e empatia, promovendo o autoconhecimento e o fortalecimento psíquico ao longo do processo terapêutico, respeitando as demandas e a especificidade de cada indivíduo.",
     phone: "11994627052"
+  },
+  {
+    id: "joele-pereira-pantoja",
+    name: "Joele Pereira Pantoja",
+    profession: "Psicóloga",
+    crp: "08/43005",
+    photo: "/joele-pereira.webp",
+    price: "R$ 30",
+    tags: [
+      "Ansiedade",
+      "Depressão",
+      "Autoestima",
+      "Relacionamentos",
+      "Dependência emocional",
+      "Violência doméstica",
+      "Violência sexual",
+      "Maternidade",
+      "Puerpério",
+      "Sexualidade"
+    ],
+    approach: "Psicanálise",
+    audience: ["Adolescentes", "Adultos", "Idosos"],
+    about: "Olá, eu sou Joele Pantoja, psicóloga formada pela UniGuairacá, pós-graduanda em Psicologia Clínica pela PUC-PR e pós-graduanda em Psicanálise pelo Instituto ESPE.\n\nAtuo a partir da psicanálise, com experiência no acompanhamento de mulheres em situações de violência doméstica e sexual, em vivências da maternidade, na preparação psicossocial de pretendentes à adoção e em demandas relacionadas a relacionamentos, autoestima, corpo, identidade e sexualidade.\n\nTambém acolho mulheres que enfrentam ansiedade, depressão, sobrecarga emocional, culpa, medos, crises, conflitos afetivos e dificuldades para se colocar, se priorizar e se reconhecer na própria história.\n\nMeu propósito é oferecer um espaço seguro, sensível e acolhedor, onde cada mulher possa falar com liberdade, compreender seus sentimentos, fortalecer-se emocionalmente e reconstruir caminhos com respeito ao seu tempo e à sua singularidade.\n\nAtendimento presencial e online.",
+    phone: "41992613919"
   }
 ];
 
