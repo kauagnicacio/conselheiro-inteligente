@@ -108,11 +108,11 @@ const psychologists: Psychologist[] = [
     phone: "41992613919"
   },
   {
-    id: "marcio-goncalves",
-    name: "Márcio Gonçalves",
-    profession: "Psicólogo",
+    id: "marcia-goncalves",
+    name: "Márcia Gonçalves",
+    profession: "Psicóloga",
     crp: "06/201241",
-    photo: "/marcio-goncalves.webp",
+    photo: "/marcia-goncalves.webp",
     price: "R$ 30",
     tags: [
       "LGBTQIA+",
@@ -127,7 +127,7 @@ const psychologists: Psychologist[] = [
     ],
     approach: "Fenomenológico-existencial, Análise Existencial, Daseinsanalyse",
     audience: ["Adultos", "Idosos"],
-    about: "Olá, como você está? Meu nome é Márcio, sou brasileiro e tenho 54 anos. Escolhi a psicologia desde muito jovem, pois já sentia a necessidade de atuar, promovendo saúde e qualidade na vida das pessoas. Atualmente, realizo atendimentos de psicoterapia de maneira on-line para mulheres, inclusive expatriadas e população idosa.\n\nA abordagem que orienta meus atendimentos é a Fenomenologia-Existencial, que propõe uma psicoterapia pautada em uma relação horizontal. Consiste em abrir caminho para que \"o outro\" se conquiste em sua singularidade, tornando-se consciente de suas potencialidades, favorecendo sua condição de ser-no-mundo.\n\nSeja para segurar a lanterna, ou amparar na subida de uma trilha mais íngreme, mas nunca para lhe indicar por onde andar. Pois a escolha é, e sempre será sua.",
+    about: "Olá, como você está? Meu nome é Márcia, sou brasileiro e tenho 54 anos. Escolhi a psicologia desde muito jovem, pois já sentia a necessidade de atuar, promovendo saúde e qualidade na vida das pessoas. Atualmente, realizo atendimentos de psicoterapia de maneira on-line para mulheres, inclusive expatriadas e população idosa.\n\nA abordagem que orienta meus atendimentos é a Fenomenologia-Existencial, que propõe uma psicoterapia pautada em uma relação horizontal. Consiste em abrir caminho para que \"o outro\" se conquiste em sua singularidade, tornando-se consciente de suas potencialidades, favorecendo sua condição de ser-no-mundo.\n\nSeja para segurar a lanterna, ou amparar na subida de uma trilha mais íngreme, mas nunca para lhe indicar por onde andar. Pois a escolha é, e sempre será sua.",
     phone: "11984611572"
   }
 ];
