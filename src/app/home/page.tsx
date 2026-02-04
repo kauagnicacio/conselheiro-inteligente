@@ -997,8 +997,8 @@ export default function HomePage() {
       {/* PWA Install Prompt */}
       <PWAInstallPrompt />
 
-      {/* Botão Flutuante de Suporte - Visível em todas as abas do /home */}
-      <SupportButton />
+      {/* Botão Flutuante de Suporte - Oculto apenas em chat ativo */}
+      {currentView !== "chat-active" && <SupportButton />}
     </div>
   );
 }
