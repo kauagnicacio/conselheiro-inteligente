@@ -559,6 +559,8 @@ export default function TestePage() {
           {currentView === "psicologos" && (
             <PsicologosView
               userId={DEMO_USER_ID}
+              isDemo={true}
+              onDemoAction={openCheckoutModal}
             />
           )}
         </main>

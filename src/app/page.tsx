@@ -252,7 +252,7 @@ export default function RootPage() {
             
             <div className="mb-6">
               <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2">
-                R$ 42,70<span className="text-2xl text-gray-500 dark:text-gray-400">/mês</span>
+                R$ 37,90<span className="text-2xl text-gray-500 dark:text-gray-400">/mês</span>
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Cancele quando quiser.
