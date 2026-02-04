@@ -276,35 +276,35 @@ export default function RootPage() {
                 <div className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <strong className="font-semibold text-gray-900 dark:text-white">Acesso completo ao Lum IA</strong> (chat, quiz, reflexão, jornada, 7 emoções)
+                    <strong className="font-semibold text-gray-900 dark:text-white">Acesso completo ao Lum IA</strong> — chat, quiz, reflexão, jornada, 7 emoções
                   </p>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <strong className="font-semibold text-gray-900 dark:text-white">4 Ebooks completos</strong> (Chat / 100 Perguntas / Minha Jornada / 7 Emoções)
+                    <strong className="font-semibold text-gray-900 dark:text-white">4 Ebooks completos</strong> — Chat / 100 Perguntas / Minha Jornada / 7 Emoções
                   </p>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <strong className="font-semibold text-gray-900 dark:text-white">10 Áudios curtos</strong> (audiobooks) dentro do app
+                    <strong className="font-semibold text-gray-900 dark:text-white">10 Áudios curtos</strong> — audiobooks dentro do app
                   </p>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <strong className="font-semibold text-gray-900 dark:text-white">Lista de Psicólogos online</strong> (indicações com botão direto pro WhatsApp)
+                    <strong className="font-semibold text-gray-900 dark:text-white">Lista de Psicólogos online</strong> — indicações com botão direto pro WhatsApp
                   </p>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <strong className="font-semibold text-gray-900 dark:text-white">Suporte exclusivo</strong> (botão de suporte via WhatsApp dentro do app)
+                    <strong className="font-semibold text-gray-900 dark:text-white">Suporte exclusivo</strong> — botão de suporte via WhatsApp dentro do app
                   </p>
                 </div>
               </div>
