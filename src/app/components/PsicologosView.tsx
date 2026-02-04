@@ -230,14 +230,6 @@ function PsychologistCard({ psychologist, onViewProfile }: PsychologistCardProps
             CRP: {psychologist.crp}
           </p>
         </div>
-        {psychologist.price && (
-          <div className="text-right">
-            <p className="text-sm text-gray-600 dark:text-gray-400">Consulta</p>
-            <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
-              {psychologist.price}
-            </p>
-          </div>
-        )}
       </div>
 
       {/* Tags/Temas */}

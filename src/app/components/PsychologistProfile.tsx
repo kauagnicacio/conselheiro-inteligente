@@ -44,19 +44,9 @@ export function PsychologistProfile({ psychologist, onBack }: PsychologistProfil
               <p className="text-lg text-gray-600 dark:text-gray-400 mb-2">
                 {psychologist.profession}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-500 mb-3">
+              <p className="text-sm text-gray-500 dark:text-gray-500">
                 CRP: {psychologist.crp}
               </p>
-              {psychologist.price && (
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                  <span className="text-sm text-gray-700 dark:text-gray-300">
-                    Valor da consulta:
-                  </span>
-                  <span className="text-xl font-bold text-purple-600 dark:text-purple-400">
-                    {psychologist.price}
-                  </span>
-                </div>
-              )}
             </div>
           </div>
 
