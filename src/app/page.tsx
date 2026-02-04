@@ -242,18 +242,22 @@ export default function RootPage() {
         </div>
       </section>
 
-      {/* PREÇO - Suave, depois do valor */}
+      {/* PREÇO - Plano completo com benefícios */}
       <section className="bg-purple-50 dark:bg-[#1a1a1a] py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-md mx-auto bg-white dark:bg-[#0f0f0f] p-8 rounded-3xl shadow-xl text-center border border-purple-100 dark:border-purple-900/30">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Acesso completo
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Um espaço que vale mais que o silêncio que você vem guardando.
-            </p>
-            
-            <div className="mb-6">
+          <div className="max-w-lg mx-auto bg-white dark:bg-[#0f0f0f] p-8 rounded-3xl shadow-xl border border-purple-100 dark:border-purple-900/30">
+            {/* Header do plano */}
+            <div className="text-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Acesso completo
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Um espaço que vale mais que o silêncio que você vem guardando.
+              </p>
+            </div>
+
+            {/* Preço */}
+            <div className="text-center mb-6 pb-6 border-b border-gray-200 dark:border-gray-800">
               <div className="text-5xl font-bold text-gray-900 dark:text-white mb-2">
                 R$ 37,90<span className="text-2xl text-gray-500 dark:text-gray-400">/mês</span>
               </div>
@@ -262,14 +266,59 @@ export default function RootPage() {
               </p>
             </div>
 
+            {/* Checklist de benefícios */}
+            <div className="mb-6">
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
+                Você recebe:
+              </p>
+
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <strong className="font-semibold text-gray-900 dark:text-white">Acesso completo ao Lum IA</strong> (chat, quiz, reflexão, jornada, 7 emoções)
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <strong className="font-semibold text-gray-900 dark:text-white">4 Ebooks completos</strong> (Chat / 100 Perguntas / Minha Jornada / 7 Emoções)
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <strong className="font-semibold text-gray-900 dark:text-white">10 Áudios curtos</strong> (audiobooks) dentro do app
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <strong className="font-semibold text-gray-900 dark:text-white">Lista de Psicólogos online</strong> (indicações com botão direto pro WhatsApp)
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <strong className="font-semibold text-gray-900 dark:text-white">Suporte exclusivo</strong> (botão de suporte via WhatsApp dentro do app)
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA */}
             <button
               onClick={() => router.push("/quiz")}
               className="w-full px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 mb-3"
             >
               Começar o quiz (2 min)
             </button>
-            
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
               Primeiro o quiz (2 min). Depois você experimenta a Lum.
             </p>
           </div>
