@@ -1,6 +1,9 @@
 // Service Worker para Lum IA PWA
-const CACHE_NAME = 'lumia-v2'; // VERSÃO INCREMENTADA para forçar limpeza do cache antigo
-const RUNTIME_CACHE = 'lumia-runtime-v2'; // VERSÃO INCREMENTADA
+// IMPORTANTE: A versão é atualizada automaticamente a cada deploy
+const BUILD_TIME = '{{BUILD_TIME}}'; // Substituído no build
+const CACHE_VERSION = BUILD_TIME || Date.now();
+const CACHE_NAME = `lumia-v3-${CACHE_VERSION}`;
+const RUNTIME_CACHE = `lumia-runtime-v3-${CACHE_VERSION}`;
 
 // Arquivos essenciais para cache
 const PRECACHE_URLS = [
@@ -44,26 +47,55 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  event.respondWith(
-    caches.open(RUNTIME_CACHE).then((cache) => {
-      return fetch(event.request)
+  // Para HTML, JS, CSS: sempre tentar rede primeiro (cache mais agressivo)
+  const url = new URL(event.request.url);
+  const isNavigationRequest = event.request.mode === 'navigate';
+  const isAsset = /\.(js|css|html)$/.test(url.pathname);
+
+  if (isNavigationRequest || isAsset) {
+    // Network First: sempre tentar buscar da rede para evitar servir assets antigos
+    event.respondWith(
+      fetch(event.request)
         .then((response) => {
-          // Clonar a resposta antes de cachear
+          // Cachear apenas se for sucesso
           if (response.status === 200) {
-            cache.put(event.request, response.clone());
+            const responseToCache = response.clone();
+            caches.open(RUNTIME_CACHE).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
           }
           return response;
         })
         .catch(() => {
-          // Se falhar, tentar buscar do cache
-          return cache.match(event.request).then((cachedResponse) => {
+          // Apenas em caso de erro de rede, usar cache
+          return caches.match(event.request).then((cachedResponse) => {
             if (cachedResponse) {
+              console.warn('[SW] Servindo do cache (offline):', event.request.url);
               return cachedResponse;
             }
-            // Se não houver cache, retornar página /home
+            // Fallback para /home
             return caches.match('/home');
           });
+        })
+    );
+    return;
+  }
+
+  // Para outros recursos (imagens, fontes): Cache First
+  event.respondWith(
+    caches.open(RUNTIME_CACHE).then((cache) => {
+      return cache.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+
+        return fetch(event.request).then((response) => {
+          if (response.status === 200) {
+            cache.put(event.request, response.clone());
+          }
+          return response;
         });
+      });
     })
   );
 });

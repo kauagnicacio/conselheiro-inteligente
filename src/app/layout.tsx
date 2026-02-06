@@ -6,6 +6,7 @@ import "./globals.css";
 // Import all available fonts for AI usage
 import "../lib/fonts";
 import { MetaPixelProvider } from "@/components/MetaPixelProvider";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -78,30 +79,55 @@ export default function RootLayout({
           />
         </noscript>
         
-        {/* Service Worker Registration */}
-        <Script id="register-sw" strategy="afterInteractive">
+        {/* Cache Manager & Service Worker Registration */}
+        <Script id="cache-manager" strategy="afterInteractive">
           {`
-            if ('serviceWorker' in navigator) {
-              window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js').then(
-                  function(registration) {
-                    console.log('Service Worker registrado com sucesso:', registration.scope);
-                  },
-                  function(err) {
-                    console.log('Falha ao registrar Service Worker:', err);
-                  }
-                );
-              });
-            }
+            // Inicializar gerenciador de cache
+            (async function() {
+              try {
+                // Importar e inicializar cache manager
+                const { initializeCacheManager, setupStorageErrorHandling } = await import('/src/lib/cache-manager.ts');
+                await initializeCacheManager();
+                setupStorageErrorHandling();
+                console.log('[App] Cache manager inicializado');
+              } catch (error) {
+                console.error('[App] Erro ao inicializar cache manager:', error);
+              }
+
+              // Registrar Service Worker
+              if ('serviceWorker' in navigator) {
+                try {
+                  const registration = await navigator.serviceWorker.register('/sw.js');
+                  console.log('[App] Service Worker registrado:', registration.scope);
+
+                  // Atualizar SW quando houver nova versão
+                  registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    if (newWorker) {
+                      newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                          console.log('[App] Nova versão do SW ativada. Recarregando...');
+                          window.location.reload();
+                        }
+                      });
+                    }
+                  });
+                } catch (error) {
+                  console.error('[App] Falha ao registrar Service Worker:', error);
+                }
+              }
+            })();
           `}
         </Script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
       >
-        <MetaPixelProvider>
-          {children}
-        </MetaPixelProvider>
+        <ErrorBoundary>
+          <MetaPixelProvider>
+            {children}
+          </MetaPixelProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

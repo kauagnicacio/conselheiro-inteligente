@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { v4 as uuidv4 } from "uuid";
+import { safeGetStorage, safeSetStorage } from "@/lib/safe-storage";
 
 // Base de 500+ perguntas profundas e reflexivas (mantida igual)
 const deepQuestions = [
@@ -32,14 +33,8 @@ export function DailyReflection({ onBack, onStartChat, userId, isDemo = false, o
   // Carregar perguntas já usadas
   useEffect(() => {
     if (!isDemo && userId) {
-      const saved = localStorage.getItem(`lumia-used-questions-${userId}`);
-      if (saved) {
-        try {
-          setUsedQuestions(JSON.parse(saved));
-        } catch (e) {
-          setUsedQuestions([]);
-        }
-      }
+      const saved = safeGetStorage<string[]>(`lumia-used-questions-${userId}`, []);
+      setUsedQuestions(saved);
     }
   }, [userId, isDemo]);
 
@@ -52,7 +47,7 @@ export function DailyReflection({ onBack, onStartChat, userId, isDemo = false, o
       availableQuestions = deepQuestions;
       setUsedQuestions([]);
       if (!isDemo && userId) {
-        localStorage.setItem(`lumia-used-questions-${userId}`, JSON.stringify([]));
+        safeSetStorage(`lumia-used-questions-${userId}`, []);
       }
     }
 
@@ -98,7 +93,7 @@ export function DailyReflection({ onBack, onStartChat, userId, isDemo = false, o
       const newUsedQuestions = [...usedQuestions, currentQuestion];
       setUsedQuestions(newUsedQuestions);
       if (userId) {
-        localStorage.setItem(`lumia-used-questions-${userId}`, JSON.stringify(newUsedQuestions));
+        safeSetStorage(`lumia-used-questions-${userId}`, newUsedQuestions);
       }
 
       // Salvar reflexão
@@ -109,10 +104,9 @@ export function DailyReflection({ onBack, onStartChat, userId, isDemo = false, o
           lumResponse: generateLumResponse(answer),
           date: new Date().toISOString(),
         };
-        const saved = localStorage.getItem(`lumia-reflections-${userId}`) || "[]";
-        const reflections = JSON.parse(saved);
+        const reflections = safeGetStorage<any[]>(`lumia-reflections-${userId}`, []);
         reflections.unshift(reflection);
-        localStorage.setItem(`lumia-reflections-${userId}`, JSON.stringify(reflections));
+        safeSetStorage(`lumia-reflections-${userId}`, reflections);
       }
     }
 

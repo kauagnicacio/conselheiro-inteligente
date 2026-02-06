@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Brain, Compass, MessageSquare, Wrench, Heart, Check, Lock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { safeGetStorage, safeSetStorage } from "@/lib/safe-storage";
 
 interface Step {
   id: string;
@@ -95,9 +96,12 @@ export function DailySteps({ selectedDay, userId, onDayComplete, onDemoAction, i
   }, [selectedDay]);
 
   const loadDayProgress = () => {
-    const saved = localStorage.getItem(`journey-day-${selectedDay}-${userId}`);
-    if (saved) {
-      const data = JSON.parse(saved);
+    const data = safeGetStorage<{ completed: string[]; responses: Record<string, string> } | null>(
+      `journey-day-${selectedDay}-${userId}`,
+      null
+    );
+
+    if (data) {
       setCompletedSteps(new Set(data.completed || []));
       setResponses(data.responses || {});
     } else {
@@ -112,7 +116,7 @@ export function DailySteps({ selectedDay, userId, onDayComplete, onDemoAction, i
       responses: newResponses,
       date: new Date().toISOString(),
     };
-    localStorage.setItem(`journey-day-${selectedDay}-${userId}`, JSON.stringify(data));
+    safeSetStorage(`journey-day-${selectedDay}-${userId}`, data);
     
     // Calcular progresso
     const progress = (completed.size / steps.length) * 100;

@@ -21,12 +21,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { MessageCircle, Heart, Users, Briefcase, Target } from "lucide-react";
-import { 
-  saveMessageHybrid, 
-  loadMessagesHybrid, 
+import {
+  saveMessageHybrid,
+  loadMessagesHybrid,
   saveConversation,
-  markConversationAsSaved 
+  markConversationAsSaved
 } from "@/lib/chat-storage";
+import { safeGetStorage, safeSetStorage } from "@/lib/safe-storage";
 
 interface Message {
   role: "user" | "assistant";
@@ -143,8 +144,8 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
   // Carregar avatar do usuário
   useEffect(() => {
     if (isDemo) return; // Não carregar avatar no modo demo
-    
-    const savedAvatar = localStorage.getItem("lumia-user-avatar");
+
+    const savedAvatar = safeGetStorage<string>("lumia-user-avatar", "");
     if (savedAvatar) {
       setUserAvatar(savedAvatar);
     }
@@ -163,17 +164,12 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
       // No modo demo, carregar mensagens salvas localmente se existirem
       if (isDemo) {
         const demoStorageKey = `demo-chat-${conversationId}`;
-        const savedDemoChat = localStorage.getItem(demoStorageKey);
+        const savedDemoChat = safeGetStorage<{ messages: Message[] } | null>(demoStorageKey, null);
 
-        if (savedDemoChat) {
-          try {
-            const parsed = JSON.parse(savedDemoChat);
-            setMessages(parsed.messages || []);
-            setIsInitialized(true);
-            return;
-          } catch (e) {
-            console.error("Erro ao carregar chat demo:", e);
-          }
+        if (savedDemoChat && savedDemoChat.messages) {
+          setMessages(savedDemoChat.messages);
+          setIsInitialized(true);
+          return;
         }
 
         // Se não há chat salvo, criar mensagem inicial
@@ -195,7 +191,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
         setMessages([initialMsg]);
 
         // Salvar mensagem inicial no localStorage do demo
-        localStorage.setItem(demoStorageKey, JSON.stringify({ messages: [initialMsg] }));
+        safeSetStorage(demoStorageKey, { messages: [initialMsg] });
 
         setIsInitialized(true);
         return;

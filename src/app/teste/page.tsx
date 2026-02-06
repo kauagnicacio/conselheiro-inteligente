@@ -21,6 +21,7 @@ import { WeeklySummary } from "../components/WeeklySummary";
 import { InicioView } from "../components/InicioView";
 import { BibliotecaView } from "../components/BibliotecaView";
 import { PsicologosView } from "../components/PsicologosView";
+import { safeGetStorage, safeSetStorage } from "@/lib/safe-storage";
 
 type ViewType = "inicio" | "chat-list" | "theme-chats" | "chat-active" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca" | "psicologos";
 type SidebarTab = "inicio" | "chat" | "perfil" | "quiz" | "reflexao" | "jornada" | "emocoes" | "biblioteca" | "psicologos";
@@ -83,14 +84,12 @@ export default function TestePage() {
   }, [isClient, currentView]);
 
   const loadWeekProgress = () => {
-    const saved = localStorage.getItem(`journey-week-${DEMO_USER_ID}`);
-    if (saved) {
-      setWeekProgress(JSON.parse(saved));
-    }
+    const saved = safeGetStorage<Record<number, number>>(`journey-week-${DEMO_USER_ID}`, {});
+    setWeekProgress(saved);
   };
 
   const saveWeekProgress = (progress: Record<number, number>) => {
-    localStorage.setItem(`journey-week-${DEMO_USER_ID}`, JSON.stringify(progress));
+    safeSetStorage(`journey-week-${DEMO_USER_ID}`, progress);
     setWeekProgress(progress);
   };
 
@@ -193,7 +192,7 @@ export default function TestePage() {
     ];
 
     const historyKey = `lumia-chat-history-${newChatId}-${DEMO_USER_ID}`;
-    localStorage.setItem(historyKey, JSON.stringify(initialMessages));
+    safeSetStorage(historyKey, initialMessages);
 
     // Abrir chat diretamente
     setActiveTheme(themeId);
