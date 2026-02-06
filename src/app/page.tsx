@@ -153,54 +153,6 @@ export default function RootPage() {
         </div>
       </section>
 
-      {/* BENEFÍCIOS - Bullets específicos */}
-      <section className="bg-purple-50 dark:bg-[#1a1a1a] py-12 md:py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-              O que a Lum faz por você
-            </h2>
-            
-            <div className="space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-[#0f0f0f] rounded-xl">
-                <div className="w-2 h-2 bg-purple-600 rounded-full mt-2 flex-shrink-0" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  <strong className="text-gray-900 dark:text-white">Desabafar com contexto</strong> (sem recomeçar do zero)
-                </p>
-              </div>
-              
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-[#0f0f0f] rounded-xl">
-                <div className="w-2 h-2 bg-purple-600 rounded-full mt-2 flex-shrink-0" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  <strong className="text-gray-900 dark:text-white">Perguntas reflexivas</strong> que destravam sua mente
-                </p>
-              </div>
-              
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-[#0f0f0f] rounded-xl">
-                <div className="w-2 h-2 bg-purple-600 rounded-full mt-2 flex-shrink-0" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  <strong className="text-gray-900 dark:text-white">Quizzes rápidos</strong> com insights sobre seu momento
-                </p>
-              </div>
-              
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-[#0f0f0f] rounded-xl">
-                <div className="w-2 h-2 bg-purple-600 rounded-full mt-2 flex-shrink-0" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  <strong className="text-gray-900 dark:text-white">Histórico salvo</strong> pra acompanhar sua evolução
-                </p>
-              </div>
-              
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-[#0f0f0f] rounded-xl">
-                <div className="w-2 h-2 bg-purple-600 rounded-full mt-2 flex-shrink-0" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  <strong className="text-gray-900 dark:text-white">Um lugar privado</strong> pra organizar pensamentos em 5 minutos
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* PRIVACIDADE - Derrubar medo */}
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
