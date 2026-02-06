@@ -153,47 +153,6 @@ export default function RootPage() {
         </div>
       </section>
 
-      {/* PRIVACIDADE - Derrubar medo */}
-      <section className="py-12 md:py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <Lock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                100% privado
-              </h2>
-            </div>
-            
-            <div className="space-y-4 mb-6">
-              <div className="flex items-start gap-3 p-4 bg-purple-50 dark:bg-[#1a1a1a] rounded-xl">
-                <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  Nada do que você escreve vira público.
-                </p>
-              </div>
-              
-              <div className="flex items-start gap-3 p-4 bg-purple-50 dark:bg-[#1a1a1a] rounded-xl">
-                <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  Ninguém tem acesso ao conteúdo das conversas.
-                </p>
-              </div>
-              
-              <div className="flex items-start gap-3 p-4 bg-purple-50 dark:bg-[#1a1a1a] rounded-xl">
-                <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  Seu espaço é seu — sem julgamento.
-                </p>
-              </div>
-            </div>
-
-            <p className="text-sm text-gray-500 dark:text-gray-400 text-center italic">
-              A Lum não substitui terapia. Se você estiver em crise, procure ajuda profissional.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* PREÇO - Plano completo com benefícios */}
       <section className="bg-purple-50 dark:bg-[#1a1a1a] py-12 md:py-16">
         <div className="container mx-auto px-4">
