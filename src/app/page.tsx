@@ -77,10 +77,10 @@ export default function RootPage() {
 
           {/* CTA Principal */}
           <button
-            onClick={() => router.push("/quiz")}
+            onClick={() => router.push("/teste")}
             className="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
-            Começar o quiz (2 min)
+            Testar a Lum
           </button>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">
             Leva menos de 2 minutos pra começar.
@@ -312,10 +312,10 @@ export default function RootPage() {
 
             {/* CTA */}
             <button
-              onClick={() => router.push("/quiz")}
+              onClick={() => router.push("/teste")}
               className="w-full px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 mb-3"
             >
-              Começar o quiz (2 min)
+              Testar a Lum
             </button>
 
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
