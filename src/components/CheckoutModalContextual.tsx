@@ -32,8 +32,8 @@ const contextMessages: Record<CheckoutContext, { title: string; description: str
     description: "Aprofunde suas reflexões e salve todos os seus momentos de conexão com a Lum."
   },
   "jornada-gratitude": {
-    title: "Assine para desbloquear o exercício Gratidão do dia 🙏",
-    description: "Complete sua jornada diária e cultive ainda mais momentos de gratidão."
+    title: "Para finalizar a sua jornada diária, assine a Lum IA 🙏",
+    description: "Tenha acesso completo ao exercício de Gratidão do dia e todos os recursos para sua transformação pessoal."
   },
   "emocoes-complete": {
     title: "Assine para concluir sua jornada e destravar o próximo passo 💜",
