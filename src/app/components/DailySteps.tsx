@@ -159,7 +159,7 @@ export function DailySteps({ selectedDay, userId, onDayComplete, onDemoAction, i
     // Salvar resposta apropriada
     let responseText = "";
     if (currentStep.id === "emotions") {
-      responseText = selectedEmotion === "Outro" ? modalInput.trim() : selectedEmotion;
+      responseText = selectedEmotion === "Outro" ? modalInput.trim() : (selectedEmotion || "");
     } else {
       responseText = modalInput.trim();
     }

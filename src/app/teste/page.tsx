@@ -101,8 +101,8 @@ export default function TestePage() {
   };
 
   // Função para abrir modal de checkout (intercepta todas as ações)
-  const openCheckoutModal = (context: CheckoutContext = "default") => {
-    setCheckoutContext(context);
+  const openCheckoutModal = (context?: string) => {
+    setCheckoutContext((context as CheckoutContext) || "default");
     setShowCheckoutModal(true);
   };
 
