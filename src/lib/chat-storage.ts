@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { normalizeTimestamp } from './timestamp-utils';
 
 export interface Message {
   role: 'user' | 'assistant';
@@ -82,7 +83,7 @@ export async function loadMessages(
     return (data || []).map((msg: any) => ({
       role: msg.role,
       content: msg.content,
-      timestamp: new Date(msg.created_at),
+      timestamp: normalizeTimestamp(msg.created_at),
       type: msg.type,
       mediaUrl: msg.media_url,
     }));
@@ -271,14 +272,19 @@ export async function loadMessagesHybrid(
   // Fallback para localStorage
   const storageKey = `lumia-chat-history-${conversationId}-${userId}`;
   const savedHistory = localStorage.getItem(storageKey);
-  
+
   if (savedHistory) {
     try {
       const parsed = JSON.parse(savedHistory);
-      return parsed.map((msg: any) => ({
+      const normalizedMessages = parsed.map((msg: any) => ({
         ...msg,
-        timestamp: new Date(msg.timestamp),
+        timestamp: normalizeTimestamp(msg.timestamp),
       }));
+
+      // Salvar de volta com timestamps normalizados (migração automática)
+      localStorage.setItem(storageKey, JSON.stringify(normalizedMessages));
+
+      return normalizedMessages;
     } catch (e) {
       console.error('Erro ao carregar do localStorage:', e);
       return [];

@@ -28,6 +28,7 @@ import {
   markConversationAsSaved
 } from "@/lib/chat-storage";
 import { safeGetStorage, safeSetStorage } from "@/lib/safe-storage";
+import { normalizeMessages, formatTimestamp } from "@/lib/timestamp-utils";
 
 interface Message {
   role: "user" | "assistant";
@@ -167,7 +168,13 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
         const savedDemoChat = safeGetStorage<{ messages: Message[] } | null>(demoStorageKey, null);
 
         if (savedDemoChat && savedDemoChat.messages) {
-          setMessages(savedDemoChat.messages);
+          // Normalizar timestamps das mensagens antigas
+          const normalizedMessages = normalizeMessages(savedDemoChat.messages);
+          setMessages(normalizedMessages);
+
+          // Salvar de volta com timestamps normalizados
+          safeSetStorage(demoStorageKey, { messages: normalizedMessages });
+
           setIsInitialized(true);
           return;
         }
@@ -199,10 +206,11 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
 
       // Carregar mensagens do banco ou localStorage
       const loadedMessages = await loadMessagesHybrid(conversationId, userId);
-      
+
       if (loadedMessages.length > 0) {
-        // Histórico existe - carregar tudo
-        setMessages(loadedMessages);
+        // Histórico existe - normalizar timestamps e carregar
+        const normalizedMessages = normalizeMessages(loadedMessages);
+        setMessages(normalizedMessages);
         
         // Verificar se já está salvo (apenas para chats que podem ser salvos)
         if (canSaveConversation) {
@@ -862,10 +870,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
                       </Button>
                     )}
                     <span className="text-xs text-gray-500">
-                      {message.timestamp.toLocaleTimeString("pt-BR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {formatTimestamp(message.timestamp)}
                     </span>
                   </div>
                 )}

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, MessageCircle, ChevronRight, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { v4 as uuidv4 } from "uuid";
+import { normalizeTimestamp } from "@/lib/timestamp-utils";
 
 interface Chat {
   id: string;
@@ -44,9 +45,12 @@ export function ThemeChats({ themeId, themeName, userId, onBack, onSelectChat }:
         const parsed = JSON.parse(saved);
         const converted = parsed.map((chat: any) => ({
           ...chat,
-          timestamp: new Date(chat.timestamp),
+          timestamp: normalizeTimestamp(chat.timestamp),
         }));
         setChats(converted);
+
+        // Salvar de volta com timestamps normalizados (migração automática)
+        localStorage.setItem(storageKey, JSON.stringify(converted));
       } catch (e) {
         console.error("Erro ao carregar conversas:", e);
         setChats([]);
@@ -152,7 +156,14 @@ export function ThemeChats({ themeId, themeName, userId, onBack, onSelectChat }:
                         </p>
                       )}
                       <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                        {chat.timestamp.toLocaleDateString("pt-BR")}
+                        {(() => {
+                          try {
+                            const date = normalizeTimestamp(chat.timestamp);
+                            return date.toLocaleDateString("pt-BR");
+                          } catch {
+                            return "--/--/----";
+                          }
+                        })()}
                       </p>
                     </div>
                   </div>
