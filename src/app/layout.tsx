@@ -86,7 +86,7 @@ export default function RootLayout({
             (async function() {
               try {
                 // Importar e inicializar cache manager
-                const { initializeCacheManager, setupStorageErrorHandling } = await import('/src/lib/cache-manager.ts');
+                const { initializeCacheManager, setupStorageErrorHandling } = await import('@/lib/cache-manager');
                 await initializeCacheManager();
                 setupStorageErrorHandling();
                 console.log('[App] Cache manager inicializado');
