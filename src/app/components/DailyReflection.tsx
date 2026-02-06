@@ -122,6 +122,7 @@ export function DailyReflection({ onBack, onStartChat, userId, isDemo = false, o
 
   const handleStartConversation = () => {
     // MODO DEMO: Liberar chat com mensagem pronta (limite será controlado no ChatInterface)
+    // Passar também a resposta da Lum gerada
     onStartChat(currentQuestion, answer);
   };
 

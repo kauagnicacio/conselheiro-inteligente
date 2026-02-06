@@ -170,33 +170,59 @@ export default function TestePage() {
   };
 
   const handleStartChatFromReflection = (question: string, answer: string) => {
-    // No modo demo, criar um ID único para cada nova reflexão
-    const themeId = "espaco-livre";
-    const newChatId = `demo-reflexao-${uuidv4()}`;
+    // No modo demo, verificar se já existe um chat de reflexão ativo
+    const existingChatId = safeGetStorage<string>(`demo-reflection-chat-id-${DEMO_USER_ID}`, "");
+
+    let chatId: string;
+    let shouldCreateNew = false;
+
+    if (existingChatId) {
+      // Verificar se o chat anterior existe e tem mensagens
+      const demoStorageKey = `demo-chat-${existingChatId}`;
+      const existingChat = safeGetStorage<{ messages: any[] } | null>(demoStorageKey, null);
+
+      if (existingChat && existingChat.messages && existingChat.messages.length > 0) {
+        // Chat existe - usar o mesmo ID para manter histórico
+        chatId = existingChatId;
+      } else {
+        // Chat não existe mais - criar novo
+        shouldCreateNew = true;
+        chatId = `demo-reflexao-${uuidv4()}`;
+      }
+    } else {
+      // Primeira reflexão - criar novo chat
+      shouldCreateNew = true;
+      chatId = `demo-reflexao-${uuidv4()}`;
+    }
+
+    // Se for criar novo chat, salvar o ID
+    if (shouldCreateNew) {
+      safeSetStorage(`demo-reflection-chat-id-${DEMO_USER_ID}`, chatId);
+
+      // Criar histórico inicial com contexto da reflexão
+      const initialMessages = [
+        {
+          role: "user",
+          content: `Pergunta da reflexão: "${question}"\n\nMinha resposta: ${answer}`,
+          timestamp: new Date(),
+        },
+        {
+          role: "assistant",
+          content: "Conte-me mais sobre isso.",
+          timestamp: new Date(),
+        }
+      ];
+
+      const demoStorageKey = `demo-chat-${chatId}`;
+      safeSetStorage(demoStorageKey, { messages: initialMessages });
+    }
 
     // Marcar como chat de reflexão
     setIsReflectionChat(true);
 
-    // Criar histórico inicial com contexto da reflexão (sempre criar novo)
-    const initialMessages = [
-      {
-        role: "user",
-        content: `Pergunta da reflexão: "${question}"\n\nMinha resposta: ${answer}`,
-        timestamp: new Date(),
-      },
-      {
-        role: "assistant",
-        content: "Conte-me mais sobre isso.",
-        timestamp: new Date(),
-      }
-    ];
-
-    const historyKey = `lumia-chat-history-${newChatId}-${DEMO_USER_ID}`;
-    safeSetStorage(historyKey, initialMessages);
-
     // Abrir chat diretamente
-    setActiveTheme(themeId);
-    setActiveChatId(newChatId);
+    setActiveTheme("espaco-livre");
+    setActiveChatId(chatId);
     setCurrentView("chat-active");
     setActiveSidebarTab("chat");
   };

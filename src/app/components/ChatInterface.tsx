@@ -392,11 +392,15 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
   const handleSend = async () => {
     if ((!input.trim() && !selectedFile) || isLoading) return;
 
-    // MODO DEMO: Verificar limite de mensagens do usuário (padrão 5, ou customizado)
+    // MODO DEMO: Verificar limite de mensagens do usuário
     if (isDemo) {
       const userMessageCount = messages.filter(m => m.role === "user").length;
 
-      if (userMessageCount >= demoMessageLimit) {
+      // Para chat de reflexão: bloquear na 3ª mensagem (limite = 2 mensagens)
+      // Para outros chats: usar demoMessageLimit padrão
+      const effectiveLimit = isReflectionChat ? 2 : demoMessageLimit;
+
+      if (userMessageCount >= effectiveLimit) {
         // Bloquear ao tentar enviar mensagem além do limite
         const context = isReflectionChat ? "reflexao-continue" : "chat-limit";
         if (onDemoAction) {
