@@ -188,7 +188,7 @@ function generatePersonalizedMessage(responses: Record<string, string>): string 
   const estiloTexto = estiloRespostaMap[estiloResposta] || "equilibrado";
 
   // Construir mensagem personalizada (formato chat)
-  const mensagem = `Oi, ${nomeCapitalizado}.\n\nPelo que você respondeu, parece que hoje está pesado por ${pesoHoje} e você está buscando ${precisaAgora}.\n\nEu vou falar com você do jeito que você preferir (${estiloTexto}) e no seu ritmo — sem julgamento.\n\nAntes da gente começar: o que está mais te consumindo agora, nesse momento?`;
+  const mensagem = `Oi, ${nomeCapitalizado}.\n\nPelo que você respondeu, parece que hoje você está com pouca energia e sentindo as coisas mais difíceis do que o normal — e está buscando ${precisaAgora}.\n\nEu vou falar com você do jeito que você preferir (${estiloTexto}) e no seu ritmo — sem julgamento.\n\nAntes da gente começar: o que está mais te consumindo agora, nesse momento?`;
 
   return mensagem;
 }
