@@ -9,7 +9,7 @@ interface QuizInterfaceProps {
   quizTitle: string;
   onBack: () => void;
   isDemo?: boolean;
-  onDemoAction?: () => void;
+  onDemoAction?: (context?: string) => void;
 }
 
 interface Question {

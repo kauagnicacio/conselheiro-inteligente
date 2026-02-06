@@ -21,27 +21,27 @@ interface CheckoutModalContextualProps {
 const contextMessages: Record<CheckoutContext, { title: string; description: string }> = {
   "chat-limit": {
     title: "Você atingiu o limite de mensagens no modo teste 💬",
-    description: "Assine para ter conversas ilimitadas 24h com a Lum, sempre que precisar."
+    description: "Assine para ter conversas ilimitadas com a Lum, 24h por dia, sempre que precisar."
   },
   "quiz-result": {
-    title: "Assine para ver o resultado completo ✨",
+    title: "Assine para ver seu resultado completo ✨",
     description: "Descubra insights profundos sobre você e continue sua jornada de autoconhecimento."
   },
   "reflexao-continue": {
-    title: "Assine para continuar a conversa 🌟",
-    description: "Aprofunde suas reflexões e salve todos os seus momentos de conexão."
+    title: "Assine para salvar e continuar essa conversa 🌟",
+    description: "Aprofunde suas reflexões e salve todos os seus momentos de conexão com a Lum."
   },
   "jornada-gratitude": {
     title: "Assine para desbloquear o exercício Gratidão do dia 🙏",
     description: "Complete sua jornada diária e cultive ainda mais momentos de gratidão."
   },
   "emocoes-complete": {
-    title: "Assine para concluir sua jornada emocional 💜",
-    description: "Finalize o processo de reconhecimento das suas emoções e converse sobre isso."
+    title: "Assine para concluir sua jornada e destravar o próximo passo 💜",
+    description: "Finalize o processo de reconhecimento das suas emoções e converse sobre isso com a Lum."
   },
   "default": {
-    title: "Pra continuar essa conversa, libere seu acesso completo ✨",
-    description: "Você já deu o primeiro passo no quiz — agora é só destravar pra conversar de verdade com a Lum, sem limites."
+    title: "Libere seu acesso completo à Lum IA ✨",
+    description: "Assine para ter acesso ilimitado a todas as funcionalidades e conversar sem limites."
   }
 };
 

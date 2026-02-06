@@ -7,7 +7,7 @@ import { QuizInterface } from "./QuizInterface";
 interface QuizLibraryProps {
   onSelectQuiz: (quizId: string) => void;
   isDemo?: boolean;
-  onDemoAction?: () => void;
+  onDemoAction?: (context?: string) => void;
   onResetQuiz?: () => void;
 }
 
@@ -119,9 +119,9 @@ export function QuizLibrary({ onSelectQuiz, isDemo = false, onDemoAction, onRese
   };
 
   const handleDemoActionWithReset = () => {
-    // Chamar o popup do checkout
+    // Chamar o popup do checkout com contexto de quiz
     if (onDemoAction) {
-      onDemoAction();
+      onDemoAction("quiz-result");
     }
     // Resetar o quiz imediatamente para que quando o popup fechar, já esteja na biblioteca
     setActiveQuiz(null);

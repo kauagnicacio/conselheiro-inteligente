@@ -47,7 +47,7 @@ interface ChatInterfaceProps {
   isDemo?: boolean;
   onDemoAction?: (context?: string) => void;
   initialMessage?: string;
-  demoMessageLimit?: number; // Limite customizado de mensagens no modo demo (padrão: 5)
+  demoMessageLimit?: number; // Limite customizado de mensagens no modo demo (padrão: 3)
   isReflectionChat?: boolean; // Flag para indicar que é um chat de reflexão (para avisos)
 }
 
@@ -83,7 +83,7 @@ const themeConfig: Record<string, { icon: any; name: string; color: string; seed
   }
 };
 
-export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeTheme, onThemeChange, onBack, isDemo = false, onDemoAction, initialMessage, demoMessageLimit = 5, isReflectionChat = false }: ChatInterfaceProps) {
+export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeTheme, onThemeChange, onBack, isDemo = false, onDemoAction, initialMessage, demoMessageLimit = 3, isReflectionChat = false }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
