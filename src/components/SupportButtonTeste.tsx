@@ -9,7 +9,7 @@ interface SupportButtonTesteProps {
 export function SupportButtonTeste({ hideOnChat = false }: SupportButtonTesteProps) {
   const handleClick = () => {
     const phoneNumber = "5511949156613";
-    const message = "Oi! Estou testando a Lum IA no modo teste (/teste) e preciso de ajuda com: ";
+    const message = "Oi! Estou testando a Lum IA no modo teste e preciso de ajuda com: ";
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
     window.open(whatsappUrl, "_blank");
