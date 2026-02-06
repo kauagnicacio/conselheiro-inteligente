@@ -438,9 +438,8 @@ export function DailySteps({ selectedDay, userId, onDayComplete, onDemoAction, i
           {steps.map((step, index) => {
             const isCompleted = completedSteps.has(step.id);
             const isExpanded = expandedStep === step.id;
-            // No modo demo, travar o exercício "gratitude" (Gratidão do dia)
-            const isDemoLocked = isDemo && step.id === "gratitude";
-            const isLocked = isFuture || (index > 0 && !completedSteps.has(steps[index - 1].id)) || isDemoLocked;
+            // No modo demo, NÃO travar "gratitude" - permitir clicar para mostrar checkout
+            const isLocked = isFuture || (index > 0 && !completedSteps.has(steps[index - 1].id));
             const Icon = step.icon;
 
             return (

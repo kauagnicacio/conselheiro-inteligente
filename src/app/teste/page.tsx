@@ -171,34 +171,29 @@ export default function TestePage() {
   };
 
   const handleStartChatFromReflection = (question: string, answer: string) => {
-    // No modo demo, usar ID fixo para chat de reflexão (persistência)
+    // No modo demo, criar um ID único para cada nova reflexão
     const themeId = "espaco-livre";
-    const newChatId = `demo-reflexao-${themeId}`;
+    const newChatId = `demo-reflexao-${uuidv4()}`;
 
     // Marcar como chat de reflexão
     setIsReflectionChat(true);
 
-    // Criar histórico inicial com contexto da reflexão
+    // Criar histórico inicial com contexto da reflexão (sempre criar novo)
+    const initialMessages = [
+      {
+        role: "user",
+        content: `Pergunta da reflexão: "${question}"\n\nMinha resposta: ${answer}`,
+        timestamp: new Date(),
+      },
+      {
+        role: "assistant",
+        content: "Conte-me mais sobre isso.",
+        timestamp: new Date(),
+      }
+    ];
+
     const historyKey = `lumia-chat-history-${newChatId}-${DEMO_USER_ID}`;
-    const existingHistory = localStorage.getItem(historyKey);
-
-    // Se não existe histórico, criar mensagem inicial
-    if (!existingHistory) {
-      const initialMessages = [
-        {
-          role: "user",
-          content: `Pergunta da reflexão: "${question}"\n\nMinha resposta: ${answer}`,
-          timestamp: new Date(),
-        },
-        {
-          role: "assistant",
-          content: "Conte-me mais sobre isso.",
-          timestamp: new Date(),
-        }
-      ];
-
-      localStorage.setItem(historyKey, JSON.stringify(initialMessages));
-    }
+    localStorage.setItem(historyKey, JSON.stringify(initialMessages));
 
     // Abrir chat diretamente
     setActiveTheme(themeId);
