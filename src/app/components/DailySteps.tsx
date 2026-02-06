@@ -71,7 +71,7 @@ interface DailyStepsProps {
   selectedDay: number;
   userId: string;
   onDayComplete: (day: number, progress: number) => void;
-  onDemoAction?: () => void;
+  onDemoAction?: (context?: string) => void;
   isDemo?: boolean;
 }
 
@@ -120,9 +120,9 @@ export function DailySteps({ selectedDay, userId, onDayComplete, onDemoAction, i
   };
 
   const handleStepClick = (step: Step) => {
-    // No modo demo, bloquear qualquer clique
-    if (isDemo && onDemoAction) {
-      onDemoAction();
+    // No modo demo, bloquear APENAS o último exercício (Gratidão do dia)
+    if (isDemo && step.id === "gratitude" && onDemoAction) {
+      onDemoAction("jornada-gratitude");
       return;
     }
 
@@ -438,7 +438,9 @@ export function DailySteps({ selectedDay, userId, onDayComplete, onDemoAction, i
           {steps.map((step, index) => {
             const isCompleted = completedSteps.has(step.id);
             const isExpanded = expandedStep === step.id;
-            const isLocked = isFuture || (index > 0 && !completedSteps.has(steps[index - 1].id));
+            // No modo demo, travar o exercício "gratitude" (Gratidão do dia)
+            const isDemoLocked = isDemo && step.id === "gratitude";
+            const isLocked = isFuture || (index > 0 && !completedSteps.has(steps[index - 1].id)) || isDemoLocked;
             const Icon = step.icon;
 
             return (

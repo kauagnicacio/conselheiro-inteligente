@@ -47,7 +47,7 @@ export function WeekCalendar({
         >
           <div className="flex items-center justify-center gap-2 text-purple-600 dark:text-purple-400">
             <Sparkles className="w-5 h-5 group-hover:scale-110 transition-transform" />
-            <span className="font-medium">✨ Meu mapa emocional da semana</span>
+            <span className="font-medium">✨ Clique para ver o seu mapa emocional semanal</span>
           </div>
         </button>
       )}

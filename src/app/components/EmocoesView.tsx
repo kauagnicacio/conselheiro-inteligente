@@ -288,7 +288,7 @@ interface EmocoesViewProps {
   onBack: () => void;
   onNavigateToChat?: (initialMessage: string) => void;
   isDemo?: boolean;
-  onDemoAction?: () => void;
+  onDemoAction?: (context?: string) => void;
 }
 
 export function EmocoesView({ userId, onBack, onNavigateToChat, isDemo = false, onDemoAction }: EmocoesViewProps) {
@@ -338,13 +338,8 @@ export function EmocoesView({ userId, onBack, onNavigateToChat, isDemo = false, 
 
   const handleFreeWriteSubmit = () => {
     if (freeWriteText.trim().length < 10) return;
-    
-    // No modo demo, bloquear ao clicar em Continuar depois da escrita livre
-    if (isDemo && onDemoAction) {
-      onDemoAction();
-      return;
-    }
-    
+
+    // Permitir continuar - bloqueio será no final
     const detected = analyzeEmotionFromText(freeWriteText);
     setSuggestedEmotion(detected);
     setFlowStep("ai-suggestion");
@@ -365,12 +360,7 @@ export function EmocoesView({ userId, onBack, onNavigateToChat, isDemo = false, 
   };
 
   const handleSelectEmotion = (emotion: Emotion) => {
-    // No modo demo, bloquear ao clicar em qualquer uma das 7 emoções
-    if (isDemo && onDemoAction) {
-      onDemoAction();
-      return;
-    }
-    
+    // Permitir selecionar e responder - bloqueio será no final
     setSelectedEmotion(emotion);
     setFlowStep("journey");
     setJourneyStep("recognize");
@@ -396,6 +386,12 @@ export function EmocoesView({ userId, onBack, onNavigateToChat, isDemo = false, 
 
   const handleComplete = () => {
     if (!selectedEmotion) return;
+
+    // No modo demo, bloquear ao tentar concluir jornada
+    if (isDemo && onDemoAction) {
+      onDemoAction("emocoes-complete");
+      return;
+    }
 
     // Salvar no histórico
     const historyKey = `emotion-journey-${selectedEmotion.id}-${userId}`;
@@ -427,6 +423,12 @@ export function EmocoesView({ userId, onBack, onNavigateToChat, isDemo = false, 
 
   const handleContinueToChat = () => {
     if (!selectedEmotion) return;
+
+    // No modo demo, bloquear ao tentar conversar sobre isso
+    if (isDemo && onDemoAction) {
+      onDemoAction("emocoes-complete");
+      return;
+    }
 
     // Mensagens variadas para continuidade emocional
     const messages = [
@@ -605,24 +607,24 @@ export function EmocoesView({ userId, onBack, onNavigateToChat, isDemo = false, 
     return (
       <div className="h-full overflow-y-auto bg-[#1a1a1a]">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12 min-h-full flex flex-col justify-center">
-          <div className="bg-[#212121] rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-gray-700 space-y-6 sm:space-y-8">
+          <div className="bg-[#212121] rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-gray-700 space-y-4 sm:space-y-6 md:space-y-8">
             {/* Ícone da emoção detectada */}
             <div className="flex justify-center">
-              <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl flex items-center justify-center bg-gradient-to-br ${suggestedEmotion.gradient}`}>
-                <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+              <div className={`w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg sm:rounded-xl flex items-center justify-center bg-gradient-to-br ${suggestedEmotion.gradient}`}>
+                <Icon className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-white" />
               </div>
             </div>
 
             {/* Mensagem da Lum */}
-            <div className="text-center space-y-3 sm:space-y-4">
+            <div className="text-center space-y-2 sm:space-y-3 md:space-y-4">
               <div className="flex items-center justify-center gap-2 text-purple-400">
                 <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="text-xs sm:text-sm font-medium">Lum analisou</span>
               </div>
-              
-              <p className="text-lg sm:text-xl text-white leading-relaxed px-2">
+
+              <p className="text-base sm:text-lg md:text-xl text-white leading-relaxed px-2 break-words">
                 Pelo que você descreveu, isso se parece mais com{" "}
-                <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 inline-block">
                   {suggestedEmotion.name}
                 </span>
               </p>
@@ -632,7 +634,7 @@ export function EmocoesView({ userId, onBack, onNavigateToChat, isDemo = false, 
             <div className="space-y-3 pt-2 sm:pt-4">
               <Button
                 onClick={handleConfirmSuggestion}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-5 sm:py-6 text-base sm:text-lg"
+                className="w-full bg-purple-500 hover:bg-purple-600 text-white py-4 sm:py-5 md:py-6 text-sm sm:text-base md:text-lg"
               >
                 Sim, é isso que estou sentindo
               </Button>
@@ -640,7 +642,7 @@ export function EmocoesView({ userId, onBack, onNavigateToChat, isDemo = false, 
               <Button
                 onClick={handleRejectSuggestion}
                 variant="outline"
-                className="w-full border-2 border-gray-700 text-gray-300 hover:bg-gray-800 py-5 sm:py-6 text-base sm:text-lg"
+                className="w-full border-2 border-gray-700 text-gray-300 hover:bg-gray-800 py-4 sm:py-5 md:py-6 text-sm sm:text-base md:text-lg"
               >
                 Não sinto isso, quero escrever novamente
               </Button>

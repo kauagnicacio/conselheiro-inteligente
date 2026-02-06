@@ -127,12 +127,7 @@ export function DailyReflection({ onBack, onStartChat, userId, isDemo = false, o
   };
 
   const handleStartConversation = () => {
-    // MODO DEMO: Interceptar ao tentar conversar
-    if (isDemo && onDemoAction) {
-      onDemoAction();
-      return;
-    }
-
+    // MODO DEMO: Liberar chat com mensagem pronta (limite será controlado no ChatInterface)
     onStartChat(currentQuestion, answer);
   };
 

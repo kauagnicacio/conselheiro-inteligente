@@ -10,9 +10,10 @@ import { ThemeSelector } from "../components/ThemeSelector";
 import { ThemeChats } from "../components/ThemeChats";
 import { DailyReflection } from "../components/DailyReflection";
 import { EmocoesView } from "../components/EmocoesView";
-import { CheckoutModal } from "@/components/CheckoutModal";
+import { CheckoutModalContextual, CheckoutContext } from "@/components/CheckoutModalContextual";
 import { LumLogo } from "@/components/LumIcons";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SupportButtonTeste } from "@/components/SupportButtonTeste";
 import { MessageCircle, BookOpen, Sparkles, Map, Heart, Home, Library, Users } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { WeekCalendar } from "../components/WeekCalendar";
@@ -63,6 +64,8 @@ export default function TestePage() {
   const [isClient, setIsClient] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [checkoutContext, setCheckoutContext] = useState<CheckoutContext>("default");
+  const [isReflectionChat, setIsReflectionChat] = useState(false); // Flag para chat de reflexão
 
   // Estados para Jornada
   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDay());
@@ -98,7 +101,8 @@ export default function TestePage() {
   };
 
   // Função para abrir modal de checkout (intercepta todas as ações)
-  const openCheckoutModal = () => {
+  const openCheckoutModal = (context: CheckoutContext = "default") => {
+    setCheckoutContext(context);
     setShowCheckoutModal(true);
   };
 
@@ -144,10 +148,22 @@ export default function TestePage() {
   };
 
   const handleBackToThemeList = () => {
+    // Se é chat de reflexão no modo demo, mostrar aviso de salvar
+    if (isReflectionChat) {
+      // Mostrar aviso de salvar conversa
+      const shouldSave = confirm("Deseja salvar esta conversa antes de sair?");
+      if (shouldSave) {
+        // Abrir modal de checkout para salvar
+        openCheckoutModal("reflexao-continue");
+        return;
+      }
+    }
+
     setCurrentView("chat-list");
     setActiveSidebarTab("chat");
     setActiveTheme("");
     setActiveChatId("");
+    setIsReflectionChat(false);
   };
 
   const handleBackToThemeChats = () => {
@@ -158,8 +174,11 @@ export default function TestePage() {
   const handleStartChatFromReflection = (question: string, answer: string) => {
     // Criar novo chat no tema "Espaço Livre" com contexto da reflexão
     const themeId = "espaco-livre";
-    const newChatId = `${themeId}-${uuidv4()}`;
-    
+    const newChatId = `reflexao-${themeId}-${uuidv4()}`;
+
+    // Marcar como chat de reflexão
+    setIsReflectionChat(true);
+
     // Abrir chat diretamente
     setActiveTheme(themeId);
     setActiveChatId(newChatId);
@@ -352,7 +371,7 @@ export default function TestePage() {
 
           {/* Botão de Logout */}
           <Button
-            onClick={openCheckoutModal}
+            onClick={() => openCheckoutModal("default")}
             variant="ghost"
             className="w-full justify-start text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10"
           >
@@ -458,6 +477,8 @@ export default function TestePage() {
               onBack={handleBackToThemeList}
               isDemo={true}
               onDemoAction={openCheckoutModal}
+              demoMessageLimit={isReflectionChat ? 3 : 5}
+              isReflectionChat={isReflectionChat}
             />
           )}
           
@@ -567,10 +588,14 @@ export default function TestePage() {
       </div>
 
       {/* Modal de Checkout */}
-      <CheckoutModal
+      <CheckoutModalContextual
         isOpen={showCheckoutModal}
         onClose={() => setShowCheckoutModal(false)}
+        context={checkoutContext}
       />
+
+      {/* Botão de Suporte - não mostrar na tela de chat */}
+      <SupportButtonTeste hideOnChat={currentView === "chat-active"} />
     </div>
   );
 }

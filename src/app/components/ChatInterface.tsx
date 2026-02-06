@@ -45,8 +45,10 @@ interface ChatInterfaceProps {
   onThemeChange: (theme: string) => void;
   onBack?: () => void;
   isDemo?: boolean;
-  onDemoAction?: () => void;
+  onDemoAction?: (context?: string) => void;
   initialMessage?: string;
+  demoMessageLimit?: number; // Limite customizado de mensagens no modo demo (padrão: 5)
+  isReflectionChat?: boolean; // Flag para indicar que é um chat de reflexão (para avisos)
 }
 
 const themeConfig: Record<string, { icon: any; name: string; color: string; seedMessage?: string }> = {
@@ -81,7 +83,7 @@ const themeConfig: Record<string, { icon: any; name: string; color: string; seed
   }
 };
 
-export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeTheme, onThemeChange, onBack, isDemo = false, onDemoAction, initialMessage }: ChatInterfaceProps) {
+export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeTheme, onThemeChange, onBack, isDemo = false, onDemoAction, initialMessage, demoMessageLimit = 5, isReflectionChat = false }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -158,10 +160,25 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
       // Para temas fixos, usar o themeId como conversationId (garantir 1 conversa por tema)
       const conversationId = isThemeChat ? themeId : activeTheme;
 
-      // No modo demo, criar mensagem seed ou usar mensagem inicial do quiz
+      // No modo demo, carregar mensagens salvas localmente se existirem
       if (isDemo) {
+        const demoStorageKey = `demo-chat-${conversationId}`;
+        const savedDemoChat = localStorage.getItem(demoStorageKey);
+
+        if (savedDemoChat) {
+          try {
+            const parsed = JSON.parse(savedDemoChat);
+            setMessages(parsed.messages || []);
+            setIsInitialized(true);
+            return;
+          } catch (e) {
+            console.error("Erro ao carregar chat demo:", e);
+          }
+        }
+
+        // Se não há chat salvo, criar mensagem inicial
         let greeting = "";
-        
+
         // ✅ FIX: Mensagem inicial do quiz APENAS para Espaço Livre
         if (initialMessage && isEspacoLivre) {
           greeting = initialMessage;
@@ -169,13 +186,17 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
           // Caso contrário, usar mensagem seed padrão do tema
           greeting = themeConfig[themeId]?.seedMessage || "Esse é seu espaço. Me conta o que você está sentindo.";
         }
-        
+
         const initialMsg: Message = {
           role: "assistant",
           content: greeting,
           timestamp: new Date()
         };
         setMessages([initialMsg]);
+
+        // Salvar mensagem inicial no localStorage do demo
+        localStorage.setItem(demoStorageKey, JSON.stringify({ messages: [initialMsg] }));
+
         setIsInitialized(true);
         return;
       }
@@ -373,13 +394,22 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
   };
 
   const handleSend = async () => {
-    // MODO DEMO: Interceptar envio de mensagem
-    if (isDemo && onDemoAction) {
-      onDemoAction();
-      return;
-    }
-    
     if ((!input.trim() && !selectedFile) || isLoading) return;
+
+    // MODO DEMO: Verificar limite de mensagens do usuário (padrão 5, ou customizado)
+    if (isDemo) {
+      const userMessageCount = messages.filter(m => m.role === "user").length;
+
+      if (userMessageCount >= demoMessageLimit) {
+        // Bloquear ao tentar enviar mensagem além do limite
+        const context = isReflectionChat ? "reflexao-continue" : "chat-limit";
+        if (onDemoAction) {
+          onDemoAction(context);
+        }
+        return;
+      }
+    }
+
 
     let messageContent = input.trim();
     let messageType: "text" | "audio" | "image" = "text";
@@ -414,10 +444,16 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
     // Para temas fixos, usar o themeId como conversationId
     const conversationId = isThemeChat ? themeId : activeTheme;
 
-    // Salvar mensagem do usuário no banco E localStorage (SEMPRE)
-    if (userId) {
+    // MODO DEMO: Salvar no localStorage
+    if (isDemo) {
+      const demoStorageKey = `demo-chat-${conversationId}`;
+      localStorage.setItem(demoStorageKey, JSON.stringify({ messages: newMessages }));
+    }
+
+    // Salvar mensagem do usuário no banco E localStorage (SEMPRE) - Modo normal
+    if (!isDemo && userId) {
       await saveMessageHybrid(conversationId, userId, userMessage, newMessages);
-      
+
       // Criar conversa se não existir (para TODOS os tipos de chat)
       await saveConversation(conversationId, userId, themeId, `Conversa em ${themeName}`, isThemeChat);
     }
@@ -491,9 +527,15 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
                       ...newMessages[messageIndex],
                       isStreaming: false,
                     };
-                    
-                    // Salvar mensagem da assistente no banco E localStorage (SEMPRE)
-                    if (userId) {
+
+                    // MODO DEMO: Salvar no localStorage
+                    if (isDemo) {
+                      const demoStorageKey = `demo-chat-${conversationId}`;
+                      localStorage.setItem(demoStorageKey, JSON.stringify({ messages: newMessages }));
+                    }
+
+                    // Salvar mensagem da assistente no banco E localStorage (SEMPRE) - Modo normal
+                    if (!isDemo && userId) {
                       saveMessageHybrid(conversationId, userId, newMessages[messageIndex], newMessages);
                     }
                   }
@@ -540,29 +582,41 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
 
         const finalMessages = [...newMessages, assistantMessage];
         setMessages(finalMessages);
-        
-        // Salvar mensagem da assistente no banco E localStorage (SEMPRE)
-        if (userId) {
+
+        // MODO DEMO: Salvar no localStorage
+        if (isDemo) {
+          const demoStorageKey = `demo-chat-${conversationId}`;
+          localStorage.setItem(demoStorageKey, JSON.stringify({ messages: finalMessages }));
+        }
+
+        // Salvar mensagem da assistente no banco E localStorage (SEMPRE) - Modo normal
+        if (!isDemo && userId) {
           await saveMessageHybrid(conversationId, userId, assistantMessage, finalMessages);
         }
       }
 
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
-      
+
       setIsTyping(false);
-      
+
       const errorMessage: Message = {
         role: "assistant",
         content: "Tive um problema agora, mas já estou aqui de novo. Pode tentar mais uma vez?",
         timestamp: new Date(),
       };
-      
+
       const finalMessages = [...newMessages, errorMessage];
       setMessages(finalMessages);
-      
-      // Salvar mensagem de erro no banco E localStorage (SEMPRE)
-      if (userId) {
+
+      // MODO DEMO: Salvar no localStorage
+      if (isDemo) {
+        const demoStorageKey = `demo-chat-${conversationId}`;
+        localStorage.setItem(demoStorageKey, JSON.stringify({ messages: finalMessages }));
+      }
+
+      // Salvar mensagem de erro no banco E localStorage (SEMPRE) - Modo normal
+      if (!isDemo && userId) {
         await saveMessageHybrid(conversationId, userId, errorMessage, finalMessages);
       }
     } finally {
