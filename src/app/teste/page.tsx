@@ -531,7 +531,7 @@ export default function TestePage() {
               onBack={handleBackToThemeList}
               isDemo={true}
               onDemoAction={openCheckoutModal}
-              demoMessageLimit={isReflectionChat ? 3 : 5}
+              demoMessageLimit={3}
               isReflectionChat={isReflectionChat}
             />
           )}

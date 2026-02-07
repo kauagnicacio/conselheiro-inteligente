@@ -304,6 +304,32 @@ export function EmocoesView({ userId, onBack, onNavigateToChat, isDemo = false, 
     transform: ""
   });
 
+  // Detectar quando modal de checkout fecha e voltar para tela inicial
+  useEffect(() => {
+    const handleModalClose = () => {
+      // Resetar para tela inicial das 7 Emoções
+      if (isDemo) {
+        setFlowStep("intro");
+        setSelectedEmotion(null);
+        setJourneyStep("recognize");
+        setJourneyAnswers({
+          recognize: "",
+          understand: "",
+          express: "",
+          transform: ""
+        });
+        setFreeWriteText("");
+        setSuggestedEmotion(null);
+      }
+    };
+
+    window.addEventListener('checkout-modal-closed', handleModalClose);
+
+    return () => {
+      window.removeEventListener('checkout-modal-closed', handleModalClose);
+    };
+  }, [isDemo]);
+
   // Simular análise de IA do texto livre
   const analyzeEmotionFromText = (text: string) => {
     const lowerText = text.toLowerCase();

@@ -400,21 +400,32 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
   const handleSend = async () => {
     if ((!input.trim() && !selectedFile) || isLoading) return;
 
-    // MODO DEMO: Verificar limite de mensagens do usuário
+    // MODO DEMO: Verificar limite GLOBAL de mensagens do usuário
     if (isDemo) {
-      const userMessageCount = messages.filter(m => m.role === "user").length;
+      // Buscar contador global de mensagens (todos os chats do /teste, exceto reflexão)
+      const globalCountKey = `demo-global-message-count-${userId}`;
+      let globalCount = safeGetStorage<number>(globalCountKey, 0);
 
-      // Para chat de reflexão: bloquear na 3ª mensagem (limite = 2 mensagens)
-      // Para outros chats: usar demoMessageLimit padrão
-      const effectiveLimit = isReflectionChat ? 2 : demoMessageLimit;
+      // Para chat de reflexão: limite separado de 2 mensagens (exceção)
+      if (isReflectionChat) {
+        const userMessageCount = messages.filter(m => m.role === "user").length;
 
-      if (userMessageCount >= effectiveLimit) {
-        // Bloquear ao tentar enviar mensagem além do limite
-        const context = isReflectionChat ? "reflexao-continue" : "chat-limit";
-        if (onDemoAction) {
-          onDemoAction(context);
+        if (userMessageCount >= 2) {
+          // Bloquear na 3ª tentativa de envio
+          if (onDemoAction) {
+            onDemoAction("reflexao-continue");
+          }
+          return;
         }
-        return;
+      } else {
+        // Para outros chats do /teste: verificar limite global
+        if (globalCount >= 3) {
+          // Já excedeu o limite global - bloquear imediatamente
+          if (onDemoAction) {
+            onDemoAction("chat-limit");
+          }
+          return;
+        }
       }
     }
 
@@ -448,6 +459,13 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
     handleRemoveFile();
     setIsLoading(true);
     setIsTyping(true);
+
+    // MODO DEMO: Incrementar contador global (exceto para chat de reflexão)
+    if (isDemo && !isReflectionChat && userId) {
+      const globalCountKey = `demo-global-message-count-${userId}`;
+      const currentCount = safeGetStorage<number>(globalCountKey, 0);
+      safeSetStorage(globalCountKey, currentCount + 1);
+    }
 
     // Para temas fixos, usar o themeId como conversationId
     const conversationId = isThemeChat ? themeId : activeTheme;
