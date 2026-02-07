@@ -6,39 +6,34 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 interface Screenshot {
   title: string;
   description: string;
-  gradient: string;
+  imageUrl: string;
 }
 
 const screenshots: Screenshot[] = [
   {
-    title: "Início",
-    description: "Escolha como cuidar de você hoje",
-    gradient: "from-purple-600 to-pink-600",
+    title: "Tela 1",
+    description: "Interface do app",
+    imageUrl: "https://pub-c0bfb119504542e0b2e6ebc8f6b3b1df.r2.dev/user-uploads/user_34dEQaUEdA0vDQOPaz2weSm3AKh/283409e0-0231-47be-98c2-ce0ecf515642.jpeg",
   },
   {
-    title: "Chat - Espaço Livre",
-    description: "Desabafe sem julgamento, 24h",
-    gradient: "from-blue-600 to-cyan-600",
+    title: "Tela 2",
+    description: "Funcionalidades do app",
+    imageUrl: "https://pub-c0bfb119504542e0b2e6ebc8f6b3b1df.r2.dev/user-uploads/user_34dEQaUEdA0vDQOPaz2weSm3AKh/a0ea9293-73d2-4e83-a76e-4bdce86356e8.jpeg",
   },
   {
-    title: "Quiz",
-    description: "Organize a cabeça em 2 minutos",
-    gradient: "from-emerald-600 to-teal-600",
+    title: "Tela 3",
+    description: "Experiência personalizada",
+    imageUrl: "https://pub-c0bfb119504542e0b2e6ebc8f6b3b1df.r2.dev/user-uploads/user_34dEQaUEdA0vDQOPaz2weSm3AKh/fdff7927-b05d-4c52-9be8-211cccf0d0f1.jpeg",
   },
   {
-    title: "Reflexão do Dia",
-    description: "Perguntas que destravam sua mente",
-    gradient: "from-amber-600 to-orange-600",
+    title: "Tela 4",
+    description: "Recursos principais",
+    imageUrl: "https://pub-c0bfb119504542e0b2e6ebc8f6b3b1df.r2.dev/user-uploads/user_34dEQaUEdA0vDQOPaz2weSm3AKh/0fa56f2c-37b2-4000-8a3a-3126bfd5cbb7.jpeg",
   },
   {
-    title: "Minha Jornada",
-    description: "Acompanhe seu progresso emocional",
-    gradient: "from-green-600 to-emerald-600",
-  },
-  {
-    title: "7 Emoções",
-    description: "Explore e entenda suas emoções",
-    gradient: "from-rose-600 to-pink-600",
+    title: "Tela 5",
+    description: "Navegação intuitiva",
+    imageUrl: "https://pub-c0bfb119504542e0b2e6ebc8f6b3b1df.r2.dev/user-uploads/user_34dEQaUEdA0vDQOPaz2weSm3AKh/5344bdfe-7341-451e-884e-178e0debd295.jpeg",
   },
 ];
 
@@ -103,22 +98,12 @@ export function AppScreenshots() {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {/* Screen Content with Gradient */}
-          <div
-            className={`w-full h-full bg-gradient-to-br ${currentScreen.gradient} p-6 flex flex-col items-center justify-center text-center transition-all duration-500`}
-          >
-            <div className="mb-4">
-              <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl mx-auto flex items-center justify-center">
-                <div className="w-16 h-16 bg-white/30 rounded-xl" />
-              </div>
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">
-              {currentScreen.title}
-            </h3>
-            <p className="text-sm text-white/90 max-w-[200px]">
-              {currentScreen.description}
-            </p>
-          </div>
+          {/* Screen Content with Real App Screenshot */}
+          <img
+            src={currentScreen.imageUrl}
+            alt={currentScreen.description}
+            className="w-full h-full object-cover transition-all duration-500"
+          />
         </div>
       </div>
 

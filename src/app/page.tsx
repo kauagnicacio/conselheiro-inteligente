@@ -66,7 +66,7 @@ export default function RootPage() {
               Testar agora
             </button>
             <p className="text-base text-gray-500 dark:text-gray-400 font-medium">
-              2 minutos pra começar. 100% privado.
+              Comece a testar agora. 100% privado.
             </p>
           </div>
 
@@ -175,7 +175,7 @@ export default function RootPage() {
               Quer ver como funciona?
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-xl mx-auto">
-              Teste gratuitamente. Leva 2 minutos pra começar e você já sente a diferença.
+              Teste gratuitamente. Abra e veja como funciona na prática.
             </p>
             <button
               onClick={() => router.push("/teste")}
@@ -336,29 +336,6 @@ export default function RootPage() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA FINAL (após FAQ) */}
-      <section className="py-16 md:py-20 bg-purple-600 dark:bg-purple-900">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-              Comece agora, é rápido
-            </h2>
-            <p className="text-xl text-purple-100 mb-10 max-w-2xl mx-auto leading-relaxed">
-              2 minutos pra criar sua conta. Totalmente privado. Você não tem nada a perder — e muito a organizar na cabeça.
-            </p>
-            <button
-              onClick={() => router.push("/teste")}
-              className="w-full md:w-auto px-12 py-6 bg-white hover:bg-gray-100 text-purple-600 text-xl font-bold rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105"
-            >
-              Testar a Lum agora
-            </button>
-            <p className="text-base text-purple-200 mt-4">
-              Sem cartão de crédito • Sem compromisso
-            </p>
           </div>
         </div>
       </section>
