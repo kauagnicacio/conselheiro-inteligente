@@ -29,6 +29,7 @@ import {
 } from "@/lib/chat-storage";
 import { safeGetStorage, safeSetStorage } from "@/lib/safe-storage";
 import { normalizeMessages, formatTimestamp } from "@/lib/timestamp-utils";
+import { uploadImageToStorage } from "@/lib/image-upload";
 
 interface Message {
   role: "user" | "assistant";
@@ -323,8 +324,22 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
 
     const file = e.target.files?.[0];
     if (file) {
+      // Inferir tipo de arquivo se vazio (iOS Safari bug)
+      let fileType = file.type;
+      if (!fileType) {
+        const extension = file.name.toLowerCase().split('.').pop();
+        if (extension === 'png') {
+          fileType = 'image/png';
+        } else if (extension === 'jpg' || extension === 'jpeg') {
+          fileType = 'image/jpeg';
+        } else if (extension === 'webp') {
+          fileType = 'image/webp';
+        }
+        console.log('[MOBILE FIX] Tipo de arquivo inferido:', fileType);
+      }
+
       // Validar tipo de arquivo
-      if (!file.type.startsWith("image/")) {
+      if (!fileType || !fileType.startsWith("image/")) {
         alert("Por favor, selecione apenas arquivos de imagem (JPG, PNG, etc.)");
         e.target.value = ""; // Limpar input
         return;
@@ -338,6 +353,14 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
         return;
       }
 
+      // Logs de diagnóstico para mobile
+      console.log('[DIAGNÓSTICO MOBILE - SELEÇÃO DE ARQUIVO]', {
+        fileName: file.name,
+        fileType: fileType,
+        fileSize: `${(file.size / 1024).toFixed(2)} KB`,
+        timestamp: new Date().toISOString(),
+      });
+
       setSelectedFile(file);
 
       // Carregar preview da imagem
@@ -348,8 +371,9 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
         const result = reader.result;
         if (typeof result === 'string' && result.length > 0) {
           setFilePreview(result);
+          console.log('[PREVIEW] Preview carregado com sucesso');
         } else {
-          console.error("Erro ao carregar preview da imagem");
+          console.error("[PREVIEW] Erro ao carregar preview da imagem");
           alert("Não consegui carregar a imagem. Tente outra imagem.");
           setSelectedFile(null);
           e.target.value = "";
@@ -357,7 +381,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
       };
 
       reader.onerror = () => {
-        console.error("Erro ao ler arquivo de imagem");
+        console.error("[PREVIEW] Erro ao ler arquivo de imagem");
         alert("Erro ao ler a imagem. Tente novamente.");
         setSelectedFile(null);
         e.target.value = "";
@@ -466,13 +490,45 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
     let messageContent = input.trim();
     let messageType: "text" | "audio" | "image" = "text";
     let mediaUrl: string | undefined;
+    let uploadedImageUrl: string | undefined;
 
+    // Se há imagem, fazer upload para Supabase ANTES de enviar para a IA
     if (selectedFile) {
-      if (selectedFile.type.startsWith("image/")) {
+      // Inferir tipo se vazio (iOS)
+      let fileType = selectedFile.type;
+      if (!fileType) {
+        const extension = selectedFile.name.toLowerCase().split('.').pop();
+        if (extension === 'png') {
+          fileType = 'image/png';
+        } else if (extension === 'jpg' || extension === 'jpeg') {
+          fileType = 'image/jpeg';
+        } else if (extension === 'webp') {
+          fileType = 'image/webp';
+        }
+      }
+
+      if (fileType && fileType.startsWith("image/")) {
         messageType = "image";
         messageContent = input.trim() || "Enviou uma imagem";
         mediaUrl = filePreview || undefined;
-      } else if (selectedFile.type.startsWith("audio/")) {
+
+        // CRÍTICO: Upload da imagem para Supabase Storage ANTES de chamar a IA
+        if (userId) {
+          console.log('[UPLOAD] Iniciando upload da imagem para Supabase...');
+          const uploadResult = await uploadImageToStorage(selectedFile, userId);
+
+          if (uploadResult) {
+            uploadedImageUrl = uploadResult.url;
+            console.log('[UPLOAD] ✅ Upload concluído. URL:', uploadedImageUrl);
+          } else {
+            console.error('[UPLOAD] ❌ Falha no upload');
+            alert('Não consegui processar a imagem. Tente novamente.');
+            setIsLoading(false);
+            setIsTyping(false);
+            return; // Abortar envio se upload falhar
+          }
+        }
+      } else if (fileType && fileType.startsWith("audio/")) {
         messageType = "audio";
         messageContent = input.trim() || "Enviou um áudio";
       }
@@ -524,8 +580,14 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
       if (userId) {
         formData.append("userId", userId);
       }
-      
-      if (selectedFile) {
+
+      // Se há imagem E foi feito upload, enviar URL da imagem (NÃO o File)
+      if (selectedFile && messageType === "image" && uploadedImageUrl) {
+        formData.append("imageUrl", uploadedImageUrl); // Enviar URL pública
+        formData.append("fileType", messageType);
+        console.log('[REQUEST] Enviando URL da imagem para IA:', uploadedImageUrl);
+      } else if (selectedFile && messageType === "audio") {
+        // Para áudio, continuar enviando o arquivo (Whisper precisa do arquivo)
         formData.append("file", selectedFile);
         formData.append("fileType", messageType);
       }

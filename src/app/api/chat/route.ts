@@ -488,6 +488,7 @@ export async function POST(request: NextRequest) {
     const userId = formData.get("userId") as string;
     const file = formData.get("file") as File | null;
     const fileType = formData.get("fileType") as string | null;
+    const imageUrl = formData.get("imageUrl") as string | null; // URL pública da imagem (já uploadada)
 
     if (!messagesJson) {
       return NextResponse.json({
@@ -532,8 +533,9 @@ export async function POST(request: NextRequest) {
     let modelToUse = "gpt-4o-mini"; // Modelo padrão para texto
 
     // Processar arquivo se houver
-    if (file && fileType && userId) {
-      if (fileType === "image") {
+    if (fileType && userId) {
+      if (fileType === "image" && imageUrl) {
+        // NOVO FLUXO: Usar URL pública da imagem (já uploadada no Supabase)
         // Verificar limite de imagens
         const limitCheck = canUseMultimodal(userId, 'image');
         if (!limitCheck.allowed) {
@@ -544,27 +546,9 @@ export async function POST(request: NextRequest) {
         }
 
         try {
-          // Processar imagem com Vision API
-          const bytes = await file.arrayBuffer();
-          const buffer = Buffer.from(bytes);
+          console.log(`[IMAGEM] Processando imagem via URL: ${imageUrl}`);
 
-          // Validar que temos dados da imagem
-          if (!buffer || buffer.length === 0) {
-            throw new Error("Imagem vazia ou corrompida");
-          }
-
-          const base64Image = buffer.toString("base64");
-
-          // Validar que a conversão base64 funcionou
-          if (!base64Image || base64Image.length === 0) {
-            throw new Error("Falha ao converter imagem para base64");
-          }
-
-          const mimeType = file.type || "image/jpeg"; // Fallback para JPEG se tipo não especificado
-
-          console.log(`[IMAGEM] Processando imagem: ${file.name}, tamanho: ${buffer.length} bytes, tipo: ${mimeType}`);
-
-          // Substituir última mensagem do usuário com imagem
+          // Substituir última mensagem do usuário com URL da imagem
           const lastUserMessage = openaiMessages[openaiMessages.length - 1];
           const imageMessage = {
             role: "user",
@@ -576,7 +560,7 @@ export async function POST(request: NextRequest) {
               {
                 type: "image_url",
                 image_url: {
-                  url: `data:${mimeType};base64,${base64Image}`,
+                  url: imageUrl, // Usar URL pública diretamente
                   detail: "high" // Garantir análise detalhada
                 },
               },
@@ -588,7 +572,7 @@ export async function POST(request: NextRequest) {
           modelToUse = "gpt-4o"; // Usar modelo multimodal para imagens
           isMultimodal = true;
 
-          console.log(`[IMAGEM] Imagem preparada com sucesso para Vision API`);
+          console.log(`[IMAGEM] ✅ Imagem preparada com sucesso para Vision API via URL`);
 
           // Incrementar uso de imagens
           incrementUsage(userId, 'image');
@@ -597,12 +581,12 @@ export async function POST(request: NextRequest) {
           console.error("[IMAGEM] Erro ao processar imagem:", imageError);
           // Se falhar o processamento da imagem, retornar erro claro
           return NextResponse.json({
-            message: "Não consegui carregar a imagem agora. Tente reenviar.",
+            message: "Não consegui ver a imagem agora. Tente reenviar.",
             error: imageError.message
           }, { status: 200 });
         }
 
-      } else if (fileType === "audio") {
+      } else if (fileType === "audio" && file) {
         // Obter duração do áudio (aproximada pelo tamanho do arquivo)
         const fileSizeInBytes = file.size;
         const estimatedDurationSeconds = Math.ceil(fileSizeInBytes / 16000); // Estimativa: 16KB/s
