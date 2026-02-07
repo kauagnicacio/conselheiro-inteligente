@@ -752,8 +752,8 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
 
   return (
     <div className="flex flex-col h-full bg-[#1a1a1a]">
-      {/* Header - Fixo no topo */}
-      <div className="sticky top-0 z-30 border-b border-gray-800 px-4 sm:px-6 py-3 flex items-center justify-between bg-[#212121]">
+      {/* Header - Rola com o conteúdo */}
+      <div className="border-b border-gray-800 px-4 sm:px-6 py-3 flex items-center justify-between bg-[#212121]">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-gray-800/50">
             <ThemeIcon className={`w-5 h-5 ${themeColor}`} />
