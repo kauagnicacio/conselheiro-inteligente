@@ -45,175 +45,187 @@ export default function RootPage() {
     <div className="min-h-screen bg-white dark:bg-[#0f0f0f]">
       {/* HERO - Primeira dobra */}
       <section className="container mx-auto px-4 pt-8 pb-12 md:pt-16 md:pb-20">
-        <div className="max-w-2xl mx-auto text-center">
-          {/* Headline */}
-          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
-            POV: você precisa falar sobre isso, mas não sabe com quem
-          </h1>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            {/* Headline */}
+            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+              O que é a Lum IA?
+            </h1>
 
-          {/* Subheadline */}
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8">
-            Chat 24h pra desabafar, refletir e organizar a cabeça. Privado, seguro e sempre disponível.
-          </p>
+            {/* Subheadline */}
+            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+              Um chat 24h pra desabafar e organizar a cabeça — com privacidade e histórico salvo.
+            </p>
 
-          {/* Bullets */}
-          <div className="space-y-3 mb-8 text-left max-w-md mx-auto">
-            <div className="flex items-start gap-3">
-              <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
-              <p className="text-gray-700 dark:text-gray-300"><strong>Chat 24h</strong> sobre qualquer coisa</p>
-            </div>
-            <div className="flex items-start gap-3">
-              <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
-              <p className="text-gray-700 dark:text-gray-300"><strong>Sem exposição</strong> - sem feed, sem print</p>
-            </div>
-            <div className="flex items-start gap-3">
-              <Check className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
-              <p className="text-gray-700 dark:text-gray-300"><strong>Histórico salvo</strong> - continua depois</p>
-            </div>
+            {/* CTA Principal */}
+            <button
+              onClick={() => router.push("/teste")}
+              className="w-full md:w-auto px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 mb-3"
+            >
+              Testar agora
+            </button>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              2 minutos pra começar. É rápido.
+            </p>
           </div>
 
-          {/* CTA Principal */}
-          <button
-            onClick={() => router.push("/teste")}
-            className="w-full md:w-auto px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            Testar agora
-          </button>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">
-            2 minutos pra começar. É rápido.
-          </p>
+          {/* Preview do App */}
+          <div className="mb-12">
+            <div className="bg-purple-50 dark:bg-[#1a1a1a] rounded-3xl p-8 md:p-12">
+              <div className="max-w-sm mx-auto">
+                {/* Mock de Celular */}
+                <div className="relative mx-auto w-full max-w-[280px] aspect-[9/19] bg-gray-900 rounded-[36px] border-8 border-gray-900 shadow-2xl overflow-hidden">
+                  {/* Notch */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-900 rounded-b-2xl z-10" />
+
+                  {/* Tela do App */}
+                  <div className="w-full h-full bg-white dark:bg-[#0f0f0f] overflow-hidden flex flex-col">
+                    {/* Header */}
+                    <div className="bg-purple-600 text-white p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-white/20 rounded-full" />
+                        <span className="font-semibold text-sm">Lum</span>
+                      </div>
+                    </div>
+
+                    {/* Mensagens */}
+                    <div className="flex-1 p-4 space-y-3 bg-gray-50 dark:bg-[#0a0a0a]">
+                      <div className="flex justify-start">
+                        <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl rounded-tl-sm p-3 max-w-[80%] shadow-sm">
+                          <p className="text-xs text-gray-800 dark:text-gray-200">
+                            Como você está se sentindo hoje?
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex justify-end">
+                        <div className="bg-purple-600 text-white rounded-2xl rounded-tr-sm p-3 max-w-[80%] shadow-sm">
+                          <p className="text-xs">
+                            Tô confusa sobre uma decisão...
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex justify-start">
+                        <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl rounded-tl-sm p-3 max-w-[80%] shadow-sm">
+                          <p className="text-xs text-gray-800 dark:text-gray-200">
+                            Conte mais sobre isso. O que te deixa confusa?
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Input */}
+                    <div className="p-3 bg-white dark:bg-[#0f0f0f] border-t border-gray-200 dark:border-gray-800">
+                      <div className="flex items-center gap-2 bg-gray-100 dark:bg-[#1a1a1a] rounded-full px-4 py-2">
+                        <span className="text-xs text-gray-400 flex-1">Digite aqui...</span>
+                        <div className="w-6 h-6 bg-purple-600 rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* SITUAÇÕES REAIS - Estilo meme/POV */}
-      <section className="bg-purple-50 dark:bg-[#1a1a1a] py-12 md:py-16">
+      {/* COMO FUNCIONA */}
+      <section className="py-12 md:py-16 bg-purple-50 dark:bg-[#1a1a1a]">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-              Quando você não sabe com quem falar sobre...
+              Como funciona
             </h2>
 
-            <div className="space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-[#0f0f0f] rounded-xl">
-                <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  "Será que eu tô errada em não deixar meu namorado ir jogar bola?"
-                </p>
+            <div className="grid gap-4">
+              <div className="flex items-start gap-4 p-5 bg-white dark:bg-[#0f0f0f] rounded-xl">
+                <Check className="w-6 h-6 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Chat 24h sobre qualquer coisa
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Relacionamento, ansiedade, família, trabalho... Sem julgamento.
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-[#0f0f0f] rounded-xl">
-                <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  "Meu relacionamento tá chato, mas tenho medo de terminar"
-                </p>
+              <div className="flex items-start gap-4 p-5 bg-white dark:bg-[#0f0f0f] rounded-xl">
+                <Check className="w-6 h-6 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Lembra do contexto
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Não precisa recomeçar do zero. A Lum lembra das conversas anteriores.
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-[#0f0f0f] rounded-xl">
-                <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  "Tenho ansiedade mas não consigo contar pra ninguém"
-                </p>
+              <div className="flex items-start gap-4 p-5 bg-white dark:bg-[#0f0f0f] rounded-xl">
+                <Check className="w-6 h-6 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Perguntas guiadas / reflexões
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    A Lum faz perguntas pra te ajudar a se entender melhor.
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-[#0f0f0f] rounded-xl">
-                <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  "Preciso tomar uma decisão importante e tô perdida"
-                </p>
+              <div className="flex items-start gap-4 p-5 bg-white dark:bg-[#0f0f0f] rounded-xl">
+                <Check className="w-6 h-6 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Quizzes rápidos com insights
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Quer algo direcionado? Tem quiz sobre emoções, relacionamento e mais.
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-start gap-4 p-4 bg-white dark:bg-[#0f0f0f] rounded-xl">
-                <div className="w-2 h-2 bg-pink-500 rounded-full mt-2 flex-shrink-0" />
-                <p className="text-gray-700 dark:text-gray-300">
-                  "Assuntos de família que não dá pra contar pros amigos"
-                </p>
+              <div className="flex items-start gap-4 p-5 bg-white dark:bg-[#0f0f0f] rounded-xl">
+                <Check className="w-6 h-6 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Histórico salvo pra continuar depois
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Todas as conversas ficam salvas. Você volta quando quiser.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-5 bg-white dark:bg-[#0f0f0f] rounded-xl">
+                <Check className="w-6 h-6 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Privado (sem feed, sem exposição)
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Ninguém vê suas conversas. Sem likes, sem print, sem julgamento.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* COMO FUNCIONA - Experiência do app */}
+      {/* CTA FINAL */}
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3 text-center">
-              Como funciona a Lum
-            </h2>
-            <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 mb-8 text-center">
-              Um espaço feito pra você se entender melhor
-            </p>
-
-            <div className="space-y-6">
-              {/* Chat 24h */}
-              <div className="p-6 bg-purple-50 dark:bg-[#1a1a1a] rounded-2xl">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  💬 Chat 24h disponível
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 mb-3">
-                  Fale sobre qualquer coisa: relacionamento, ansiedade, família, trabalho... sem julgamento.
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  A Lum lembra do contexto e continua a conversa de onde você parou.
-                </p>
-              </div>
-
-              {/* Perguntas reflexivas */}
-              <div className="p-6 bg-purple-50 dark:bg-[#1a1a1a] rounded-2xl">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  🤔 Perguntas que te ajudam a pensar
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 mb-3">
-                  A Lum não só ouve — ela faz perguntas pra você se entender melhor.
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Como terapia, mas você conversa no seu tempo.
-                </p>
-              </div>
-
-              {/* Quiz e dinâmicas */}
-              <div className="p-6 bg-purple-50 dark:bg-[#1a1a1a] rounded-2xl">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  ✨ Quiz e dinâmicas rápidas
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 mb-3">
-                  Quer algo mais direcionado? Tem quiz sobre emoções, relacionamento, autoconhecimento...
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Responde e recebe insights personalizados.
-                </p>
-              </div>
-
-              {/* Privacidade */}
-              <div className="p-6 bg-purple-50 dark:bg-[#1a1a1a] rounded-2xl">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  🔒 Totalmente privado
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 mb-3">
-                  Sem feed, sem likes, sem exposição. Ninguém vê suas conversas.
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Pode até usar apelido se quiser.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA INTERMEDIÁRIO */}
-      <section className="bg-purple-600 dark:bg-purple-700 py-12 md:py-16">
-        <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
               Experimente agora
             </h2>
-            <p className="text-lg text-purple-100 mb-6">
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
               Leva 2 minutos pra testar. Você vai ver como funciona.
             </p>
             <button
               onClick={() => router.push("/teste")}
-              className="w-full md:w-auto px-8 py-4 bg-white text-purple-600 hover:bg-purple-50 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+              className="w-full md:w-auto px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
             >
               Testar a Lum agora
             </button>
