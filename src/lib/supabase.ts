@@ -1,23 +1,35 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Verificar se as variáveis de ambiente estão disponíveis
-// IMPORTANTE: Usar typeof window para garantir que funciona no servidor e cliente
+// IMPORTANTE: Suportar tanto VITE_ quanto NEXT_PUBLIC_ (para compatibilidade)
 const getSupabaseUrl = () => {
   if (typeof window !== 'undefined') {
-    // Cliente: tentar window.ENV primeiro, depois process.env
-    return (window as any).ENV?.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    // Cliente: tentar várias fontes
+    return (
+      (window as any).ENV?.VITE_SUPABASE_URL ||
+      (window as any).ENV?.NEXT_PUBLIC_SUPABASE_URL ||
+      process.env.VITE_SUPABASE_URL ||
+      process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      ''
+    );
   }
   // Servidor: usar process.env
-  return process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  return process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 };
 
 const getSupabaseAnonKey = () => {
   if (typeof window !== 'undefined') {
-    // Cliente: tentar window.ENV primeiro, depois process.env
-    return (window as any).ENV?.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    // Cliente: tentar várias fontes
+    return (
+      (window as any).ENV?.VITE_SUPABASE_ANON_KEY ||
+      (window as any).ENV?.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      process.env.VITE_SUPABASE_ANON_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      ''
+    );
   }
   // Servidor: usar process.env
-  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  return process.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 };
 
 const supabaseUrl = getSupabaseUrl();

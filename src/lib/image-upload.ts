@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { ensureChatImagesBucket } from './supabase-init';
 
 // Função para comprimir/redimensionar imagem antes do upload
 export async function compressImage(file: File, maxWidth: number = 1280): Promise<File> {
@@ -95,13 +96,20 @@ export async function compressImage(file: File, maxWidth: number = 1280): Promis
 export async function uploadImageToStorage(
   file: File,
   userId: string
-): Promise<{ url: string; path: string } | null> {
+): Promise<{ url: string; path: string; error?: string } | null> {
   if (!supabase) {
     console.error('[UPLOAD] Supabase não configurado');
-    return null;
+    return { url: '', path: '', error: 'Supabase não configurado. Contate o suporte.' };
   }
 
   try {
+    // Garantir que o bucket existe antes de fazer upload
+    const bucketReady = await ensureChatImagesBucket();
+    if (!bucketReady) {
+      console.error('[UPLOAD] Bucket não está pronto');
+      return { url: '', path: '', error: 'Storage não configurado. Contate o suporte.' };
+    }
+
     // Logs de diagnóstico
     console.log('[UPLOAD - DIAGNÓSTICO MOBILE]', {
       fileName: file.name,
@@ -110,12 +118,23 @@ export async function uploadImageToStorage(
       timestamp: new Date().toISOString(),
     });
 
+    // Validar tamanho do arquivo
+    if (file.size > 10 * 1024 * 1024) {
+      return { url: '', path: '', error: 'Imagem muito grande (máximo 10MB)' };
+    }
+
     // Comprimir imagem antes do upload (principalmente para mobile)
     let fileToUpload = file;
-    if (file.size > 200 * 1024) {
-      // Se maior que 200KB, comprimir
-      console.log('[UPLOAD] Comprimindo imagem...');
-      fileToUpload = await compressImage(file, 1280);
+    try {
+      if (file.size > 200 * 1024) {
+        // Se maior que 200KB, comprimir
+        console.log('[UPLOAD] Comprimindo imagem...');
+        fileToUpload = await compressImage(file, 1280);
+      }
+    } catch (compressionError) {
+      console.error('[UPLOAD] Erro ao comprimir:', compressionError);
+      // Continuar com arquivo original se compressão falhar
+      fileToUpload = file;
     }
 
     // Gerar nome único para o arquivo
@@ -126,8 +145,8 @@ export async function uploadImageToStorage(
 
     console.log('[UPLOAD] Iniciando upload:', fileName);
 
-    // Upload para Supabase Storage
-    const { data, error } = await supabase.storage
+    // Upload para Supabase Storage com timeout
+    const uploadPromise = supabase.storage
       .from('chat-images')
       .upload(fileName, fileToUpload, {
         contentType: fileToUpload.type || 'image/jpeg',
@@ -135,9 +154,33 @@ export async function uploadImageToStorage(
         upsert: false,
       });
 
+    // Adicionar timeout de 30 segundos
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Upload timeout')), 30000)
+    );
+
+    const { data, error } = await Promise.race([uploadPromise, timeoutPromise]) as any;
+
     if (error) {
       console.error('[UPLOAD] Erro ao fazer upload:', error);
-      return null;
+
+      // Mensagens de erro mais amigáveis
+      if (error.message?.includes('Bucket not found')) {
+        return { url: '', path: '', error: 'Configuração do storage incorreta. Contate o suporte.' };
+      }
+      if (error.message?.includes('not allowed')) {
+        return { url: '', path: '', error: 'Tipo de arquivo não permitido.' };
+      }
+      if (error.message?.includes('size')) {
+        return { url: '', path: '', error: 'Imagem muito grande.' };
+      }
+
+      return { url: '', path: '', error: 'Erro ao fazer upload. Tente novamente.' };
+    }
+
+    if (!data || !data.path) {
+      console.error('[UPLOAD] Upload retornou dados inválidos:', data);
+      return { url: '', path: '', error: 'Upload falhou. Tente novamente.' };
     }
 
     console.log('[UPLOAD] Upload concluído:', data.path);
@@ -154,23 +197,10 @@ export async function uploadImageToStorage(
       console.error('[UPLOAD] ❌ URL pública inválida:', publicUrl);
       // Tentar deletar arquivo inválido
       await supabase.storage.from('chat-images').remove([data.path]);
-      return null;
+      return { url: '', path: '', error: 'URL da imagem inválida. Tente novamente.' };
     }
 
     console.log('[UPLOAD] ✅ URL pública válida gerada:', publicUrl);
-
-    // VALIDAÇÃO ADICIONAL: Testar se a URL é acessível (HEAD request)
-    try {
-      const headResponse = await fetch(publicUrl, { method: 'HEAD' });
-      if (!headResponse.ok) {
-        console.error('[UPLOAD] ❌ URL não acessível. Status:', headResponse.status);
-        return null;
-      }
-      console.log('[UPLOAD] ✅ URL acessível confirmada');
-    } catch (fetchError) {
-      console.error('[UPLOAD] ❌ Erro ao validar URL:', fetchError);
-      // Não retornar null aqui - pode ser problema temporário de rede
-    }
 
     return {
       url: publicUrl,
@@ -178,7 +208,12 @@ export async function uploadImageToStorage(
     };
   } catch (error: any) {
     console.error('[UPLOAD] Erro inesperado:', error);
-    return null;
+
+    if (error.message === 'Upload timeout') {
+      return { url: '', path: '', error: 'Upload muito lento. Verifique sua conexão.' };
+    }
+
+    return { url: '', path: '', error: 'Erro inesperado. Tente novamente.' };
   }
 }
 

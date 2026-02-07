@@ -522,26 +522,28 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
 
           const uploadResult = await uploadImageToStorage(selectedFile, userId);
 
-          if (uploadResult && uploadResult.url) {
+          // Verificar se houve erro
+          if (uploadResult?.error) {
+            console.error('[UPLOAD] ❌ Erro no upload:', uploadResult.error);
+            alert(uploadResult.error);
+            setIsLoading(false);
+            setIsTyping(false);
+            handleRemoveFile();
+            return;
+          }
+
+          if (uploadResult && uploadResult.url && uploadResult.url.startsWith('http')) {
             uploadedImageUrl = uploadResult.url;
             console.log('[UPLOAD] ✅ Upload concluído com sucesso!', {
               url: uploadedImageUrl,
               path: uploadResult.path,
             });
-
-            // VALIDAÇÃO FINAL: Verificar se a URL é válida
-            if (!uploadedImageUrl.startsWith('http')) {
-              console.error('[UPLOAD] ❌ URL retornada inválida:', uploadedImageUrl);
-              alert('Erro ao processar a imagem. A URL gerada é inválida. Tente novamente.');
-              setIsLoading(false);
-              setIsTyping(false);
-              return;
-            }
           } else {
-            console.error('[UPLOAD] ❌ Falha no upload - resultado nulo ou sem URL');
+            console.error('[UPLOAD] ❌ Falha no upload - resultado inválido');
             alert('Não consegui fazer upload da imagem. Verifique sua conexão e tente novamente.');
             setIsLoading(false);
             setIsTyping(false);
+            handleRemoveFile();
             return; // Abortar envio se upload falhar
           }
         } else {
@@ -549,6 +551,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
           alert('Erro: usuário não identificado. Faça login novamente.');
           setIsLoading(false);
           setIsTyping(false);
+          handleRemoveFile();
           return;
         }
       } else if (fileType && fileType.startsWith("audio/")) {
