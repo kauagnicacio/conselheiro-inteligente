@@ -149,7 +149,28 @@ export async function uploadImageToStorage(
 
     const publicUrl = publicUrlData.publicUrl;
 
-    console.log('[UPLOAD] URL pública gerada:', publicUrl);
+    // VALIDAÇÃO CRÍTICA: Verificar se a URL é válida antes de retornar
+    if (!publicUrl || !publicUrl.startsWith('http')) {
+      console.error('[UPLOAD] ❌ URL pública inválida:', publicUrl);
+      // Tentar deletar arquivo inválido
+      await supabase.storage.from('chat-images').remove([data.path]);
+      return null;
+    }
+
+    console.log('[UPLOAD] ✅ URL pública válida gerada:', publicUrl);
+
+    // VALIDAÇÃO ADICIONAL: Testar se a URL é acessível (HEAD request)
+    try {
+      const headResponse = await fetch(publicUrl, { method: 'HEAD' });
+      if (!headResponse.ok) {
+        console.error('[UPLOAD] ❌ URL não acessível. Status:', headResponse.status);
+        return null;
+      }
+      console.log('[UPLOAD] ✅ URL acessível confirmada');
+    } catch (fetchError) {
+      console.error('[UPLOAD] ❌ Erro ao validar URL:', fetchError);
+      // Não retornar null aqui - pode ser problema temporário de rede
+    }
 
     return {
       url: publicUrl,

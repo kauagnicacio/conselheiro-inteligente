@@ -546,7 +546,40 @@ export async function POST(request: NextRequest) {
         }
 
         try {
-          console.log(`[IMAGEM] Processando imagem via URL: ${imageUrl}`);
+          console.log(`[IMAGEM] 🔍 Processando imagem via URL: ${imageUrl}`);
+
+          // VALIDAÇÃO CRÍTICA: Verificar se a URL é válida e acessível
+          if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+            console.error('[IMAGEM] ❌ URL inválida - não começa com http/https:', imageUrl);
+            return NextResponse.json({
+              message: "Não consegui processar a imagem. Tente novamente.",
+              error: "URL de imagem inválida"
+            }, { status: 400 });
+          }
+
+          // Testar se a URL é acessível antes de enviar para OpenAI
+          console.log('[IMAGEM] 🔍 Validando acessibilidade da URL...');
+          const headResponse = await fetch(imageUrl, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
+
+          if (!headResponse.ok) {
+            console.error(`[IMAGEM] ❌ URL não acessível. Status: ${headResponse.status}`);
+            return NextResponse.json({
+              message: "Não consegui acessar a imagem. Tente enviar novamente.",
+              error: `URL retornou status ${headResponse.status}`
+            }, { status: 400 });
+          }
+
+          const contentType = headResponse.headers.get('content-type');
+          console.log(`[IMAGEM] ✅ URL acessível. Content-Type: ${contentType}`);
+
+          // Verificar se o Content-Type é realmente uma imagem
+          if (contentType && !contentType.startsWith('image/')) {
+            console.error(`[IMAGEM] ❌ Content-Type não é imagem: ${contentType}`);
+            return NextResponse.json({
+              message: "O arquivo enviado não é uma imagem válida.",
+              error: `Content-Type inválido: ${contentType}`
+            }, { status: 415 });
+          }
 
           // Substituir última mensagem do usuário com URL da imagem
           const lastUserMessage = openaiMessages[openaiMessages.length - 1];
@@ -572,18 +605,32 @@ export async function POST(request: NextRequest) {
           modelToUse = "gpt-4o"; // Usar modelo multimodal para imagens
           isMultimodal = true;
 
-          console.log(`[IMAGEM] ✅ Imagem preparada com sucesso para Vision API via URL`);
+          console.log(`[IMAGEM] ✅ Imagem preparada com sucesso para Vision API`);
+          console.log(`[IMAGEM] 📊 Modelo: ${modelToUse} | URL válida: ${imageUrl.substring(0, 50)}...`);
 
           // Incrementar uso de imagens
           incrementUsage(userId, 'image');
 
         } catch (imageError: any) {
-          console.error("[IMAGEM] Erro ao processar imagem:", imageError);
-          // Se falhar o processamento da imagem, retornar erro claro
+          console.error("[IMAGEM] ❌ Erro ao processar imagem:", {
+            message: imageError.message,
+            stack: imageError.stack,
+            url: imageUrl,
+          });
+
+          // Mensagens de erro específicas
+          let errorMessage = "Não consegui processar a imagem. Tente novamente.";
+
+          if (imageError.name === 'TimeoutError' || imageError.message?.includes('timeout')) {
+            errorMessage = "A imagem demorou muito para carregar. Tente enviar uma imagem menor.";
+          } else if (imageError.message?.includes('fetch')) {
+            errorMessage = "Não consegui acessar a imagem. Verifique sua conexão e tente novamente.";
+          }
+
           return NextResponse.json({
-            message: "Não consegui ver a imagem agora. Tente reenviar.",
+            message: errorMessage,
             error: imageError.message
-          }, { status: 200 });
+          }, { status: 400 });
         }
 
       } else if (fileType === "audio" && file) {
@@ -635,10 +682,19 @@ export async function POST(request: NextRequest) {
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
           if (attempt > 0) {
-            console.log(`[API] Tentativa ${attempt + 1} de ${maxRetries + 1}...`);
+            console.log(`[API] ⚠️ Tentativa ${attempt + 1} de ${maxRetries + 1}...`);
             // Pequeno delay antes de retry (500ms)
             await new Promise(resolve => setTimeout(resolve, 500));
           }
+
+          console.log(`[API] 📤 Enviando request para OpenAI...`, {
+            model: modelToUse,
+            isMultimodal,
+            messagesCount: openaiMessages.length,
+            hasImage: isMultimodal && openaiMessages.some((m: any) =>
+              Array.isArray(m.content) && m.content.some((c: any) => c.type === 'image_url')
+            ),
+          });
 
           const completion = await openai.chat.completions.create({
             model: modelToUse,
@@ -650,10 +706,30 @@ export async function POST(request: NextRequest) {
             stream: true, // Habilitar streaming para efeito de digitação
           });
 
+          console.log('[API] ✅ Request para OpenAI bem-sucedido');
           return completion;
         } catch (error: any) {
           lastError = error;
-          console.error(`[API] Erro na tentativa ${attempt + 1}:`, error.message);
+          console.error(`[API] ❌ Erro na tentativa ${attempt + 1}:`, {
+            message: error.message,
+            code: error.code,
+            status: error.status,
+            type: error.type,
+            isMultimodal,
+          });
+
+          // Logs específicos para erros de imagem
+          if (isMultimodal && error.message) {
+            if (error.message.includes('image')) {
+              console.error('[API] ❌ ERRO ESPECÍFICO DE IMAGEM:', error.message);
+            }
+            if (error.message.includes('url')) {
+              console.error('[API] ❌ ERRO RELACIONADO À URL DA IMAGEM:', error.message);
+            }
+            if (error.message.includes('download')) {
+              console.error('[API] ❌ OpenAI não conseguiu fazer download da imagem');
+            }
+          }
 
           // Se for erro de rate limit ou timeout, fazer retry
           if (attempt < maxRetries && (
@@ -663,6 +739,16 @@ export async function POST(request: NextRequest) {
             error.message?.includes('ECONNRESET')
           )) {
             continue; // Tentar novamente
+          }
+
+          // Se for erro de imagem específico, não fazer retry (erro definitivo)
+          if (isMultimodal && (
+            error.message?.includes('image') ||
+            error.message?.includes('download') ||
+            error.status === 400
+          )) {
+            console.error('[API] ❌ Erro definitivo de imagem - abortando retry');
+            throw error;
           }
 
           // Se não for erro que vale retry, lançar imediatamente
@@ -707,23 +793,59 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error("Erro na API de chat:", error);
+    console.error("❌ ERRO CRÍTICO NA API DE CHAT:", {
+      message: error.message,
+      code: error.code,
+      status: error.status,
+      stack: error.stack,
+      isMultimodal,
+    });
 
     // Verificar se o erro está relacionado a imagem
-    const isImageError = isMultimodal || error.message?.includes('image') || error.message?.includes('vision');
+    const isImageError = isMultimodal || error.message?.includes('image') || error.message?.includes('vision') || error.message?.includes('download');
 
     // Respostas humanizadas baseadas no tipo de erro
     let fallbackMessage = "Entendi o que você disse. Me dá um segundo pra organizar meus pensamentos... O que mais você quer compartilhar?";
+    let statusCode = 200;
 
     if (isImageError) {
-      fallbackMessage = "Não consegui carregar a imagem agora. Tente reenviar.";
+      // Mensagens específicas para erros de imagem
+      if (error.message?.includes('download')) {
+        fallbackMessage = "Não consegui acessar a imagem. Verifique se ela foi enviada corretamente e tente novamente.";
+        console.error('[ERRO] OpenAI não conseguiu fazer download da imagem do Supabase');
+      } else if (error.message?.includes('url')) {
+        fallbackMessage = "Houve um problema com o link da imagem. Tente enviar novamente.";
+        console.error('[ERRO] Problema com URL da imagem');
+      } else if (error.message?.includes('format') || error.message?.includes('type')) {
+        fallbackMessage = "O formato da imagem não é suportado. Tente enviar em PNG ou JPG.";
+        console.error('[ERRO] Formato de imagem inválido');
+      } else if (error.status === 400) {
+        fallbackMessage = "Não consegui processar a imagem. Ela pode estar corrompida ou em um formato incompatível.";
+        console.error('[ERRO] Bad request ao processar imagem (status 400)');
+      } else {
+        fallbackMessage = "Não consegui processar a imagem. Tente novamente.";
+        console.error('[ERRO] Erro genérico ao processar imagem');
+      }
+      statusCode = 400; // Bad Request para erros de imagem
     } else if (error.code === 'insufficient_quota') {
       fallbackMessage = "Estou com um problema técnico agora, mas estou aqui te ouvindo. Me conta mais enquanto eu resolvo isso.";
+      console.error('[ERRO] Quota insuficiente da OpenAI');
     } else if (error.code === 'rate_limit_exceeded') {
       fallbackMessage = "Muita gente falando comigo agora! Mas estou aqui pra você. Me conta mais sobre o que está acontecendo.";
+      console.error('[ERRO] Rate limit excedido');
     } else if (error.message?.includes('timeout')) {
       fallbackMessage = "Demorei um pouco pra processar, mas estou aqui. Pode continuar, estou te ouvindo.";
+      console.error('[ERRO] Timeout na requisição');
     }
+
+    // Log final de diagnóstico
+    console.error('📋 DIAGNÓSTICO COMPLETO DO ERRO:', {
+      isImageError,
+      isMultimodal,
+      errorType: error.code || error.name || 'unknown',
+      fallbackMessage,
+      statusCode,
+    });
 
     // Retornar mensagem humanizada mesmo em caso de erro
     return NextResponse.json(
@@ -731,7 +853,7 @@ export async function POST(request: NextRequest) {
         message: fallbackMessage,
         error: error.message
       },
-      { status: 200 } // Retornar 200 para não quebrar o fluxo do chat
+      { status: statusCode }
     );
   }
 }

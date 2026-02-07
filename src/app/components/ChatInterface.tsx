@@ -514,19 +514,42 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
 
         // CRÍTICO: Upload da imagem para Supabase Storage ANTES de chamar a IA
         if (userId) {
-          console.log('[UPLOAD] Iniciando upload da imagem para Supabase...');
+          console.log('[UPLOAD] 📤 Iniciando upload da imagem para Supabase...', {
+            fileName: selectedFile.name,
+            fileType: selectedFile.type,
+            fileSize: `${(selectedFile.size / 1024).toFixed(2)} KB`,
+          });
+
           const uploadResult = await uploadImageToStorage(selectedFile, userId);
 
-          if (uploadResult) {
+          if (uploadResult && uploadResult.url) {
             uploadedImageUrl = uploadResult.url;
-            console.log('[UPLOAD] ✅ Upload concluído. URL:', uploadedImageUrl);
+            console.log('[UPLOAD] ✅ Upload concluído com sucesso!', {
+              url: uploadedImageUrl,
+              path: uploadResult.path,
+            });
+
+            // VALIDAÇÃO FINAL: Verificar se a URL é válida
+            if (!uploadedImageUrl.startsWith('http')) {
+              console.error('[UPLOAD] ❌ URL retornada inválida:', uploadedImageUrl);
+              alert('Erro ao processar a imagem. A URL gerada é inválida. Tente novamente.');
+              setIsLoading(false);
+              setIsTyping(false);
+              return;
+            }
           } else {
-            console.error('[UPLOAD] ❌ Falha no upload');
-            alert('Não consegui processar a imagem. Tente novamente.');
+            console.error('[UPLOAD] ❌ Falha no upload - resultado nulo ou sem URL');
+            alert('Não consegui fazer upload da imagem. Verifique sua conexão e tente novamente.');
             setIsLoading(false);
             setIsTyping(false);
             return; // Abortar envio se upload falhar
           }
+        } else {
+          console.error('[UPLOAD] ❌ userId não disponível - não é possível fazer upload');
+          alert('Erro: usuário não identificado. Faça login novamente.');
+          setIsLoading(false);
+          setIsTyping(false);
+          return;
         }
       } else if (fileType && fileType.startsWith("audio/")) {
         messageType = "audio";
@@ -599,8 +622,23 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
 
       // Verificar se houve erro na resposta
       if (!response.ok) {
+        console.error('[CHAT] Resposta da API com erro:', {
+          status: response.status,
+          statusText: response.statusText,
+          messageType,
+        });
+
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Erro na resposta da API");
+        const errorMessage = errorData.message || "Erro na resposta da API";
+
+        console.error('[CHAT] Dados do erro:', errorData);
+
+        // Se for erro de imagem (status 400), mostrar mensagem específica
+        if (messageType === "image" && response.status === 400) {
+          throw new Error(errorMessage);
+        }
+
+        throw new Error(errorMessage);
       }
 
       const contentType = response.headers.get("content-type");
