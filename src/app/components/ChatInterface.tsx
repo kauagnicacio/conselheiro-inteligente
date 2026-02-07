@@ -932,11 +932,11 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4">
           {/* File Preview */}
           {(selectedFile || filePreview) && (
-            <div className="mb-3 p-3 bg-purple-500/10 rounded-lg flex items-center gap-3 animate-fade-in border border-purple-500/20">
+            <div className="mb-3 p-3 bg-purple-500/10 rounded-lg flex items-center gap-3 animate-fade-in border border-purple-500/20 w-full max-w-full">
               {filePreview ? (
-                <img src={filePreview} alt="Preview" className="w-12 h-12 rounded object-cover" />
+                <img src={filePreview} alt="Preview" className="w-12 h-12 rounded object-cover flex-shrink-0" />
               ) : (
-                <div className="w-12 h-12 rounded bg-purple-500/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded bg-purple-500/20 flex items-center justify-center flex-shrink-0">
                   {selectedFile?.type.startsWith("audio/") ? (
                     <Mic className="w-5 h-5 text-purple-400" />
                   ) : (
@@ -944,7 +944,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
                   )}
                 </div>
               )}
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 overflow-hidden">
                 <p className="text-sm font-medium text-gray-100 truncate">
                   {selectedFile?.name}
                 </p>
@@ -956,7 +956,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
                 variant="ghost"
                 size="sm"
                 onClick={handleRemoveFile}
-                className="hover:bg-purple-500/20"
+                className="hover:bg-purple-500/20 flex-shrink-0"
               >
                 <X className="w-4 h-4 text-gray-400" />
               </Button>
@@ -964,7 +964,7 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
           )}
 
           {/* Input Row */}
-          <div className="flex items-end gap-2">
+          <div className="flex items-end gap-2 w-full max-w-full">
             {/* Image Upload */}
             <input
               ref={fileInputRef}
@@ -976,7 +976,14 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => isDemo && onDemoAction ? onDemoAction() : fileInputRef.current?.click()}
+              onClick={() => {
+                if (isDemo && onDemoAction) {
+                  // No modo demo, sempre bloquear imagem
+                  onDemoAction("image-blocked");
+                } else {
+                  fileInputRef.current?.click();
+                }
+              }}
               disabled={isLoading || isRecording}
               className="h-10 w-10 rounded-lg hover:bg-gray-800 shrink-0"
             >
@@ -994,7 +1001,16 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
             <Button
               variant="ghost"
               size="icon"
-              onClick={isRecording ? stopRecording : startRecording}
+              onClick={() => {
+                if (isDemo && onDemoAction) {
+                  // No modo demo, sempre bloquear áudio
+                  onDemoAction("audio-blocked");
+                } else if (isRecording) {
+                  stopRecording();
+                } else {
+                  startRecording();
+                }
+              }}
               disabled={isLoading}
               className={`h-10 w-10 rounded-lg hover:bg-gray-800 shrink-0 ${
                 isRecording ? "bg-red-900/20" : ""
@@ -1004,21 +1020,21 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
             </Button>
 
             {/* Text Input */}
-            <div className="flex-1 relative">
+            <div className="flex-1 relative min-w-0">
               <Textarea
                 ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Digite sua mensagem..."
-                className="min-h-[44px] max-h-[200px] resize-none border-gray-700 bg-gray-800 text-gray-100 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl text-[15px] py-3 pr-12"
+                className="w-full min-h-[44px] max-h-[200px] resize-none border-gray-700 bg-gray-800 text-gray-100 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl text-[15px] py-3 pr-12"
                 disabled={isLoading}
               />
               <Button
                 onClick={handleSend}
                 disabled={(!input.trim() && !selectedFile) || isLoading}
                 size="icon"
-                className="absolute right-2 bottom-2 h-8 w-8 rounded-lg bg-purple-500 hover:bg-purple-600 text-white disabled:opacity-30 disabled:hover:bg-purple-500 shadow-sm"
+                className="absolute right-2 bottom-2 h-8 w-8 rounded-lg bg-purple-500 hover:bg-purple-600 text-white disabled:opacity-30 disabled:hover:bg-purple-500 shadow-sm flex-shrink-0"
               >
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

@@ -9,6 +9,8 @@ export type CheckoutContext =
   | "reflexao-continue"
   | "jornada-gratitude"
   | "emocoes-complete"
+  | "image-blocked"
+  | "audio-blocked"
   | "default";
 
 interface CheckoutModalContextualProps {
@@ -38,6 +40,14 @@ const contextMessages: Record<CheckoutContext, { title: string; description: str
   "emocoes-complete": {
     title: "Assine para concluir sua jornada e destravar o próximo passo 💜",
     description: "Finalize o processo de reconhecimento das suas emoções e converse sobre isso com a Lum."
+  },
+  "image-blocked": {
+    title: "Para mandar imagens ilimitadas, assine já 📸",
+    description: "Compartilhe fotos e imagens com a Lum sem limites para aprofundar suas conversas."
+  },
+  "audio-blocked": {
+    title: "Para mandar áudios ilimitados, assine já 🎤",
+    description: "Envie áudios e fale livremente com a Lum sempre que precisar se expressar."
   },
   "default": {
     title: "Libere seu acesso completo à Lum IA ✨",
