@@ -471,6 +471,8 @@ function generateMemoryContext(messages: Message[], conversationCount: number): 
 }
 
 export async function POST(request: NextRequest) {
+  let isMultimodal = false; // Mover para escopo da função inteira
+
   try {
     // Verificar se a API key está configurada
     if (!openai || !process.env.OPENAI_API_KEY) {
@@ -488,24 +490,24 @@ export async function POST(request: NextRequest) {
     const fileType = formData.get("fileType") as string | null;
 
     if (!messagesJson) {
-      return NextResponse.json({ 
-        message: "Me conta mais sobre isso. Estou aqui pra te ouvir." 
+      return NextResponse.json({
+        message: "Me conta mais sobre isso. Estou aqui pra te ouvir."
       });
     }
 
     const messages: Message[] = JSON.parse(messagesJson);
     const lastUserMessage = messages[messages.length - 1];
-    
+
     // Detectar situação de crise
     const isCrisis = lastUserMessage && detectCrisis(lastUserMessage.content);
-    
+
     let systemPrompt = systemPrompts[tabContext] || systemPrompts.inicio;
-    
+
     // Adicionar contexto de memória ao prompt
     const conversationCount = messages.filter(m => m.role === 'user').length;
     const memoryContext = generateMemoryContext(messages, conversationCount);
     systemPrompt += memoryContext;
-    
+
     // Se for crise, adicionar instruções específicas
     if (isCrisis) {
       systemPrompt += `\n\nATENÇÃO: A pessoa está expressando pensamentos graves. Responda com extremo cuidado, acolhimento e empatia. Sugira recursos de ajuda imediatamente, mas de forma humana e calorosa.`;
@@ -528,7 +530,6 @@ export async function POST(request: NextRequest) {
     }
 
     let modelToUse = "gpt-4o-mini"; // Modelo padrão para texto
-    let isMultimodal = false;
 
     // Processar arquivo se houver
     if (file && fileType && userId) {
@@ -536,41 +537,70 @@ export async function POST(request: NextRequest) {
         // Verificar limite de imagens
         const limitCheck = canUseMultimodal(userId, 'image');
         if (!limitCheck.allowed) {
-          return NextResponse.json({ 
+          return NextResponse.json({
             message: limitCheck.message,
-            limitReached: true 
+            limitReached: true
           });
         }
 
-        // Processar imagem com Vision API
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        const base64Image = buffer.toString("base64");
-        const mimeType = file.type;
+        try {
+          // Processar imagem com Vision API
+          const bytes = await file.arrayBuffer();
+          const buffer = Buffer.from(bytes);
 
-        // Substituir última mensagem do usuário com imagem
-        const lastUserMessage = openaiMessages[openaiMessages.length - 1];
-        openaiMessages[openaiMessages.length - 1] = {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: lastUserMessage.content || "Analise esta imagem e me ajude a entender o que está acontecendo aqui.",
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:${mimeType};base64,${base64Image}`,
+          // Validar que temos dados da imagem
+          if (!buffer || buffer.length === 0) {
+            throw new Error("Imagem vazia ou corrompida");
+          }
+
+          const base64Image = buffer.toString("base64");
+
+          // Validar que a conversão base64 funcionou
+          if (!base64Image || base64Image.length === 0) {
+            throw new Error("Falha ao converter imagem para base64");
+          }
+
+          const mimeType = file.type || "image/jpeg"; // Fallback para JPEG se tipo não especificado
+
+          console.log(`[IMAGEM] Processando imagem: ${file.name}, tamanho: ${buffer.length} bytes, tipo: ${mimeType}`);
+
+          // Substituir última mensagem do usuário com imagem
+          const lastUserMessage = openaiMessages[openaiMessages.length - 1];
+          const imageMessage = {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: lastUserMessage.content || "Analise esta imagem e me ajude a entender o que está acontecendo aqui.",
               },
-            },
-          ],
-        };
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:${mimeType};base64,${base64Image}`,
+                  detail: "high" // Garantir análise detalhada
+                },
+              },
+            ],
+          };
 
-        modelToUse = "gpt-4o"; // Usar modelo multimodal para imagens
-        isMultimodal = true;
+          openaiMessages[openaiMessages.length - 1] = imageMessage;
 
-        // Incrementar uso de imagens
-        incrementUsage(userId, 'image');
+          modelToUse = "gpt-4o"; // Usar modelo multimodal para imagens
+          isMultimodal = true;
+
+          console.log(`[IMAGEM] Imagem preparada com sucesso para Vision API`);
+
+          // Incrementar uso de imagens
+          incrementUsage(userId, 'image');
+
+        } catch (imageError: any) {
+          console.error("[IMAGEM] Erro ao processar imagem:", imageError);
+          // Se falhar o processamento da imagem, retornar erro claro
+          return NextResponse.json({
+            message: "Não consegui carregar a imagem agora. Tente reenviar.",
+            error: imageError.message
+          }, { status: 200 });
+        }
 
       } else if (fileType === "audio") {
         // Obter duração do áudio (aproximada pelo tamanho do arquivo)
@@ -610,16 +640,58 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Chamar OpenAI com configurações otimizadas para respostas curtas e naturais
-    const completion = await openai.chat.completions.create({
-      model: modelToUse,
-      messages: openaiMessages,
-      temperature: 0.9, // Alta para naturalidade e espontaneidade
-      max_tokens: 150, // Limite para respostas breves
-      presence_penalty: 0.8, // Alto para evitar repetição
-      frequency_penalty: 0.5, // Médio para variar vocabulário
-      stream: true, // Habilitar streaming para efeito de digitação
-    });
+    // Função auxiliar para chamar OpenAI com retry
+    async function callOpenAIWithRetry(maxRetries = 1) {
+      if (!openai) {
+        throw new Error("OpenAI client não inicializado");
+      }
+
+      let lastError: any = null;
+
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          if (attempt > 0) {
+            console.log(`[API] Tentativa ${attempt + 1} de ${maxRetries + 1}...`);
+            // Pequeno delay antes de retry (500ms)
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+
+          const completion = await openai.chat.completions.create({
+            model: modelToUse,
+            messages: openaiMessages,
+            temperature: 0.9, // Alta para naturalidade e espontaneidade
+            max_tokens: isMultimodal ? 300 : 150, // Mais tokens para análise de imagem
+            presence_penalty: 0.8, // Alto para evitar repetição
+            frequency_penalty: 0.5, // Médio para variar vocabulário
+            stream: true, // Habilitar streaming para efeito de digitação
+          });
+
+          return completion;
+        } catch (error: any) {
+          lastError = error;
+          console.error(`[API] Erro na tentativa ${attempt + 1}:`, error.message);
+
+          // Se for erro de rate limit ou timeout, fazer retry
+          if (attempt < maxRetries && (
+            error.code === 'rate_limit_exceeded' ||
+            error.code === 'timeout' ||
+            error.message?.includes('timeout') ||
+            error.message?.includes('ECONNRESET')
+          )) {
+            continue; // Tentar novamente
+          }
+
+          // Se não for erro que vale retry, lançar imediatamente
+          throw error;
+        }
+      }
+
+      // Se chegou aqui, todas as tentativas falharam
+      throw lastError;
+    }
+
+    // Chamar OpenAI com retry automático
+    const completion = await callOpenAIWithRetry(isMultimodal ? 1 : 0);
 
     // Criar stream de resposta
     const encoder = new TextEncoder();
@@ -652,23 +724,28 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     console.error("Erro na API de chat:", error);
-    
+
+    // Verificar se o erro está relacionado a imagem
+    const isImageError = isMultimodal || error.message?.includes('image') || error.message?.includes('vision');
+
     // Respostas humanizadas baseadas no tipo de erro
     let fallbackMessage = "Entendi o que você disse. Me dá um segundo pra organizar meus pensamentos... O que mais você quer compartilhar?";
-    
-    if (error.code === 'insufficient_quota') {
+
+    if (isImageError) {
+      fallbackMessage = "Não consegui carregar a imagem agora. Tente reenviar.";
+    } else if (error.code === 'insufficient_quota') {
       fallbackMessage = "Estou com um problema técnico agora, mas estou aqui te ouvindo. Me conta mais enquanto eu resolvo isso.";
     } else if (error.code === 'rate_limit_exceeded') {
       fallbackMessage = "Muita gente falando comigo agora! Mas estou aqui pra você. Me conta mais sobre o que está acontecendo.";
     } else if (error.message?.includes('timeout')) {
       fallbackMessage = "Demorei um pouco pra processar, mas estou aqui. Pode continuar, estou te ouvindo.";
     }
-    
+
     // Retornar mensagem humanizada mesmo em caso de erro
     return NextResponse.json(
-      { 
+      {
         message: fallbackMessage,
-        error: error.message 
+        error: error.message
       },
       { status: 200 } // Retornar 200 para não quebrar o fluxo do chat
     );

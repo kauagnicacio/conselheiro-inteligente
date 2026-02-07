@@ -320,17 +320,50 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
       onDemoAction();
       return;
     }
-    
+
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file);
-      if (file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setFilePreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+      // Validar tipo de arquivo
+      if (!file.type.startsWith("image/")) {
+        alert("Por favor, selecione apenas arquivos de imagem (JPG, PNG, etc.)");
+        e.target.value = ""; // Limpar input
+        return;
       }
+
+      // Validar tamanho (máximo 10MB)
+      const maxSize = 10 * 1024 * 1024; // 10MB em bytes
+      if (file.size > maxSize) {
+        alert("A imagem é muito grande. Por favor, envie uma imagem menor que 10MB.");
+        e.target.value = ""; // Limpar input
+        return;
+      }
+
+      setSelectedFile(file);
+
+      // Carregar preview da imagem
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        // Validar que o resultado é uma string válida
+        const result = reader.result;
+        if (typeof result === 'string' && result.length > 0) {
+          setFilePreview(result);
+        } else {
+          console.error("Erro ao carregar preview da imagem");
+          alert("Não consegui carregar a imagem. Tente outra imagem.");
+          setSelectedFile(null);
+          e.target.value = "";
+        }
+      };
+
+      reader.onerror = () => {
+        console.error("Erro ao ler arquivo de imagem");
+        alert("Erro ao ler a imagem. Tente novamente.");
+        setSelectedFile(null);
+        e.target.value = "";
+      };
+
+      reader.readAsDataURL(file);
     }
   };
 
@@ -502,8 +535,10 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
         body: formData,
       });
 
+      // Verificar se houve erro na resposta
       if (!response.ok) {
-        throw new Error("Erro na resposta da API");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Erro na resposta da API");
       }
 
       const contentType = response.headers.get("content-type");
@@ -594,6 +629,35 @@ export function ChatInterface({ activeTab, onCreateCustomTab, userId, activeThem
         }
       } else {
         const data = await response.json();
+
+        // Verificar se houve erro específico de imagem
+        if (data.error && messageType === "image") {
+          // Erro ao processar imagem - dar feedback imediato
+          setIsTyping(false);
+          setIsLoading(false);
+
+          const errorMessage: Message = {
+            role: "assistant",
+            content: data.message || "Não consegui carregar a imagem agora. Tente reenviar.",
+            timestamp: new Date(),
+          };
+
+          const finalMessages = [...newMessages, errorMessage];
+          setMessages(finalMessages);
+
+          // MODO DEMO: Salvar no localStorage
+          if (isDemo) {
+            const demoStorageKey = `demo-chat-${conversationId}`;
+            localStorage.setItem(demoStorageKey, JSON.stringify({ messages: finalMessages }));
+          }
+
+          // Salvar mensagem de erro no banco E localStorage (SEMPRE) - Modo normal
+          if (!isDemo && userId) {
+            await saveMessageHybrid(conversationId, userId, errorMessage, finalMessages);
+          }
+
+          return; // Parar execução aqui
+        }
 
         const naturalDelay = 1000 + Math.random() * 1000;
         await new Promise(resolve => setTimeout(resolve, naturalDelay));
