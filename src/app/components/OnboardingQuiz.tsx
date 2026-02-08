@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { LumLogo } from "@/components/LumIcons";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { AppPreviewTabs } from "@/components/AppPreviewTabs";
 
 // Tipos de etapas: 'question' (pergunta normal) ou 'transition' (mensagem animada)
 interface Step {
@@ -366,44 +367,53 @@ export function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
   if (showWelcome) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 dark:from-gray-900 dark:via-[#1a1a1a] dark:to-gray-900 flex items-center justify-center p-4">
-        <div className="w-full max-w-2xl">
-          <div className="text-center mb-8">
+        <div className="w-full max-w-4xl">
+          <div className="text-center mb-12">
             <div className="flex justify-center mb-6">
               <LumLogo className="w-20 h-20" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              Vamos nos conhecer melhor? ✨
+              Como a Lum IA funciona
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto mb-8">
-              Isso leva cerca de 2 minutos e muda totalmente sua experiência com a Lum.
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12">
+              Não é só um chat comum. É um espaço personalizado que entende você e evolui com você.
             </p>
-            
-            <div className="bg-white dark:bg-[#212121] rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-lg">
-              <ul className="text-left space-y-3 text-base text-gray-700 dark:text-gray-300">
-                <li className="flex items-start gap-3">
-                  <span className="text-purple-500 mt-0.5 text-xl">✓</span>
-                  <span>Entender o momento que você está vivendo</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-purple-500 mt-0.5 text-xl">✓</span>
-                  <span>Adaptar as respostas ao seu jeito de pensar</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-purple-500 mt-0.5 text-xl">✓</span>
-                  <span>Criar um espaço verdadeiramente personalizado</span>
-                </li>
-              </ul>
+
+            {/* Preview em abas - importar componente */}
+            <div className="mb-12">
+              <div className="bg-purple-50 dark:bg-[#1a1a1a] rounded-3xl p-8 md:p-10">
+                <AppPreviewTabs />
+              </div>
             </div>
 
-            <Button
+            {/* Copy persuasiva */}
+            <div className="bg-white dark:bg-[#212121] rounded-2xl p-6 md:p-8 max-w-2xl mx-auto mb-8 shadow-lg">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                Por que fazer o quiz?
+              </h2>
+              <div className="text-left space-y-4 text-base text-gray-700 dark:text-gray-300">
+                <p>
+                  A Lum tem <span className="font-semibold text-purple-600 dark:text-purple-400">chat 24h</span>, histórico salvo, perguntas reflexivas e quizzes guiados — tudo para te ajudar a entender melhor o que você sente.
+                </p>
+                <p>
+                  Mas antes de começar, <span className="font-semibold text-purple-600 dark:text-purple-400">preciso te conhecer</span>. São 9 perguntas rápidas que vão personalizar toda a experiência.
+                </p>
+                <p>
+                  Com o quiz, a Lum <span className="font-semibold text-purple-600 dark:text-purple-400">lembra do contexto</span>, fala do jeito que você prefere, e te ajuda de verdade — sem respostas genéricas.
+                </p>
+              </div>
+            </div>
+
+            {/* CTA Premium */}
+            <button
               onClick={handleStartQuiz}
-              className="h-14 px-8 text-lg bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all"
+              className="w-full md:w-auto px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xl font-bold rounded-full shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] transition-all duration-300 hover:scale-105"
             >
               Personalizar minha Lum (2 min)
-              <ChevronRight className="w-5 h-5 ml-2" />
-            </Button>
+              <ChevronRight className="w-6 h-6 ml-2 inline-block" />
+            </button>
 
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-8">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-6">
               🔒 Suas respostas são privadas e seguras.
             </p>
           </div>

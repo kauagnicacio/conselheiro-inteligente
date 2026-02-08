@@ -61,7 +61,7 @@ export default function RootPage() {
             {/* CTA Principal MAIOR */}
             <button
               onClick={() => router.push("/teste")}
-              className="w-full md:w-auto px-10 py-5 bg-purple-600 hover:bg-purple-700 text-white text-xl font-bold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 mb-3"
+              className="w-full md:w-auto px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xl font-bold rounded-full shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] transition-all duration-300 hover:scale-105 mb-3"
             >
               Testar agora
             </button>
@@ -179,7 +179,7 @@ export default function RootPage() {
             </p>
             <button
               onClick={() => router.push("/teste")}
-              className="w-full md:w-auto px-10 py-5 bg-purple-600 hover:bg-purple-700 text-white text-xl font-bold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              className="w-full md:w-auto px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xl font-bold rounded-full shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] transition-all duration-300 hover:scale-105"
             >
               Testar agora
             </button>
