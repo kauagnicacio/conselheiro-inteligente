@@ -389,17 +389,17 @@ export function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
             {/* Copy persuasiva */}
             <div className="bg-white dark:bg-[#212121] rounded-2xl p-6 md:p-8 max-w-2xl mx-auto mb-8 shadow-lg">
               <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                Por que fazer o quiz?
+                Um começo guiado pra você ir com mais clareza
               </h2>
               <div className="text-left space-y-4 text-base text-gray-700 dark:text-gray-300">
                 <p>
                   A Lum tem <span className="font-semibold text-purple-600 dark:text-purple-400">chat 24h</span>, histórico salvo, perguntas reflexivas e quizzes guiados — tudo para te ajudar a entender melhor o que você sente.
                 </p>
                 <p>
-                  Mas antes de começar, <span className="font-semibold text-purple-600 dark:text-purple-400">preciso te conhecer</span>. São 9 perguntas rápidas que vão personalizar toda a experiência.
+                  Responda rapidinho pra eu <span className="font-semibold text-purple-600 dark:text-purple-400">te entender e ajustar a conversa pra você</span>. São 9 perguntas que personalizam como eu falo e o que eu sugiro.
                 </p>
                 <p>
-                  Com o quiz, a Lum <span className="font-semibold text-purple-600 dark:text-purple-400">lembra do contexto</span>, fala do jeito que você prefere, e te ajuda de verdade — sem respostas genéricas.
+                  Assim, a Lum <span className="font-semibold text-purple-600 dark:text-purple-400">lembra do contexto</span>, fala do seu jeito, e te ajuda de verdade — sem respostas genéricas.
                 </p>
               </div>
             </div>
