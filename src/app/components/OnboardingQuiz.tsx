@@ -366,42 +366,55 @@ export function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
   // Tela de boas-vindas
   if (showWelcome) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#1a1a1a] flex items-center justify-center p-4">
-        <div className="w-full max-w-4xl">
-          {/* Header clean */}
-          <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <LumLogo className="w-16 h-16" />
+      <div className="min-h-screen bg-white dark:bg-[#1a1a1a] flex items-center justify-center px-4 py-8 md:py-12">
+        <div className="w-full max-w-5xl">
+          {/* Header clean com espaçamentos simétricos */}
+          <div className="text-center mb-8 md:mb-10 px-4">
+            <div className="flex justify-center mb-6">
+              <LumLogo className="w-16 h-16 md:w-20 md:h-20" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Bem-vinda à Lum IA
+            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-6 leading-tight">
+              Bem-vinda(o) à Lum IA
             </h1>
-            <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
-              Um chat 24h com perguntas guiadas pra desabafar e organizar a cabeça — com privacidade e histórico salvo.
-            </p>
+
+            {/* Texto persuasivo e escaneável */}
+            <div className="max-w-2xl mx-auto space-y-3 md:space-y-4">
+              <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                <span className="font-semibold text-purple-600 dark:text-purple-400">Chat 24h</span> pra desabafar e organizar a cabeça
+              </p>
+              <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                <span className="font-semibold text-purple-600 dark:text-purple-400">Perguntas guiadas</span> — não é só "chat comum"
+              </p>
+              <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                <span className="font-semibold text-purple-600 dark:text-purple-400">Privacidade + histórico salvo</span> — sem exposição
+              </p>
+            </div>
           </div>
 
-          {/* CTA principal (antes do preview) */}
-          <div className="flex flex-col items-center mb-10">
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+          {/* CTA principal premium */}
+          <div className="flex flex-col items-center mb-10 md:mb-12 px-4">
+            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-4">
               Pra personalizar sua experiência
             </p>
             <button
               onClick={handleStartQuiz}
-              className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+              className="group relative px-10 py-5 bg-purple-600 hover:bg-purple-700 text-white text-lg md:text-xl font-semibold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              Começar agora
-              <ChevronRight className="w-5 h-5 ml-1 inline-block" />
+              <span className="flex items-center gap-2">
+                Fazer o quiz
+                <ChevronRight className="w-6 h-6 transition-transform group-hover:translate-x-1" />
+              </span>
+              <div className="absolute inset-0 rounded-2xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </button>
           </div>
 
-          {/* Preview em abas - mockless, fiel ao app real */}
-          <div className="mb-6">
+          {/* Preview em abas - responsivo com espaçamento simétrico */}
+          <div className="mb-8 md:mb-10 px-4">
             <AppPreviewTabs />
           </div>
 
           {/* Privacidade */}
-          <p className="text-center text-xs text-gray-400 dark:text-gray-500">
+          <p className="text-center text-xs md:text-sm text-gray-400 dark:text-gray-500 px-4">
             🔒 Suas conversas são privadas e seguras
           </p>
         </div>
