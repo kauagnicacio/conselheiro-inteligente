@@ -1,12 +1,28 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Sparkles } from "lucide-react";
 import { QuizAppPreview } from "@/components/QuizAppPreview";
+import { OnboardingQuiz } from "@/app/components/OnboardingQuiz";
 
 export default function QuizPage() {
-  const router = useRouter();
+  const [showQuiz, setShowQuiz] = useState(false);
 
+  const handleStartQuiz = () => {
+    setShowQuiz(true);
+  };
+
+  const handleQuizComplete = (responses: Record<string, string>) => {
+    // O OnboardingQuiz já cuida do redirecionamento para /teste
+    console.log("Quiz completo", responses);
+  };
+
+  // Se o quiz foi iniciado, mostrar o componente OnboardingQuiz
+  if (showQuiz) {
+    return <OnboardingQuiz onComplete={handleQuizComplete} />;
+  }
+
+  // Página inicial com o CTA para iniciar o quiz
   return (
     <div className="min-h-screen bg-white dark:bg-[#0f0f0f]">
       {/* Main Content */}
@@ -31,7 +47,7 @@ export default function QuizPage() {
 
             {/* CTA Button with Gradient */}
             <button
-              onClick={() => router.push("/teste")}
+              onClick={handleStartQuiz}
               className="w-full md:w-auto px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white text-xl font-bold rounded-full shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] transition-all duration-300 hover:scale-105 mb-3"
             >
               Fazer o quiz
