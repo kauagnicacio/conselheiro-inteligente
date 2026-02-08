@@ -8,31 +8,31 @@ const tabs = [
     id: "chat",
     label: "Chat",
     icon: MessageCircle,
-    description: "Converse 24h sobre qualquer assunto"
+    description: "Chat com temas guiados"
   },
   {
     id: "quiz",
     label: "Quiz",
     icon: ListChecks,
-    description: "Quizzes rápidos para organizar a mente"
+    description: "Quizzes rápidos pra organizar a mente"
   },
   {
     id: "perguntas",
-    label: "Perguntas reflexivas",
-    icon: FileQuestion,
-    description: "Perguntas guiadas que destravam sua mente"
+    label: "Reflexão",
+    icon: Sparkles,
+    description: "Perguntas guiadas diárias"
   },
   {
     id: "jornada",
-    label: "Minha jornada",
-    icon: BookOpen,
-    description: "Histórico salvo da sua evolução"
+    label: "Jornada",
+    icon: Map,
+    description: "Acompanhe sua evolução"
   },
   {
     id: "psicologos",
-    label: "Psicólogos",
+    label: "Profissionais",
     icon: Users,
-    description: "Encontre profissionais quando precisar"
+    description: "Encontre psicólogos"
   }
 ];
 
@@ -252,29 +252,29 @@ export function AppPreviewTabs() {
 
   return (
     <div className="w-full">
-      {/* Navegação de abas */}
-      <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6 pb-2">
+      {/* Navegação de abas - ícones + labels curtos */}
+      <div className="flex gap-2 justify-center overflow-x-auto scrollbar-hide mb-6 pb-2 px-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200 ${
+              className={`flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl font-medium text-xs whitespace-nowrap transition-all duration-200 min-w-[70px] ${
                 activeTab === tab.id
                   ? "bg-purple-600 text-white shadow-md"
-                  : "bg-white dark:bg-[#1a1a1a] text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                  : "bg-gray-100 dark:bg-[#212121] text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20"
               }`}
             >
-              <Icon className="w-4 h-4" />
-              {tab.label}
+              <Icon className="w-5 h-5 flex-shrink-0" />
+              <span className="text-[10px] leading-tight">{tab.label}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Preview real da aba selecionada - SEM mockup de celular */}
-      <div className="relative mx-auto w-full max-w-sm aspect-[9/16] bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+      {/* Preview real da aba selecionada - fiel ao app, sem mock de celular */}
+      <div className="relative mx-auto w-full max-w-sm aspect-[9/16] bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700">
         {/* Bloqueio de interação (overlay invisível) */}
         <div className="absolute inset-0 z-50 cursor-not-allowed" />
 
@@ -286,7 +286,7 @@ export function AppPreviewTabs() {
 
       {/* Descrição da aba */}
       <div className="text-center mt-4">
-        <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           {currentTab.description}
         </p>
       </div>

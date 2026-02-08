@@ -366,57 +366,44 @@ export function OnboardingQuiz({ onComplete }: OnboardingQuizProps) {
   // Tela de boas-vindas
   if (showWelcome) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 dark:from-gray-900 dark:via-[#1a1a1a] dark:to-gray-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-white dark:bg-[#1a1a1a] flex items-center justify-center p-4">
         <div className="w-full max-w-4xl">
-          <div className="text-center mb-12">
-            <div className="flex justify-center mb-6">
-              <LumLogo className="w-20 h-20" />
+          {/* Header clean */}
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <LumLogo className="w-16 h-16" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              Como a Lum IA funciona
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              Bem-vinda à Lum IA
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12">
-              Não é só um chat comum. É um espaço personalizado que entende você e evolui com você.
-            </p>
-
-            {/* Preview em abas - importar componente */}
-            <div className="mb-12">
-              <div className="bg-purple-50 dark:bg-[#1a1a1a] rounded-3xl p-8 md:p-10">
-                <AppPreviewTabs />
-              </div>
-            </div>
-
-            {/* Copy persuasiva */}
-            <div className="bg-white dark:bg-[#212121] rounded-2xl p-6 md:p-8 max-w-2xl mx-auto mb-8 shadow-lg">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                Um começo guiado pra você ir com mais clareza
-              </h2>
-              <div className="text-left space-y-4 text-base text-gray-700 dark:text-gray-300">
-                <p>
-                  A Lum tem <span className="font-semibold text-purple-600 dark:text-purple-400">chat 24h</span>, histórico salvo, perguntas reflexivas e quizzes guiados — tudo para te ajudar a entender melhor o que você sente.
-                </p>
-                <p>
-                  Responda rapidinho pra eu <span className="font-semibold text-purple-600 dark:text-purple-400">te entender e ajustar a conversa pra você</span>. São 9 perguntas que personalizam como eu falo e o que eu sugiro.
-                </p>
-                <p>
-                  Assim, a Lum <span className="font-semibold text-purple-600 dark:text-purple-400">lembra do contexto</span>, fala do seu jeito, e te ajuda de verdade — sem respostas genéricas.
-                </p>
-              </div>
-            </div>
-
-            {/* CTA Premium */}
-            <button
-              onClick={handleStartQuiz}
-              className="w-full md:w-auto px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xl font-bold rounded-full shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] transition-all duration-300 hover:scale-105"
-            >
-              Personalizar minha Lum (2 min)
-              <ChevronRight className="w-6 h-6 ml-2 inline-block" />
-            </button>
-
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-6">
-              🔒 Suas respostas são privadas e seguras.
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
+              Um chat 24h com perguntas guiadas pra desabafar e organizar a cabeça — com privacidade e histórico salvo.
             </p>
           </div>
+
+          {/* CTA principal (antes do preview) */}
+          <div className="flex flex-col items-center mb-10">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+              Pra personalizar sua experiência
+            </p>
+            <button
+              onClick={handleStartQuiz}
+              className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              Começar agora
+              <ChevronRight className="w-5 h-5 ml-1 inline-block" />
+            </button>
+          </div>
+
+          {/* Preview em abas - mockless, fiel ao app real */}
+          <div className="mb-6">
+            <AppPreviewTabs />
+          </div>
+
+          {/* Privacidade */}
+          <p className="text-center text-xs text-gray-400 dark:text-gray-500">
+            🔒 Suas conversas são privadas e seguras
+          </p>
         </div>
       </div>
     );
