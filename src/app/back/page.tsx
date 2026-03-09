@@ -36,10 +36,10 @@ export default function BackRedirectPage() {
         {/* Preço com desconto */}
         <div className="py-2">
           <p className="text-gray-400 text-sm line-through mb-1">
-            R$ 37,90/mês
+            R$ 32,90/mês
           </p>
           <p className="text-purple-400 font-bold text-2xl">
-            R$ 26,53/mês
+            R$ 23,03/mês
           </p>
           <p className="text-gray-400 text-xs mt-1">Cancele quando quiser.</p>
         </div>
@@ -79,7 +79,7 @@ export default function BackRedirectPage() {
             className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-green-500/20"
           >
             <Check className="w-5 h-5" />
-            Finalizar com 30% OFF (R$ 26,53/mês)
+            Finalizar com 30% OFF (R$ 23,03/mês)
           </button>
 
           {/* CTA Secundário */}

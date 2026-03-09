@@ -62,7 +62,7 @@ export function PaywallModal({ isOpen, onClose, feature }: PaywallModalProps) {
 
           <div className="text-center">
             <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">
-              R$ 27,90<span className="text-lg font-normal text-gray-600 dark:text-gray-400">/mês</span>
+              R$ 32,90<span className="text-lg font-normal text-gray-600 dark:text-gray-400">/mês</span>
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Cancele quando quiser, sem compromisso

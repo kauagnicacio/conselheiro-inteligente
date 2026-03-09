@@ -54,7 +54,7 @@ export function CheckoutModal({ isOpen, onClose, checkoutUrl = "https://pay.kirv
             {/* Preço */}
             <div className="py-3 px-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
               <p className="text-lg font-semibold text-purple-600 dark:text-purple-400">
-                R$ 37,90/mês
+                R$ 32,90/mês
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 Um espaço que vale mais que o silêncio que você vem guardando.

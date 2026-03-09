@@ -38,7 +38,7 @@ export function CheckoutScreen({ onCheckout }: CheckoutScreenProps) {
               </h3>
               <div className="flex items-baseline justify-center gap-2">
                 <span className="text-4xl font-bold text-purple-600 dark:text-purple-400">
-                  R$ 27,90
+                  R$ 32,90
                 </span>
                 <span className="text-gray-600 dark:text-gray-400">/mês</span>
               </div>
