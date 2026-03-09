@@ -125,6 +125,18 @@ export default function EbookPage() {
                 </p>
               </div>
             </li>
+
+            <li className="flex items-start gap-3">
+              <span className="flex-shrink-0 text-lg mt-0.5">🎁</span>
+              <div>
+                <p className="font-semibold text-gray-900 dark:text-white text-sm">
+                  6 eBooks bônus (Raiva, Tristeza, Medo, Culpa, Vergonha e Confusão)
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  Um guia completo para cada emoção — entenda, acolha e transforme.
+                </p>
+              </div>
+            </li>
           </ul>
         </div>
       </section>
